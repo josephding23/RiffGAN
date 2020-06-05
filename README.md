@@ -1,0 +1,1 @@
+some attempts to generate music using riff-oriented strategy, with the aid of GAN
