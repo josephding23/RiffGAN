@@ -1,5 +1,5 @@
 from util.database import *
-from src.fragments.riff import *
+from src.db_fragments.riff import *
 import os
 import shutil
 from music21 import interval, key
