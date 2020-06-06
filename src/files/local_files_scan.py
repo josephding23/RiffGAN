@@ -48,7 +48,7 @@ def scan_local_files():
 
                         try:
                             guitar_riff = GuitarRiff(griff_path, 'null')
-                            riff_length = guitar_riff.end_time
+                            riff_length = guitar_riff.length
 
                             griff_table.insert_one({
                                 'Performer': performer,
@@ -73,7 +73,7 @@ def scan_local_files():
 
                         try:
                             bass_riff = BassRiff(briff_path, 'null')
-                            riff_length = bass_riff.end_time
+                            riff_length = bass_riff.length
 
                             briff_table.insert_one({
                                 'Performer': performer,
@@ -98,7 +98,7 @@ def scan_local_files():
 
                         try:
                             guitar_solo = GuitarSolo(gsolo_path, 'null')
-                            solo_length = guitar_solo.end_time
+                            solo_length = guitar_solo.length
 
                             gsolo_table.insert_one({
                                 'Performer': performer,

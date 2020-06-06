@@ -13,7 +13,7 @@ def analyse_tonality():
             guitar_riff = GuitarRiff(griff['Path'])
 
             measures_num = guitar_riff.measures_num
-            measures_tonality = guitar_riff.measures_tonality
+            measures_tonality = guitar_riff.tonality_by_measures()
 
             griff_table.update_one(
                 {'_id': griff['_id']},
@@ -31,7 +31,7 @@ def analyse_tonality():
             bass_riff = BassRiff(briff['Path'])
 
             measures_num = bass_riff.measures_num
-            measures_tonality = bass_riff.measures_tonality
+            measures_tonality = bass_riff.tonality_by_measures()
 
             briff_table.update_one(
                 {'_id': briff['_id']},
@@ -49,7 +49,7 @@ def analyse_tonality():
             guitar_solo = GuitarSolo(gsolo['Path'])
 
             measures_num = guitar_solo.measures_num
-            measures_tonality = guitar_solo.measures_tonality
+            measures_tonality = guitar_solo.tonality_by_measures()
 
             gsolo_table.update_one(
                 {'_id': gsolo['_id']},
@@ -66,7 +66,7 @@ def analyse_tonality():
 def test_tonal():
     path = 'E:/data/test.mid'
     guitar_riff = GuitarRiff(path)
-    print(guitar_riff.note_lengths_by_measures)
+    print(guitar_riff.get_note_lengths_divided_by_measure())
 
 
 if __name__ == '__main__':

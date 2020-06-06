@@ -12,11 +12,6 @@ class MusicFragment:
         self.length = self.pm.get_end_time()
         self.measures_num = math.ceil(self.length / 2.0)
 
-        self.note_lengths = self.get_note_lengths()
-        self.note_lengths_by_measures = self.get_note_lengths_divided_by_measure()
-
-        self.measures_tonality = self.tonality_by_measures()
-
     def get_note_lengths_divided_by_measure(self):
         notes_length = [[0 for _ in range(12)] for _ in range(self.measures_num)]
 
@@ -33,12 +28,6 @@ class MusicFragment:
                     notes_length[start_measure][pitch % 12] += end_time - start_time
 
                 else:
-                    '''
-                    print(start_time, end_time)
-                    print(start_measure, end_measure, '\n')
-                    print(notes_length)
-                    '''
-
                     # start_measure
                     notes_length[start_measure][pitch % 12] += (start_measure+1) * 2.0 - start_time
 
@@ -49,9 +38,56 @@ class MusicFragment:
                     # end_measure
                     notes_length[end_measure][pitch % 12] += end_time - end_measure * 2.0
 
-                    # print(notes_length)
-
         return notes_length
+
+    def crop_by_measure(self):
+        cropped_pm = []
+
+        for measure in range(self.measures_num):
+            pm = pretty_midi.PrettyMIDI()
+            piano = pretty_midi.Instrument(program=0)
+
+            for instr in self.pm.instruments:
+                for note in instr.notes:
+                    pitch = note.pitch
+                    velocity = note.velocity
+
+                    start_time, end_time = note.start, note.end
+                    start_measure, end_measure = int(start_time // 2), int(end_time // 2)
+
+                    if start_measure > measure or end_measure < measure:
+                        continue
+
+                    else:
+                        if start_measure == end_measure == measure:
+                            new_start, new_end = start_time - measure*2.0, end_time - measure*2.0
+                            new_note = pretty_midi.Note(velocity=velocity, pitch=pitch,
+                                                        start=new_start, end=new_end)
+                            piano.notes.append(new_note)
+
+                        elif start_measure == measure < end_measure:
+                            new_start, new_end = start_time - measure*2.0, 2.0
+                            new_note = pretty_midi.Note(velocity=velocity, pitch=pitch,
+                                                        start=new_start, end=new_end)
+                            piano.notes.append(new_note)
+
+                        elif start_measure < measure == measure:
+                            new_start, new_end = 0, end_time - measure*2.0
+                            new_note = pretty_midi.Note(velocity=velocity, pitch=pitch,
+                                                        start=new_start, end=new_end)
+                            piano.notes.append(new_note)
+
+                        else:
+                            assert start_measure < measure < end_measure
+                            new_start, new_end = 0, 2.0
+                            new_note = pretty_midi.Note(velocity=velocity, pitch=pitch,
+                                                        start=new_start, end=new_end)
+                            piano.notes.append(new_note)
+
+            pm.instruments.append(piano)
+            cropped_pm.append(pm)
+
+        return cropped_pm
 
     def get_note_lengths(self):
         notes_length = [0 for _ in range(12)]
@@ -68,7 +104,7 @@ class MusicFragment:
         measures_tonality = [None for _ in range(self.measures_num)]
 
         for measure in range(self.measures_num):
-            note_lengths_of_measure = self.note_lengths_by_measures[measure]
+            note_lengths_of_measure = self.get_note_lengths_divided_by_measure()[measure]
             tonality = krumhansl_schmuckler(note_lengths_of_measure)
             measures_tonality[measure] = tonality
 
