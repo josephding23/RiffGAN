@@ -1,48 +1,52 @@
 import pretty_midi
+from src.custom_elements.toolkit import *
 
 
 class GuitarRiff:
-    def __init__(self, length, root_note, degree_and_types, time_stamps):
+    def __init__(self, length, root_note_name, degrees_and_types, time_stamps, velocity=100, instr=27):
         self.length = length
-        self.root_note = root_note
-        self.degree_and_types = degree_and_types
+
+        self.root_note_name = root_note_name
+        self.root_note = note_name_to_num(self.root_note_name)
+
+        self.degrees_and_types = degrees_and_types
         self.time_stamps = time_stamps
-        self.pm = pretty_midi.PrettyMIDI
+        self.chords = [get_chord(degree_and_type) for degree_and_type in self.degrees_and_types]
+        self.velocity = velocity
+
+        self.instr = instr
+
+        self.pm = pretty_midi.PrettyMIDI()
+        self.add_notes_to_pm()
+
+    def add_notes_to_pm(self):
+        guitar = pretty_midi.Instrument(program=self.instr)
+        for i in range(len(self.time_stamps)):
+            start_time, end_time = self.time_stamps[i]
+            if type(self.velocity) == int:
+                velocity = self.velocity
+            else:
+                assert type(self.velocity) == list
+                velocity = self.velocity[i]
+            chord = self.chords[i]
+
+            for note_dist in chord:
+                note = pretty_midi.Note(velocity=velocity, pitch=note_dist+self.root_note,
+                                        start=start_time, end=end_time)
+                guitar.notes.append(note)
+
+        self.pm.instruments.append(guitar)
+
+    def save(self, save_path):
+        self.pm.write(save_path)
 
 
-def get_relative_distance(degree_and_type, mode='major'):
-    degree, type = degree_and_type
-    major_degree_dict = {'I': 0, 'II': 2, 'III': 4, 'IV': 5, 'V': 7, 'VI': 9, 'VII': 11}
-    minor_degree_dict = {'I': 0, 'II': 2, 'III': 3, 'IV': 5, 'V': 7, 'VI': 8, 'VII': 10}
-
-    if mode == 'major':
-        degree_dict = major_degree_dict
-    else:
-        assert mode == 'minor'
-        degree_dict = minor_degree_dict
-
-    octave = 0
-    if '<' in degree:
-        octave = -degree.count('<')
-    elif '>' in degree:
-        octave = degree.count('>')
-
-    alt = 0
-    if '+' in degree:
-        alt = 1
-    elif '-' in degree:
-        alt = -1
-
-    clean_degree = degree[abs(octave):]
-    if alt != 0:
-        clean_degree = clean_degree[:-1]
-    print(clean_degree, octave, alt)
-
-
-def test_distance():
-    dt1 = ('<<I', '5')
-    get_relative_distance(dt1)
+def test_riff():
+    griff = GuitarRiff(length=2.0, root_note_name='C3',
+                       degrees_and_types=[('I', '5'), ('II', '5')],
+                       time_stamps=[(0.0, 0.5), (0.5, 1.5)])
+    griff.save('../../data/custom_element/guitar_riff/test1.mid')
 
 
 if __name__ == '__main__':
-    test_distance()
+    test_riff()
