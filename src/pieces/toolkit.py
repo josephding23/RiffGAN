@@ -1,2 +1,2 @@
 def get_measure_length(bpm):
-    return 60 / 120 * 4
+    return 60 / bpm * 4

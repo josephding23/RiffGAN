@@ -19,17 +19,17 @@ class Phrase:
 
         self.pm = pretty_midi.PrettyMIDI()
 
-    def add_riffs(self, riffs):
-        self.riffs += riffs
+    def set_riffs(self, riffs):
+        self.riffs = riffs
 
     def set_arrangement(self, arrangement):
         self.arrangement = arrangement
 
     def add_riffs_to_pm(self):
-
         instr = pretty_midi.Instrument(program=self.instr)
         riff_start = 0
         length_per_measure = get_measure_length(self.bpm)
+
         for arrange in self.arrangement:
             riff = self.riffs[arrange]
 
@@ -51,7 +51,7 @@ class Phrase:
                     instr.notes.append(note)
 
             riff_start += length_per_measure * riff.measure_length
-            print(riff_start)
+            # print(riff_start)
 
         self.pm.instruments.append(instr)
 
@@ -65,7 +65,7 @@ def test_phrase():
                                           ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
                        time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
     phrase = Phrase(0, 6, ('C3', 'major'), 120, 26)
-    phrase.add_riffs([griff])
+    phrase.set_riffs([griff])
     phrase.set_arrangement([0, 0, 0])
     phrase.add_riffs_to_pm()
     phrase.save('../../data/custom_element/phrase/test1.mid')
