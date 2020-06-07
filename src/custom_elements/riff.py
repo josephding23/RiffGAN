@@ -1,6 +1,6 @@
 import pretty_midi
 from src.custom_elements.toolkit import *
-
+from util.npy_related import *
 
 class Riff:
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity):
@@ -78,5 +78,17 @@ def test_riff():
     griff.save('../../data/custom_element/guitar_riff/test1.mid')
 
 
+def test_plot():
+    griff = GuitarRiff(measure_length=2,
+                       degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
+                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
+                       time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
+    griff.add_notes_to_pm(root_note_name='C3', bpm=120, instr=27)
+
+    nonzeros, shape = generate_nonzeros_from_pm(griff.pm, 120, 2)
+    data = generate_sparse_matrix_from_nonzeros(nonzeros, shape)
+    plot_data(data[0])
+
+
 if __name__ == '__main__':
-    test_riff()
+    test_plot()
