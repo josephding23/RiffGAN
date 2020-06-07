@@ -192,3 +192,22 @@ def get_chord_pattern(chord_type):
         chord = [0, 2, 5, 7, 10]
 
     return chord
+
+
+def time_stamps_convert(simple_ts, bpm):
+    detailed_ts = []
+    current_start = 0.0
+    unit_length = 60 / bpm
+
+    for ts in simple_ts:
+        start = current_start
+        end = ts * unit_length + start
+        detailed_ts.append((start, end))
+
+        current_start = end
+
+    return detailed_ts
+
+
+if __name__ == '__main__':
+    print(time_stamps_convert([1, 1, 2, 0.5], 120))
