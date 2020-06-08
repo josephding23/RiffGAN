@@ -1,4 +1,5 @@
 from music.db_fragments.music_fragment import MusicFragment
+from util.npy_related import *
 
 
 class Riff(MusicFragment):
@@ -16,11 +17,21 @@ class BassRiff(Riff):
         Riff.__init__(self, path)
 
 
-class UnitGuitarRiff(Riff):
+class UnitRiff(Riff):
     def __init__(self, path):
         Riff.__init__(self, path)
 
+    def save_nonzeros(self, save_path):
+        nonzeros, shape = generate_nonzeros_from_pm(self.pm, bpm=120, length=1)
+        print(shape)
+        np.savez_compressed(save_path, nonzeros=nonzeros, shape=shape)
 
-class UnitBassRiff(Riff):
+
+class UnitGuitarRiff(UnitRiff):
     def __init__(self, path):
-        Riff.__init__(self, path)
+        UnitRiff.__init__(self, path)
+
+
+class UnitBassRiff(UnitRiff):
+    def __init__(self, path):
+        UnitRiff.__init__(self, path)
