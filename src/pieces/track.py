@@ -13,7 +13,7 @@ class Track:
         self.bpm_list = bpm_list
         self.tonality_list = tonality_list
 
-        self.pm = pretty_midi.PrettyMIDI()
+        self.pm = None
 
     def get_measure_start_time(self, measure):
         start_time = 0
@@ -52,6 +52,7 @@ class Track:
         print(len(self.phrases))
 
     def add_phrases_to_pm(self):
+        self.pm = pretty_midi.PrettyMIDI()
         instr = pretty_midi.Instrument(program=0, name=self.name)
 
         for phrase in self.phrases:

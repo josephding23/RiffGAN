@@ -37,6 +37,10 @@ def get_relative_distance(degree, mode='major'):
     # print(clean_degree, octave, alt)
 
 
+def get_measure_length(bpm):
+    return 60 / bpm * 4
+
+
 def note_name_to_num(name):
     major_degree_dict = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
     octave = int(name[-1])

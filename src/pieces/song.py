@@ -8,7 +8,7 @@ class Song:
     def __init__(self, name):
         self.name = name
         self.tracks = []
-        self.pm = pretty_midi.PrettyMIDI()
+        self.pm = None
 
     def add_track(self, track):
         assert isinstance(track, Track)
@@ -18,6 +18,7 @@ class Song:
         self.tracks = tracks
 
     def add_tracks_to_pm(self):
+        self.pm = pretty_midi.PrettyMIDI()
         for track in self.tracks:
             instr = pretty_midi.Instrument(program=0, name=track.name)
 

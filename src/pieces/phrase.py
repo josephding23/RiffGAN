@@ -17,7 +17,7 @@ class Phrase:
         self.riffs = []
         self.arrangement = []
 
-        self.pm = pretty_midi.PrettyMIDI()
+        self.pm = None
 
     def set_riffs(self, riffs):
         self.riffs = riffs
@@ -26,6 +26,8 @@ class Phrase:
         self.arrangement = arrangement
 
     def add_riffs_to_pm(self):
+        self.pm = pretty_midi.PrettyMIDI()
+
         instr = pretty_midi.Instrument(program=self.instr)
         riff_start = 0
         length_per_measure = get_measure_length(self.bpm)
@@ -58,9 +60,3 @@ class Phrase:
 
     def save(self, save_path):
         self.pm.write(save_path)
-
-
-
-
-if __name__ == '__main__':
-    test_phrase()
