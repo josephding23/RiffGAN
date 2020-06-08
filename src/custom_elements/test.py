@@ -1,4 +1,5 @@
 from src.custom_elements.riff import *
+from src.custom_elements.drum_riff import *
 
 
 def test_riff():
@@ -30,3 +31,17 @@ def test_simple_briff():
     briff_simple = generate_briff_from_griff(griff)
     briff_simple.add_notes_to_pm(root_note_name='G1', bpm=120, instr=33)
     briff_simple.save('../../data/custom_element/bass_riff/test1.mid')
+
+
+def test_one_part_drum_riff():
+    drum_riff = DrumRiff(measure_length=2)
+    drum_riff.set_specific_pattern('hi-hat', 'ccccocco_occo___')
+    drum_riff.add_specific_pattern_to_pm('hi-hat', 120)
+    drum_riff.save('../../data/custom_element/drum_riff/test1.mid')
+
+
+def test_drum_riff():
+    drum_riff = DrumRiff(measure_length=2)
+    drum_riff.set_pattern({'hi-hat': 'ccccoccococco_cc', 'snare': '____x__x_x__x___'})
+    drum_riff.add_all_patterns_to_pm(120)
+    drum_riff.save('../../data/custom_element/drum_riff/test2.mid')
