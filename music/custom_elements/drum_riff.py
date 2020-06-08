@@ -1,4 +1,4 @@
-from src.custom_elements.toolkit import *
+from music.custom_elements.toolkit import *
 from util.npy_related import *
 import pretty_midi
 

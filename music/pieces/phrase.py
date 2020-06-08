@@ -1,6 +1,6 @@
-from src.custom_elements.riff import *
-from src.custom_elements.drum_riff import *
-from src.pieces.toolkit import *
+from music.custom_elements.riff import *
+from music.custom_elements.drum_riff import *
+from music.pieces.toolkit import *
 import pretty_midi
 
 
@@ -68,8 +68,8 @@ class DrumPhrase(Phrase):
         self.pm.instruments.append(drum)
 
 
-class RiffPhrase(Phrase):
-    def __init__(self, start_measure, length, bpm, instr, tonality):
+class RhythmPhrase(Phrase):
+    def __init__(self, start_measure, length, tonality, bpm, instr):
         Phrase.__init__(self, start_measure, length, bpm)
 
         self.tonic, self.mode = tonality
@@ -121,7 +121,7 @@ class RiffPhrase(Phrase):
 
 
 class SoloPhrase(Phrase):
-    def __init__(self, start_measure, length, bpm, instr, tonality):
+    def __init__(self, start_measure, length, tonality, bpm, instr):
         Phrase.__init__(self, start_measure, length, bpm)
 
         self.tonic, self.mode = tonality
@@ -130,16 +130,3 @@ class SoloPhrase(Phrase):
         self.instr = instr
 
 
-def test_drum_phrase():
-    drum_riff = DrumRiff(measure_length=1)
-    drum_riff.set_pattern({'hi-hat': 'ccccoccococco_cc', 'snare': '____x__x_x__x___'})
-
-    drum_phrase = DrumPhrase(0, length=3, bpm=120)
-    drum_phrase.set_riffs([drum_riff])
-    drum_phrase.set_arrangement([0, 0, 0])
-    drum_phrase.add_riffs_to_pm()
-    drum_phrase.save('../../data/custom_element/phrase/test2.mid')
-
-
-if __name__ == '__main__':
-    test_drum_phrase()

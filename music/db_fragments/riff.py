@@ -1,4 +1,4 @@
-from src.db_fragments.music_fragment import MusicFragment
+from music.db_fragments.music_fragment import MusicFragment
 
 
 class Riff(MusicFragment):

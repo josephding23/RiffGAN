@@ -1,5 +1,5 @@
-from src.db_fragments.riff import GuitarRiff, BassRiff
-from src.db_fragments.solo import GuitarSolo, BassSolo
+from music.db_fragments.riff import GuitarRiff, BassRiff
+from music.db_fragments.solo import GuitarSolo, BassSolo
 import os
 import math
 import traceback

@@ -1,5 +1,5 @@
-from src.custom_elements.riff import *
-from src.custom_elements.drum_riff import *
+from music.custom_elements.riff import *
+from music.custom_elements.drum_riff import *
 
 
 def test_riff():

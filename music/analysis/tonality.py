@@ -1,6 +1,6 @@
 from util.database import *
-from src.db_fragments.riff import *
-from src.db_fragments.solo import *
+from music.db_fragments.riff import *
+from music.db_fragments.solo import *
 
 
 def analyse_tonality():

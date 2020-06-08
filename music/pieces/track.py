@@ -1,17 +1,21 @@
-from src.custom_elements.riff import *
-from src.pieces.toolkit import *
-from src.pieces.phrase import Phrase
+from music.custom_elements.riff import *
+from music.pieces.toolkit import *
+from music.pieces.phrase import Phrase, RhythmPhrase, SoloPhrase, DrumPhrase
+from music.custom_elements.drum_riff import *
 import pretty_midi
 
 
 class Track:
-    def __init__(self, name, bpm_list, tonality_list):
+    def __init__(self, name, bpm_list, tonality_list, is_drum=False, is_rhythm=True):
         self.name = name
 
         self.phrases = []
 
         self.bpm_list = bpm_list
         self.tonality_list = tonality_list
+
+        self.is_drum = is_drum
+        self.is_rhythm = is_rhythm
 
         self.pm = None
 
@@ -52,10 +56,58 @@ class Track:
         print(len(self.phrases))
 
     def add_phrases_to_pm(self):
+        if self.is_drum:
+            self.add_drum_phrases_to_pm()
+        elif self.is_rhythm:
+            self.add_rhythm_phrases_to_pm()
+
+    def add_drum_phrases_to_pm(self):
+
+        self.pm = pretty_midi.PrettyMIDI()
+        drum = pretty_midi.Instrument(program=0, name=self.name, is_drum=True)
+
+        for phrase in self.phrases:
+            assert isinstance(phrase, DrumPhrase)
+
+            phrase_start = self.get_measure_start_time(phrase.start_measure)
+            riff_start = phrase_start
+            length_per_measure = get_measure_length(phrase.bpm)
+
+            for arrange in phrase.arrangement:
+                riff = phrase.riffs[arrange]
+                for part, pattern in riff.patterns.items():
+                    if pattern is None:
+                        continue
+                    else:
+                        assert isinstance(pattern, str)
+
+                        total_num = len(pattern)
+                        measure_length = get_measure_length(phrase.bpm)
+                        unit_length = measure_length / total_num
+
+                        for i in range(total_num):
+                            symbol = pattern[i]
+                            if symbol == '_':
+                                continue
+                            else:
+                                start_time, end_time = i * unit_length, (i + 1) * unit_length
+                                start_time += riff_start
+                                end_time += riff_start
+
+                                note = pretty_midi.Note(velocity=100, pitch=translate_symbol(part, symbol),
+                                                        start=start_time, end=end_time)
+                                drum.notes.append(note)
+
+                riff_start += length_per_measure * riff.measure_length
+
+        self.pm.instruments.append(drum)
+
+    def add_rhythm_phrases_to_pm(self):
         self.pm = pretty_midi.PrettyMIDI()
         instr = pretty_midi.Instrument(program=0, name=self.name)
 
         for phrase in self.phrases:
+            assert isinstance(phrase, RhythmPhrase)
             instr.program = phrase.instr
             phrase_start = self.get_measure_start_time(phrase.start_measure)
             riff_start = phrase_start
