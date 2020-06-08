@@ -31,7 +31,8 @@ class Phrase:
         length_per_measure = get_measure_length(self.bpm)
 
         for arrange in self.arrangement:
-            riff = self.riffs[arrange]
+            riff, riff_root_name = self.riffs[arrange[0]], arrange[1]
+            riff_root_dist = get_relative_distance(riff_root_name)
 
             real_time_stamps = time_stamps_convert(riff.time_stamps, self.bpm)
             for i in range(len(real_time_stamps)):
@@ -46,7 +47,7 @@ class Phrase:
                 chord = riff.chords[i]
 
                 for note_dist in chord:
-                    note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note,
+                    note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note + riff_root_dist,
                                             start=start_time, end=end_time)
                     instr.notes.append(note)
 
@@ -59,16 +60,6 @@ class Phrase:
         self.pm.write(save_path)
 
 
-def test_phrase():
-    griff = GuitarRiff(measure_length=2,
-                       degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
-                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
-                       time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
-    phrase = Phrase(0, 6, ('C3', 'major'), 120, 26)
-    phrase.set_riffs([griff])
-    phrase.set_arrangement([0, 0, 0])
-    phrase.add_riffs_to_pm()
-    phrase.save('../../data/custom_element/phrase/test1.mid')
 
 
 if __name__ == '__main__':

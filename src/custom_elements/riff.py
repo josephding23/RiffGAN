@@ -1,12 +1,13 @@
-import pretty_midi
 from src.custom_elements.toolkit import *
 from util.npy_related import *
+
 
 class Riff:
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity):
         self.measure_length = measure_length
 
         self.degrees_and_types = degrees_and_types
+
         self.time_stamps = time_stamps
         self.chords = [get_chord(degree_and_type) for degree_and_type in self.degrees_and_types]
         self.velocity = velocity
@@ -42,14 +43,14 @@ class GuitarRiff(Riff):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
 
         '''
-        25 Acoustic Guitar (nylon)
-        26 Acoustic Guitar (steel)
-        27 Electric Guitar (jazz)
-        28 Electric Guitar (clean)
-        29 Electric Guitar (muted)
-        30 Overdriven Guitar
-        31 Distortion Guitar
-        32 Guitar harmonics
+        24 Acoustic Guitar (nylon)
+        25 Acoustic Guitar (steel)
+        26 Electric Guitar (jazz)
+        27 Electric Guitar (clean)
+        28 Electric Guitar (muted)
+        29 Overdriven Guitar
+        30 Distortion Guitar
+        31 Guitar harmonics
         '''
 
 
@@ -58,37 +59,19 @@ class BassRiff(Riff):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
 
         '''
-        33 Acoustic Bass
-        34 Electric Bass (finger)
-        35 Electric Bass (pick)
-        36 Fretless Bass
-        37 Slap Bass 1
-        38 Slap Bass 2
-        39 Synth Bass 1
-        40 Synth Bass 2
+        32 Acoustic Bass
+        33 Electric Bass (finger)
+        34 Electric Bass (pick)
+        35 Fretless Bass
+        36 Slap Bass 1
+        37 Slap Bass 2
+        38 Synth Bass 1
+        39 Synth Bass 2
         '''
 
 
-def test_riff():
-    griff = GuitarRiff(measure_length=2,
-                       degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
-                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
-                       time_stamps=[1/2, 1/2, 1/2, 1/2, 1/2, 1/2, 1/2, 1, 1/2, 1/2, 1/2])
-    griff.add_notes_to_pm(root_note_name='C3', bpm=120, instr=27)
-    griff.save('../../data/custom_element/guitar_riff/test1.mid')
+def generate_briff_from_griff(guitar_riff):
+    assert isinstance(guitar_riff, GuitarRiff)
+    new_degrees_and_types = [(degree_and_type[0], '') for degree_and_type in guitar_riff.degrees_and_types]
+    return BassRiff(guitar_riff.measure_length, new_degrees_and_types, guitar_riff.time_stamps, guitar_riff.velocity)
 
-
-def test_plot():
-    griff = GuitarRiff(measure_length=2,
-                       degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
-                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
-                       time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
-    griff.add_notes_to_pm(root_note_name='C3', bpm=120, instr=27)
-
-    nonzeros, shape = generate_nonzeros_from_pm(griff.pm, 120, 2)
-    data = generate_sparse_matrix_from_nonzeros(nonzeros, shape)
-    plot_data(data[0])
-
-
-if __name__ == '__main__':
-    test_plot()

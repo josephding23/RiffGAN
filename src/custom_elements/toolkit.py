@@ -57,7 +57,7 @@ def note_name_to_num(name):
 def get_chord_pattern(chord_type):
     chord = None
     # Others
-    if chord_type in ['_']:
+    if chord_type in ['']:
         # Single note
         chord = [0]
 

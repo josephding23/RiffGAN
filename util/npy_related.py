@@ -6,15 +6,16 @@ import math
 def generate_nonzeros_from_pm(pm, bpm, length):
     assert isinstance(pm, pretty_midi.PrettyMIDI)
 
-    thirty_second_length = 60 / bpm / 8
+    sixty_fourth_length = 60 / bpm / 16
     note_range = (24, 108)
-    shape = (math.ceil(length / 2), 64, 84)
+    shape = (math.ceil(length), 64, 84)
+    print(shape)
     nonzeros = []
 
     for instr in pm.instruments:
         for note in instr.notes:
-            start = int(note.start / thirty_second_length)
-            end = int(note.end / thirty_second_length)
+            start = int(note.start / sixty_fourth_length)
+            end = int(note.end / sixty_fourth_length)
             pitch = note.pitch
             if pitch < note_range[0] or pitch >= note_range[1]:
                 continue
