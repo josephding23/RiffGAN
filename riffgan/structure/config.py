@@ -16,7 +16,7 @@ class Config(object):
         self.note_valid_length = 84
 
         self.phase = 'train'
-        self.continue_train = True
+        self.continue_train = False
 
         ###########################
 

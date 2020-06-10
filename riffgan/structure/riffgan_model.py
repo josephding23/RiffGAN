@@ -152,6 +152,8 @@ class RiffGAN(object):
                 self.logger.error(e)
                 self.opt.continue_train = False
                 self.reset_save()
+        else:
+            self.reset_save()
 
         dataset = UnitRiffDataset(self.opt.instr_type)
         dataset_size = len(dataset)
@@ -201,7 +203,7 @@ class RiffGAN(object):
                 D_fake = self.discriminator(fake_data)
                 # print(D_fake.shape)
 
-                self.generator.zero_grad()
+                self.G_optimizer.zero_grad()
                 loss_G = criterionGAN(D_fake, real_label)
                 loss_G.backward(retain_graph=True)
 
@@ -221,7 +223,7 @@ class RiffGAN(object):
                 # all-fake batch
                 loss_D_fake = criterionGAN(D_fake, fake_label)
 
-                self.discriminator.zero_grad()
+                self.D_optimizer.zero_grad()
                 loss_D = loss_D_real + loss_D_fake
                 loss_D.backward()
 
@@ -257,8 +259,6 @@ class RiffGAN(object):
         data = generate_sparse_matrix_from_nonzeros(pm, shape)
         # plot_data(data[0, :, :])
 
-        data = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
-
         torch.cuda.empty_cache()
 
         ######################
@@ -268,12 +268,11 @@ class RiffGAN(object):
         self.continue_from_latest_checkpoint()
 
         for i in range(5):
-            '''
-            noise = torch.abs(
-                torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std)).to(self.device, dtype=torch.float)
-            '''
-            noise = generate_random_seed(1)
-            noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
+
+            noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
+
+            # noise = generate_random_seed(1)
+            # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :])
             fake_sample = self.generator(noise).cpu().detach().numpy()
             print(fake_sample[0, :, :])

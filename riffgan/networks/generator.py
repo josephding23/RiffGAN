@@ -78,6 +78,7 @@ class Generator(nn.Module):
                                              nn.InstanceNorm2d(64, eps=1e-5),
                                              nn.ReLU(),
                                              )
+        '''
         init_weight_(self.paragraph_cnet1)
 
         self.bar_cnet1 = BarUnit(self.eta)
@@ -92,6 +93,7 @@ class Generator(nn.Module):
         init_weight_(self.bar_cnet2)
         init_weight_(self.bar_cnet3)
         init_weight_(self.bar_cnet4)
+        '''
 
         self.paragraph_cnet2 = nn.Sequential(nn.Conv2d(in_channels=64,
                                                        out_channels=128,
