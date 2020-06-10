@@ -1,6 +1,7 @@
 import pretty_midi
 import numpy as np
 
+
 def generate_midi_segment_from_tensor(data, path, bpm=120):
     pm = pretty_midi.PrettyMIDI()
     instr_track = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')

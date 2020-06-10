@@ -85,4 +85,4 @@ def generate_from_nonzeros(instr):
 
 
 if __name__ == '__main__':
-    generate_from_nonzeros('guitar')
+    create_nonzeros()

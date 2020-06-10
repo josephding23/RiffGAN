@@ -17,6 +17,7 @@ from riffgan.networks.generator import Generator
 from riffgan.structure.config import Config
 from riffgan.structure.image_pool import ImagePool
 from riffgan.structure.loss import GANLoss
+from riffgan.structure.random_seed import *
 
 import logging
 import colorlog
@@ -25,6 +26,7 @@ from riffgan.error import RiffganException
 
 from util.data_convert import *
 from util.npy_related import *
+
 
 class RiffGAN(object):
     def __init__(self):
@@ -188,9 +190,13 @@ class RiffGAN(object):
                 ######################
                 # Generator
                 ######################
-
+                '''
                 noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, 84]), std=self.opt.gaussian_std).to(self.device,
                                                                                                        dtype=torch.float)
+                '''
+                noise = generate_random_seed(batch_size)
+                noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
+
                 fake_data = self.generator(noise)
                 D_fake = self.discriminator(fake_data)
                 # print(D_fake.shape)
@@ -262,11 +268,15 @@ class RiffGAN(object):
         self.continue_from_latest_checkpoint()
 
         for i in range(5):
+            '''
             noise = torch.abs(
                 torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std)).to(self.device, dtype=torch.float)
+            '''
+            noise = generate_random_seed(1)
+            noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :])
-            fake_sample = self.generator(data).cpu().detach().numpy()
-            print(data[0, :, :])
+            fake_sample = self.generator(noise).cpu().detach().numpy()
+            print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])
 

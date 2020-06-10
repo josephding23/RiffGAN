@@ -54,19 +54,19 @@ def move_to_new_folder():
         shutil.copyfile(briff['Path'], new_path)
 
 
-def transpose_to_c():
+def transpose_to_e():
     griff_table, briff_table = get_unit_guitar_riff_table(), get_unit_bass_riff_table()
 
-    griff_ori_dir = 'E:/unit_riffs/original/guitar'
-    briff_ori_dir = 'E:/unit_riffs/original/bass'
+    griff_ori_dir = 'E:/grunge_library/unit_riffs/original/guitar'
+    briff_ori_dir = 'E:/grunge_library/unit_riffs/original/bass'
 
-    griff_transposed_dir = 'E:/unit_riffs/transposed/guitar'
-    briff_transposed_dir = 'E:/unit_riffs/transposed/bass'
+    griff_transposed_dir = 'E:/grunge_library/unit_riffs/transposed/guitar'
+    briff_transposed_dir = 'E:/grunge_library/unit_riffs/transposed/bass'
 
     for griff in griff_table.find():
         idStr = griff['idStr']
         tonic = griff['Tonality']['Tonic']
-        semitones = get_near_distance('C', tonic)
+        semitones = get_near_distance('E', tonic)
 
         old_path = griff_ori_dir + '/' + idStr + '.mid'
         new_path = griff_transposed_dir + '/' + idStr + '.mid'
@@ -83,7 +83,7 @@ def transpose_to_c():
     for briff in briff_table.find():
         idStr = briff['idStr']
         tonic = briff['Tonality']['Tonic']
-        semitones = get_near_distance('C', tonic)
+        semitones = get_near_distance('E', tonic)
 
         old_path = briff_ori_dir + '/' + idStr + '.mid'
         new_path = briff_transposed_dir + '/' + idStr + '.mid'
@@ -99,4 +99,4 @@ def transpose_to_c():
 
 
 if __name__ == '__main__':
-    transpose_to_c()
+    move_to_new_folder()
