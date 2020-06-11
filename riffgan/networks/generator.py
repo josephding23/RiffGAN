@@ -117,7 +117,7 @@ class Generator(nn.Module):
         init_weight_(self.paragraph_cnet2)
 
         self.resnet = nn.Sequential()
-        for i in range(12):
+        for i in range(9):
             self.resnet.add_module('resnet_block', ResnetBlock(dim=256,
                                                                padding_type='reflect',
                                                                use_dropout=False,

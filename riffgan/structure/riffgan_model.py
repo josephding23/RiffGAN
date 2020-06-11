@@ -165,7 +165,7 @@ class RiffGAN(object):
         # Initiate
         ######################
 
-        criterionGAN = nn.BCELoss()
+        criterionGAN = nn.BCEWithLogitsLoss()
 
         GLoss_meter = MovingAverageValueMeter(self.opt.plot_every)
         DLoss_meter = MovingAverageValueMeter(self.opt.plot_every)
@@ -192,12 +192,13 @@ class RiffGAN(object):
                 ######################
                 # Generator
                 ######################
-                '''
+
                 noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, 84]), std=self.opt.gaussian_std).to(self.device,
                                                                                                        dtype=torch.float)
                 '''
                 noise = generate_random_seed(batch_size)
                 noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
+                '''
 
                 fake_data = self.generator(noise)
                 D_fake = self.discriminator(fake_data)
@@ -269,11 +270,16 @@ class RiffGAN(object):
 
         for i in range(5):
 
-            noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
+            # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
 
             # noise = generate_random_seed(1)
-            # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
-            # plot_data(noise[0, 0, :, :])
+            noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std).to(
+                self.device,
+                dtype=torch.float)
+            '''
+            noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
+            plot_data(noise[0, 0, :, :])
+            '''
             fake_sample = self.generator(noise).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 

@@ -33,7 +33,6 @@ class Discriminator(nn.Module):
                                             bias=False),
                                   nn.InstanceNorm2d(32, eps=1e-5),
                                   nn.ReLU(),
-                                  nn.Dropout(0.5),
 
                                   nn.Conv2d(in_channels=32,
                                             out_channels=64,
@@ -42,7 +41,7 @@ class Discriminator(nn.Module):
                                             padding=1,
                                             bias=False),
                                   nn.RReLU(lower=0.1, upper=0.2),
-                                  nn.Dropout(0.5)
+                                  nn.Dropout(0.2)
                                   )
         init_weight_(self.net1)
 
@@ -52,8 +51,8 @@ class Discriminator(nn.Module):
                                             stride=1,
                                             padding=1,
                                             bias=False),
+                                  nn.InstanceNorm2d(128, eps=1e-5),
                                   nn.ReLU(),
-                                  nn.Dropout(0.5),
 
                                   nn.Conv2d(in_channels=128,
                                             out_channels=128,
@@ -61,8 +60,8 @@ class Discriminator(nn.Module):
                                             stride=1,
                                             padding=1,
                                             bias=False),
+                                  nn.InstanceNorm2d(256, eps=1e-5),
                                   nn.ReLU(),
-                                  nn.Dropout(0.5),
 
                                   nn.Conv2d(in_channels=128,
                                             out_channels=256,
@@ -105,6 +104,5 @@ class Discriminator(nn.Module):
         x = self.net3(x)
         # ↓
         # (batch * 1 * 16 * 21)
-        x = torch.sigmoid(x)
 
         return x

@@ -43,7 +43,7 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.5  # Adam optimizer beta1 & 2
+        self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.lr = 0.00005
@@ -54,8 +54,8 @@ class Config(object):
 
         self.no_flip = True
         self.num_threads = 0
-        self.batch_size = 16
-        self.max_epoch = 20
+        self.batch_size = 32
+        self.max_epoch = 30
         self.epoch_step = 5
 
         self.data_shape = (self.batch_size, 1, 64, 84)
