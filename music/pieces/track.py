@@ -18,6 +18,7 @@ class Track:
         self.is_rhythm = is_rhythm
 
         self.pm = None
+        self.save_path = '../../data/pieces/tracks/'
 
     def get_measure_start_time(self, measure):
         start_time = 0
@@ -82,7 +83,7 @@ class Track:
                         assert isinstance(pattern, str)
 
                         total_num = len(pattern)
-                        measure_length = get_measure_length(phrase.bpm)
+                        measure_length = get_measure_length(phrase.bpm) * riff.measure_length
                         unit_length = measure_length / total_num
 
                         for i in range(total_num):
@@ -138,5 +139,5 @@ class Track:
 
         self.pm.instruments.append(instr)
 
-    def save(self, save_path):
-        self.pm.write(save_path)
+    def save(self, name):
+        self.pm.write(self.save_path + name)

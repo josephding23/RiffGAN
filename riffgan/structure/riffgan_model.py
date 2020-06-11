@@ -276,10 +276,10 @@ class RiffGAN(object):
             noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std).to(
                 self.device,
                 dtype=torch.float)
-            '''
+
             noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
             plot_data(noise[0, 0, :, :])
-            '''
+
             fake_sample = self.generator(noise).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 

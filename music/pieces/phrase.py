@@ -4,7 +4,7 @@ from music.pieces.toolkit import *
 import pretty_midi
 
 
-class Phrase:
+class Phrase(object):
     def __init__(self, start_measure, length, bpm):
         self.start_measure = start_measure
         self.length = length
@@ -13,9 +13,11 @@ class Phrase:
 
         self.pm = None
 
-    def save(self, save_path):
+        self.save_dir = '../../data/pieces/phrases/'
+
+    def save(self, name):
         assert self.pm is not None
-        self.pm.write(save_path)
+        self.pm.write(self.save_dir + name)
 
 
 class DrumPhrase(Phrase):
@@ -47,7 +49,7 @@ class DrumPhrase(Phrase):
                     assert isinstance(pattern, str)
 
                     total_num = len(pattern)
-                    measure_length = get_measure_length(self.bpm)
+                    measure_length = get_measure_length(self.bpm) * riff.measure_length
                     unit_length = measure_length / total_num
 
                     for i in range(total_num):

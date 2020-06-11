@@ -8,6 +8,8 @@ class Riff:
 
         self.degrees_and_types = degrees_and_types
 
+        self.save_dir = ''
+
         self.time_stamps = time_stamps
         self.chords = [get_chord(degree_and_type) for degree_and_type in self.degrees_and_types]
         self.velocity = velocity
@@ -34,14 +36,15 @@ class Riff:
 
         self.pm.instruments.append(guitar)
 
-    def save(self, save_path):
-        self.pm.write(save_path)
+    def save(self, name):
+        assert self.save_dir != ''
+        self.pm.write(self.save_dir + name)
 
 
 class GuitarRiff(Riff):
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
-
+        self.save_dir = '../../../data/custom_element/guitar_riff/'
         '''
         24 Acoustic Guitar (nylon)
         25 Acoustic Guitar (steel)
@@ -57,6 +60,7 @@ class GuitarRiff(Riff):
 class BassRiff(Riff):
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
+        self.save_dir = '../../../data/custom_element/bass_riff/'
 
         '''
         32 Acoustic Bass

@@ -27,6 +27,7 @@ class DrumRiff:
         }
 
         self.pm = None
+        self.save_dir = '../../../data/custom_element/drum_riff/'
 
     def set_specific_pattern(self, part, pattern):
         self.patterns[part] = pattern
@@ -68,7 +69,7 @@ class DrumRiff:
                 assert isinstance(pattern, str)
 
                 total_num = len(pattern)
-                measure_length = get_measure_length(bpm)
+                measure_length = get_measure_length(bpm) * self.measure_length
                 unit_length = measure_length / total_num
 
                 for i in range(total_num):
@@ -83,8 +84,8 @@ class DrumRiff:
 
         self.pm.instruments.append(drum)
 
-    def save(self, save_path):
-        self.pm.write(save_path)
+    def save(self, name):
+        self.pm.write(self.save_dir + name)
 
 
 def translate_symbol(part, symbol):
