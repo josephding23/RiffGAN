@@ -21,75 +21,37 @@
     }
   ],
   "briffs": [
-    {"from_griff": 0},
-    {"from_griff": 1}
+    {
+      "from_griff": {
+        "length": 2,
+        "degrees_and_types":
+                [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                  ["III", "5"], ["VI", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                  ["IV", ""], ["V", ""], ["IV", ""], ["III", ""], ["I", ""]],
+        "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 1,
+                        0.125, 0.125, 0.25, 0.5, 0.5]
+      }
+    },
+    {
+      "from_griff": {
+      "length": 2,
+      "degrees_and_types":
+              [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+              ["III", "5"], ["VI", "5"],["V", "M"], ["V", "M"], ["V", "M"], ["V", "M"], ["IV", "M"], ["IV", "M"],
+              ["IV", "M"]],
+      "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1,
+                      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+     }
+    }
   ],
   "driffs": [
     {
-      "measure_length": 1,
+      "length": 1,
       "pattern": {"hi-hat": "ccccoccococco_cc", "snare": "____x__x_x__x___", "bass": "xxxxxxxx"}
     },
     {
-      "measure_length": 2,
-      "pattern": {"bass": "_________xxxxxxx", "tom": "_________1111___", "snare": "_____________xxx"}
-    }
-  ],
-  "rhythm_phrases": [
-    {
-      "start": 0,
-      "length": 8,
-      "tonality": ["G2", "major"],
-      "bpm": 120,
-      "instr": 29,
-      "instr_type": "guitar",
-      "riffs": [0, 1],
-      "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
-    },
-    {
-      "start": 8,
-      "length": 8,
-      "tonality": ["G2", "major"],
-      "bpm": 120,
-      "instr": 29,
-      "instr_type": "guitar",
-      "riffs": [0, 1],
-      "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
-    },
-    {
-      "start": 0,
-      "length": 8,
-      "tonality": ["G1", "major"],
-      "bpm": 120,
-      "instr": 33,
-      "instr_type": "bass",
-      "riffs": [0, 1],
-      "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
-    },
-    {
-      "start": 8,
-      "length": 8,
-      "tonality": ["G1", "major"],
-      "bpm": 120,
-      "instr": 33,
-      "instr_type": "bass",
-      "riffs": [0, 1],
-      "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
-    }
-  ],
-  "drum_phrases": [
-    {
-      "start": 0,
-      "length": 8,
-      "bpm": 120,
-      "riffs": [0, 1],
-      "arrangement": [0, 0, 0, 0, 0, 0, 1]
-    },
-    {
-      "start": 8,
-      "length": 8,
-      "bpm": 120,
-      "riffs": [0, 1],
-      "arrangement": [0, 0, 0, 0, 0, 0, 1]
+      "length": 2,
+      "pattern": {"bass": "_________xxxxxxx", "tom": "_________1111___", "snare": "__________________________x_x_xx"}
     }
   ],
   "tracks": [
@@ -98,21 +60,104 @@
       "bpm_list": [[0, 120]],
       "tonality_list": [{}],
       "is_drum": false,
-      "phrases": [0, 1]
+      "phrases": [
+        {
+          "length": 8,
+          "tonality": ["G2", "major"],
+          "bpm": 120,
+          "instr": 29,
+          "instr_type": "guitar",
+          "riffs": [
+            {
+              "length": 2,
+              "degrees_and_types":
+                      [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                        ["III", "5"], ["VI", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                        ["IV", ""], ["V", ""], ["IV", ""], ["III", ""], ["I", ""]],
+              "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 1,
+                              0.125, 0.125, 0.25, 0.5, 0.5]
+            },
+            {
+              "length": 2,
+              "degrees_and_types":
+                      [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                      ["III", "5"], ["VI", "5"],["V", "M"], ["V", "M"], ["V", "M"], ["V", "M"], ["IV", "M"], ["IV", "M"],
+                      ["IV", "M"]],
+              "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1,
+                              0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            }
+          ],
+          "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
+        }
+      ],
+      "arrangement": [[0, 0], [0, 8]]
     },
+
     {
       "name": "bass",
       "bpm_list": [[0, 120]],
       "tonality_list": [{}],
       "is_drum": false,
-      "phrases": [2, 3]
+      "phrases": [
+        {
+          "length": 8,
+          "tonality": ["G1", "major"],
+          "bpm": 120,
+          "instr": 33,
+          "instr_type": "bass",
+          "riffs": [
+            {
+              "from_griff": {
+                "length": 2,
+                "degrees_and_types":
+                        [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                          ["III", "5"], ["VI", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                          ["IV", ""], ["V", ""], ["IV", ""], ["III", ""], ["I", ""]],
+                "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 1,
+                                0.125, 0.125, 0.25, 0.5, 0.5]
+              }
+            },
+            {
+              "from_griff": {
+              "length": 2,
+              "degrees_and_types":
+                      [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"],
+                      ["III", "5"], ["VI", "5"],["V", "M"], ["V", "M"], ["V", "M"], ["V", "M"], ["IV", "M"], ["IV", "M"],
+                      ["IV", "M"]],
+              "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1,
+                              0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+             }
+            }
+          ],
+          "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]
+        }
+      ],
+      "arrangement": [[0, 0], [0, 8]]
     },
+
     {
       "name": "drum",
       "bpm_list": [[0, 120]],
       "tonality_list": [{}],
       "is_drum": true,
-      "phrases": [0, 1]
+      "phrases": [
+        {
+          "length": 8,
+          "bpm": 120,
+          "riffs": [
+                {
+                  "length": 1,
+                  "pattern": {"hi-hat": "ccccoccococco_cc", "snare": "____x__x_x__x___", "bass": "xxxxxxxx"}
+                },
+                {
+                  "length": 2,
+                  "pattern": {"bass": "_________xxxxxxx", "tom": "_________1111___", "snare": "__________________________x_x_xx"}
+                }
+          ],
+          "arrangement": [0, 0, 0, 0, 0, 0, 1]
+        }
+      ],
+      "arrangement": [[0, 0], [0, 8]]
     }
   ]
 }

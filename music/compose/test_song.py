@@ -40,36 +40,30 @@ def test_song():
                                      0.5, 1,
                                      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
 
-    phrase11 = RhythmPhrase(0, 8, ["G2", "major"], 120, 29)
+    phrase11 = RhythmPhrase(8, ["G2", "major"], 120, 29, "guitar")
     phrase11.set_riffs([griff1, griff2])
     phrase11.set_arrangement([[0, "I"], [0, "V"], [0, "III"], [1, "I"]])
-
-    phrase12 = RhythmPhrase(8, 8, ["G2", "major"], 120, 29)
-    phrase12.set_riffs([griff1, griff2])
-    phrase12.set_arrangement([[0, "I"], [0, "V"], [0, "III"], [1, "I"]])
 
     track_guitar = Track(name="guitar",
                          bpm_list=[[0, 120]],
                          tonality_list=[{}])
-    track_guitar.set_phrases([phrase11, phrase12])
+    track_guitar.set_phrases([phrase11])
+    track_guitar.set_arrangement([[0, 0], [0, 8]])
     track_guitar.add_phrases_to_pm()
 
     # Bass track
     briff1 = generate_briff_from_griff(griff1)
     briff2 = generate_briff_from_griff(griff2)
 
-    phrase21 = RhythmPhrase(0, 8, ["G1", "major"], 120, 33)
+    phrase21 = RhythmPhrase(8, ["G1", "major"], 120, 33, "bass")
     phrase21.set_riffs([briff1, briff2])
     phrase21.set_arrangement([[0, "I"], [0, "V"], [0, "III"], [1, "I"]])
-
-    phrase22 = RhythmPhrase(8, 8, ["G1", "major"], 120, 33)
-    phrase22.set_riffs([briff1, briff2])
-    phrase22.set_arrangement([[0, "I"], [0, "V"], [0, "III"], [1, "I"]])
 
     track_bass = Track(name="bass",
                        bpm_list=[[0, 120]],
                        tonality_list=[{}])
-    track_bass.set_phrases([phrase21, phrase22])
+    track_bass.set_phrases([phrase21])
+    track_bass.set_arrangement([[0, 0], [0, 8]])
 
     # Track Drum
     driff1 = DrumRiff(measure_length=1)
@@ -78,26 +72,28 @@ def test_song():
     driff2 = DrumRiff(measure_length=2)
     driff2.set_pattern({"bass": "_________xxxxxxx", "tom": "_________1111___", "snare": "_____________xxx"})
 
-    phrase31 = DrumPhrase(0, length=8, bpm=120)
+    phrase31 = DrumPhrase(0, bpm=120)
     phrase31.set_riffs([driff1, driff2])
     phrase31.set_arrangement([0, 0, 0, 0, 0, 0, 1])
-
-    phrase32 = DrumPhrase(8, length=8, bpm=120)
-    phrase32.set_riffs([driff1, driff2])
-    phrase32.set_arrangement([0, 0, 0, 0, 0, 0, 1])
 
     track_drum = Track(name="drum",
                        bpm_list=[[0, 120]],
                        tonality_list=[], is_drum=True)
-    track_drum.set_phrases([phrase31, phrase32])
+    track_drum.set_phrases([phrase31])
+    track_drum.set_arrangement([[0, 0], [0, 8]])
 
     song = Song("test_song")
     song.set_tracks([track_guitar, track_bass, track_drum])
-    song.add_tracks_to_pm()
+    song.save_json()
 
-    # song.save()
-    song.export_as_wav()
+
+def song_from_json():
+    path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
+    song = create_song_drom_json(path)
+    song.add_tracks_to_pm()
+    song.save_midi()
+    song.play_it()
 
 
 if __name__ == "__main__":
-    test_song()
+    song_from_json()

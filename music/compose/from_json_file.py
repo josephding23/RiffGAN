@@ -39,36 +39,17 @@ def parse_song_from_json(path):
         '''
 
         for griff in griffs_info:
-            measure_length = griff['length']
-            degrees_and_types = griff['degrees_and_types']
-            time_stamps = griff['time_stamps']
-
-            griffs_list.append(GuitarRiff(measure_length=measure_length,
-                                          degrees_and_types=degrees_and_types,
-                                          time_stamps=time_stamps)
-                               )
+            griffs_list.append(parse_griff_json(griff))
 
         for briff in briffs_info:
-            from_griff = briff['from_griff']
-            if from_griff == -1:
-                measure_length = briff['measure_length']
-                degrees_and_types = briff['degrees_and_types']
-                time_stamps = briff['time_stamps']
-
-                briffs_list.append(BassRiff(measure_length=measure_length,
-                                            degrees_and_types=degrees_and_types,
-                                            time_stamps=time_stamps)
-                                   )
-            else:
+            if 'from_griff' in briff.keys():
+                from_griff = briff['from_griff']
                 briffs_list.append(generate_briff_from_griff(griffs_list[from_griff]))
+            else:
+                briffs_list.append(parse_briff_json(briff))
 
         for driff in driffs_info:
-            measure_length = driff['measure_length']
-            pattern = driff['pattern']
-
-            drum_riff = DrumRiff(measure_length=measure_length)
-            drum_riff.set_pattern(pattern)
-            driffs_list.append(drum_riff)
+            driffs_list.append(parse_driff_json(driff))
 
         for phr in rhythm_phrases_info:
             start_measure = phr['start']
@@ -92,17 +73,21 @@ def parse_song_from_json(path):
             phrase.set_riffs(phr_riffs)
             phrase.set_arrangement(phr_arrangement)
 
-        for phr in driffs_info:
+            rhythm_phrases_list.append(phrase)
+
+        for phr in drum_phrases_info:
             start_measure = phr['start']
             length = phr['length']
             bpm = phr['bpm']
 
-            phr_riffs = phr['riffs']
+            phr_riffs = [driffs_list[num] for num in phr['riffs']]
             phr_arrangement = phr['arrangement']
 
             phrase = DrumPhrase(start_measure=start_measure, length=length, bpm=bpm)
             phrase.set_riffs(phr_riffs)
             phrase.set_arrangement(phr_arrangement)
+
+            drum_phrases_list.append(phrase)
 
         for tr in tracks_info:
             name = tr['name']
@@ -119,15 +104,17 @@ def parse_song_from_json(path):
 
             tracks_list.append(track)
 
-        song = Song([song_name])
+        song = Song(name=song_name)
+        song.set_tracks(tracks_list)
         return song
 
 
 def test_parse_json():
-    json_path = '../../data/jsons/test1.json'
+    json_path = '/PycharmProjects/RiffGAN/data/jsons/test1.json'
     song = parse_song_from_json(json_path)
     song.add_tracks_to_pm()
-    song.save()
+    song.save_midi()
+    song.play_it()
 
 
 if __name__ == '__main__':

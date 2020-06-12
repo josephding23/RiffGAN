@@ -5,24 +5,129 @@ import pretty_midi
 
 
 class Phrase(object):
-    def __init__(self, start_measure, length, bpm):
-        self.start_measure = start_measure
+    def __init__(self, length, bpm):
         self.length = length
 
         self.bpm = bpm
 
         self.pm = None
 
-        self.save_dir = '../../data/pieces/phrases/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/pieces/phrases/'
+        self.midi_path = ''
 
-    def save(self, name):
-        assert self.pm is not None
-        self.pm.write(self.save_dir + name)
+    def save_midi(self, name):
+        self.midi_path = self.save_dir + 'midi/' + name + '.mid'
+        self.pm.write(self.midi_path)
+
+    def play_it(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music(self.midi_path)
+
+    def save_json(self, name):
+        with open(self.save_dir + 'json/' + name + '.json', 'w') as f:
+            if isinstance(self, RhythmPhrase):
+                json.dump(self.export_json_dict(), f)
+            if isinstance(self, DrumPhrase):
+                json.dump(self.export_json_dict(), f)
+
+
+class RhythmPhrase(Phrase):
+    def __init__(self, length, tonality, bpm, instr, instr_type):
+        Phrase.__init__(self, length, bpm)
+
+        self.tonality = tonality
+        self.tonic, self.mode = self.tonality[0], self.tonality[1]
+        self.root_note = note_name_to_num(self.tonic)
+
+        self.instr = instr
+        self.instr_type = instr_type
+
+        self.riffs = []
+        self.arrangement = []
+
+    def set_riffs(self, riffs):
+        self.riffs = riffs
+
+    def set_arrangement(self, arrangement):
+        self.arrangement = arrangement
+
+    def add_riffs_to_pm(self):
+        self.pm = pretty_midi.PrettyMIDI()
+
+        instr = pretty_midi.Instrument(program=self.instr)
+        riff_start = 0
+        length_per_measure = get_measure_length(self.bpm)
+
+        for arrange in self.arrangement:
+            riff, riff_root_name = self.riffs[arrange[0]], arrange[1]
+            riff_root_dist = get_relative_distance(riff_root_name)
+
+            real_time_stamps = time_stamps_convert(riff.time_stamps, self.bpm)
+            for i in range(len(real_time_stamps)):
+                start_time, end_time = real_time_stamps[i]
+                start_time += riff_start
+                end_time += riff_start
+                if type(riff.velocity) == int:
+                    velocity = riff.velocity
+                else:
+                    assert type(riff.velocity) == list
+                    velocity = riff.velocity[i]
+                chord = riff.chords[i]
+
+                for note_dist in chord:
+                    note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note + riff_root_dist,
+                                            start=start_time, end=end_time)
+                    instr.notes.append(note)
+
+            riff_start += length_per_measure * riff.measure_length
+            # print(riff_start)
+
+        self.pm.instruments.append(instr)
+
+    def export_json_dict(self):
+        info_dict = {
+            "length": self.length,
+            "tonality": self.tonality,
+            "bpm": self.bpm,
+            "instr": self.instr,
+            "instr_type": self.instr_type,
+            "riffs": [riff.export_json_dict() for riff in self.riffs],
+            "arrangement": self.arrangement
+        }
+        return info_dict
+
+
+def create_rhythm_phrase_from_json(path):
+    with open(path, 'r') as f:
+        phrase_info = json.loads(f.read())
+        return parse_rhythm_phrase_json(phrase_info)
+
+
+def parse_rhythm_phrase_json(phrase_info):
+    instr_type = phrase_info['instr_type']
+    if instr_type == 'guitar':
+        riffs = [parse_griff_json(riff_info) for riff_info in phrase_info['riffs']]
+    else:
+        assert instr_type == 'bass'
+        riffs = [parse_briff_json(riff_info) for riff_info in phrase_info['riffs']]
+
+    rhythm_phrase = RhythmPhrase(
+        length=phrase_info['length'],
+        tonality=phrase_info['tonality'],
+        bpm=phrase_info['bpm'],
+        instr=phrase_info['instr'],
+        instr_type=instr_type,
+    )
+
+    rhythm_phrase.set_riffs(riffs)
+    rhythm_phrase.set_arrangement(phrase_info['arrangement'])
+
+    return rhythm_phrase
 
 
 class DrumPhrase(Phrase):
-    def __init__(self, start_measure, length, bpm):
-        Phrase.__init__(self, start_measure, length, bpm)
+    def __init__(self, length, bpm):
+        Phrase.__init__(self, length, bpm)
 
         self.riffs = []
         self.arrangement = []
@@ -69,62 +174,37 @@ class DrumPhrase(Phrase):
 
         self.pm.instruments.append(drum)
 
+    def export_json_dict(self):
+        info_dict = {
+            "length": self.length,
+            "bpm": self.bpm,
+            "riffs": [riff.export_json_dict() for riff in self.riffs],
+            "arrangement": self.arrangement
+        }
+        return info_dict
 
-class RhythmPhrase(Phrase):
-    def __init__(self, start_measure, length, tonality, bpm, instr):
-        Phrase.__init__(self, start_measure, length, bpm)
 
-        self.tonic, self.mode = tonality
-        self.root_note = note_name_to_num(self.tonic)
+def create_drum_phrase_from_json(path):
+    with open(path, 'r') as f:
+        phrase_info = json.loads(f.read())
+        return parse_drum_phrase_json(phrase_info)
 
-        self.instr = instr
 
-        self.riffs = []
-        self.arrangement = []
+def parse_drum_phrase_json(phrase_info):
+    drum_phrase = DrumPhrase(
+        length=phrase_info['length'],
+        bpm=phrase_info['bpm'],
+    )
 
-    def set_riffs(self, riffs):
-        self.riffs = riffs
+    drum_phrase.set_riffs([parse_driff_json(riff_info) for riff_info in phrase_info['riffs']])
+    drum_phrase.set_arrangement(phrase_info['arrangement'])
 
-    def set_arrangement(self, arrangement):
-        self.arrangement = arrangement
-
-    def add_riffs_to_pm(self):
-        self.pm = pretty_midi.PrettyMIDI()
-
-        instr = pretty_midi.Instrument(program=self.instr)
-        riff_start = 0
-        length_per_measure = get_measure_length(self.bpm)
-
-        for arrange in self.arrangement:
-            riff, riff_root_name = self.riffs[arrange[0]], arrange[1]
-            riff_root_dist = get_relative_distance(riff_root_name)
-
-            real_time_stamps = time_stamps_convert(riff.time_stamps, self.bpm)
-            for i in range(len(real_time_stamps)):
-                start_time, end_time = real_time_stamps[i]
-                start_time += riff_start
-                end_time += riff_start
-                if type(riff.velocity) == int:
-                    velocity = riff.velocity
-                else:
-                    assert type(riff.velocity) == list
-                    velocity = riff.velocity[i]
-                chord = riff.chords[i]
-
-                for note_dist in chord:
-                    note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note + riff_root_dist,
-                                            start=start_time, end=end_time)
-                    instr.notes.append(note)
-
-            riff_start += length_per_measure * riff.measure_length
-            # print(riff_start)
-
-        self.pm.instruments.append(instr)
+    return drum_phrase
 
 
 class SoloPhrase(Phrase):
-    def __init__(self, start_measure, length, tonality, bpm, instr):
-        Phrase.__init__(self, start_measure, length, bpm)
+    def __init__(self, length, tonality, bpm, instr):
+        Phrase.__init__(self, length, bpm)
 
         self.tonic, self.mode = tonality
         self.root_note = note_name_to_num(self.tonic)

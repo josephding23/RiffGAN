@@ -1,6 +1,9 @@
 from music.custom_elements.toolkit import *
 from util.npy_related import *
 import pretty_midi
+from music.process.audio_related import play_music
+import os
+import json
 
 
 class DrumRiff:
@@ -27,7 +30,8 @@ class DrumRiff:
         }
 
         self.pm = None
-        self.save_dir = '../../../data/custom_element/drum_riff/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
+        self.midi_path = ''
 
     def set_specific_pattern(self, part, pattern):
         self.patterns[part] = pattern
@@ -84,8 +88,36 @@ class DrumRiff:
 
         self.pm.instruments.append(drum)
 
-    def save(self, name):
-        self.pm.write(self.save_dir + name)
+    def save_midi(self, name):
+        self.midi_path = self.save_dir + name + '.mid'
+        self.pm.write(self.midi_path)
+
+    def play_it(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music(self.midi_path)
+
+    def export_json_dict(self):
+        info_dict = {
+            "length": self.measure_length,
+            "pattern": self.patterns
+        }
+        return info_dict
+
+    def save_json(self, name):
+        with open(self.save_dir + 'json/' + name + '.json', 'w') as f:
+            json.dump(self.export_json_dict(), f)
+
+
+def create_driff_from_json(path):
+    with open(path, 'r') as f:
+        riff_info = json.loads(f.read())
+        return parse_driff_json(riff_info)
+
+
+def parse_driff_json(riff_info):
+    driff = DrumRiff(measure_length=riff_info['length'])
+    driff.set_pattern(riff_info['pattern'])
+    return driff
 
 
 def translate_symbol(part, symbol):

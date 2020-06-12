@@ -1,0 +1,23 @@
+{
+  "length": 3,
+  "bpm": 120,
+  "riffs": [
+    {
+      "length": 1,
+      "pattern": {
+        "hi-hat": "ccccoccococco_cc",
+        "snare": "____x__x_x__x___",
+        "bass": null,
+        "tom": null,
+        "ride": null,
+        "crash": null,
+        "splash": null
+      }
+    }
+  ],
+  "arrangement": [
+    0,
+    0,
+    0
+  ]
+}

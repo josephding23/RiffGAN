@@ -1,6 +1,6 @@
 from music.custom_elements.riff import *
 from music.pieces.toolkit import *
-from music.pieces.phrase import Phrase, RhythmPhrase, SoloPhrase, DrumPhrase
+from music.pieces.phrase import *
 from music.custom_elements.drum_riff import *
 import pretty_midi
 
@@ -10,6 +10,7 @@ class Track:
         self.name = name
 
         self.phrases = []
+        self.arrangement = []
 
         self.bpm_list = bpm_list
         self.tonality_list = tonality_list
@@ -18,7 +19,9 @@ class Track:
         self.is_rhythm = is_rhythm
 
         self.pm = None
-        self.save_path = '../../data/pieces/tracks/'
+        self.save_path = '/PycharmProjects/RiffGAN/data/pieces/tracks/'
+        self.midi_path = self.save_path + 'midi/' + self.name + '.mid'
+        self.json_path = self.save_path + 'json/' + self.name + '.json'
 
     def get_measure_start_time(self, measure):
         start_time = 0
@@ -53,6 +56,9 @@ class Track:
     def set_phrases(self, phrases):
         self.phrases = phrases
 
+    def set_arrangement(self, arrangement):
+        self.arrangement = arrangement
+
     def get_phrases_num(self):
         print(len(self.phrases))
 
@@ -67,10 +73,11 @@ class Track:
         self.pm = pretty_midi.PrettyMIDI()
         drum = pretty_midi.Instrument(program=0, name=self.name, is_drum=True)
 
-        for phrase in self.phrases:
+        for phrase_num, start_measure in self.arrangement:
+            phrase = self.phrases[phrase_num]
             assert isinstance(phrase, DrumPhrase)
 
-            phrase_start = self.get_measure_start_time(phrase.start_measure)
+            phrase_start = self.get_measure_start_time(start_measure)
             riff_start = phrase_start
             length_per_measure = get_measure_length(phrase.bpm)
 
@@ -107,10 +114,11 @@ class Track:
         self.pm = pretty_midi.PrettyMIDI()
         instr = pretty_midi.Instrument(program=0, name=self.name)
 
-        for phrase in self.phrases:
+        for phrase_num, start_measure in self.arrangement:
+            phrase = self.phrases[phrase_num]
             assert isinstance(phrase, RhythmPhrase)
             instr.program = phrase.instr
-            phrase_start = self.get_measure_start_time(phrase.start_measure)
+            phrase_start = self.get_measure_start_time(start_measure)
             riff_start = phrase_start
             length_per_measure = get_measure_length(phrase.bpm)
 
@@ -139,5 +147,50 @@ class Track:
 
         self.pm.instruments.append(instr)
 
-    def save(self, name):
-        self.pm.write(self.save_path + name)
+    def save_midi(self):
+        self.pm.write(self.midi_path)
+
+    def play_it(self):
+        assert os.path.exists(self.midi_path)
+        play_music(self.midi_path)
+
+    def export_json_dict(self):
+        info_dict = {
+            "name": self.name,
+            "bpm_list": self.bpm_list,
+            "tonality_list": self.tonality_list,
+            "is_drum": self.is_drum,
+            "phrases": [phrase.export_json_dict() for phrase in self.phrases],
+            "arrangement": self.arrangement
+        }
+
+        return info_dict
+
+    def save_json(self):
+        with open(self.json_path, 'w') as f:
+            json.dump(self.export_json_dict(), f)
+
+
+def create_track_from_json(path):
+    with open(path, 'r') as f:
+        track_info = json.loads(f.read())
+        return parse_track_json(track_info)
+
+
+def parse_track_json(track_info):
+    is_drum = track_info['is_drum']
+    if is_drum:
+        phrases = [parse_drum_phrase_json(phrase) for phrase in track_info['phrases']]
+    else:
+        phrases = [parse_rhythm_phrase_json(phrase) for phrase in track_info['phrases']]
+
+    track = Track(
+        name=track_info['name'],
+        bpm_list=track_info['bpm_list'],
+        tonality_list=track_info['tonality_list'],
+        is_drum=is_drum
+    )
+    track.set_phrases(phrases)
+    track.set_arrangement(track_info['arrangement'])
+
+    return track

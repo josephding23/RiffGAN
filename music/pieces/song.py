@@ -1,10 +1,6 @@
-from music.custom_elements.riff import *
-from music.pieces.phrase import *
 from music.pieces.track import *
 import pretty_midi
-import pygame
-import pyaudio
-import wave
+from music.process.audio_related import *
 import os
 
 
@@ -14,10 +10,10 @@ class Song:
         self.tracks = []
         self.pm = None
 
-        self.save_dir = '../../data/pieces/songs/'
-        self.midi_path = self.save_dir + self.name + '.mid'
-        self.wav_path = self.save_dir + self.name + '.wav'
-        self.saved = False
+        self.save_dir = '/PycharmProjects/RiffGAN/data/pieces/songs/'
+        self.midi_path = self.save_dir + 'midi/' + self.name + '.mid'
+        self.json_path = self.save_dir + 'json/' + self.name + '.json'
+        self.wav_path = self.save_dir + 'audio/' + self.name + '.wav'
 
     def add_track(self, track):
         assert isinstance(track, Track)
@@ -32,10 +28,11 @@ class Song:
             instr = pretty_midi.Instrument(program=0, name=track.name, is_drum=track.is_drum)
 
             if track.is_drum:
-                for phrase in track.phrases:
+                for phrase_num, start_measure in track.arrangement:
+                    phrase = track.phrases[phrase_num]
                     assert isinstance(phrase, DrumPhrase)
 
-                    phrase_start = track.get_measure_start_time(phrase.start_measure)
+                    phrase_start = track.get_measure_start_time(start_measure)
                     riff_start = phrase_start
                     length_per_measure = get_measure_length(phrase.bpm)
 
@@ -67,11 +64,12 @@ class Song:
                         riff_start += length_per_measure * riff.measure_length
 
             elif track.is_rhythm:
-                for phrase in track.phrases:
+                for phrase_num, start_measure in track.arrangement:
+                    phrase = track.phrases[phrase_num]
                     assert isinstance(phrase, RhythmPhrase)
                     instr.program = phrase.instr
 
-                    phrase_start = track.get_measure_start_time(phrase.start_measure)
+                    phrase_start = track.get_measure_start_time(start_measure)
                     riff_start = phrase_start
                     length_per_measure = get_measure_length(phrase.bpm)
 
@@ -101,81 +99,39 @@ class Song:
 
             self.pm.instruments.append(instr)
 
-    def save(self):
+    def save_midi(self):
+        assert self.pm is not None
+
         self.pm.write(self.midi_path)
-        self.saved = True
 
     def play_it(self):
-
-        assert self.saved
-
-        freq = 44100
-        bitsize = -16
-        channels = 2
-        buffer = 1024
-        pygame.mixer.init(freq, bitsize, channels, buffer)
-        pygame.mixer.music.set_volume(1)
-        clock = pygame.time.Clock()
-        try:
-            pygame.mixer.music.load(self.midi_path)
-        except:
-            import traceback
-            print(traceback.format_exc())
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            clock.tick(30)
-
-    def export_as_wav(self):
-
-        do_ffmpeg_convert = False  # Uses FFmpeg to convert WAV files to MP3. Requires ffmpeg.exe in the script folder or PATH
-        do_wav_cleanup = True  # Deletes WAV files after conversion to MP3
-        sample_rate = 44100  # Sample rate used for WAV/MP3
-        channels = 2  # Audio channels (1 = mono, 2 = stereo)
-        buffer = 1024  # Audio buffer size
-        mp3_bitrate = 128  # Bitrate to save MP3 with in kbps (CBR)
-        input_device = 2  # Which recording device to use. On my system Stereo Mix = 1
-
-        bitsize = -16  # unsigned 16 bit
-        pygame.mixer.init(sample_rate, bitsize, channels, buffer)
-
-        # optional volume 0 to 1.0
-        pygame.mixer.music.set_volume(1.0)
-
-        # Init pyAudio
-        format = pyaudio.paInt16
-        audio = pyaudio.PyAudio()
-
-        stream = audio.open(format=format, channels=channels, rate=sample_rate, input=True,
-                            input_device_index=input_device, frames_per_buffer=buffer)
-
+        assert os.path.exists(self.midi_path)
         play_music(self.midi_path)
-        frames = []
 
-        # Record frames while the song is playing
-        while pygame.mixer.music.get_busy():
-            frames.append(stream.read(buffer))
+    def export_wav(self):
+        assert os.path.exists(self.midi_path)
+        export_as_wav(self.midi_path, self.wav_path)
 
-        # Stop recording
-        stream.stop_stream()
-        stream.close()
-        audio.terminate()
+    def save_json(self):
+        with open(self.json_path, 'w') as f:
+            json.dump(self.export_json_dict(), f)
 
-        wave_file = wave.open(self.wav_path, 'wb')
-        wave_file.setnchannels(channels)
-        wave_file.setsampwidth(audio.get_sample_size(format))
-        wave_file.setframerate(sample_rate)
-
-        wave_file.writeframes(b''.join(frames))
-        wave_file.close()
+    def export_json_dict(self):
+        info_dict = {
+            "name": self.name,
+            "tracks": [track.export_json_dict() for track in self.tracks]
+        }
+        return info_dict
 
 
-def play_music(music_file):
+def create_song_drom_json(path):
+    with open(path, 'r') as f:
+        song_info = json.loads(f.read())
+        return parse_song_json(song_info)
 
-    try:
-        pygame.mixer.music.load(music_file)
 
-    except pygame.error:
-        print("Couldn't play %s! (%s)" % (music_file, pygame.get_error()))
-        return
+def parse_song_json(song_info):
+    song = Song(song_info['name'])
+    song.set_tracks([parse_track_json(track_info) for track_info in song_info['tracks']])
 
-    pygame.mixer.music.play()
+    return song
