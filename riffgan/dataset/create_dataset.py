@@ -1,6 +1,6 @@
 from util.npy_related import *
 from music.db_fragments.riff import UnitGuitarRiff
-from util.database import *
+from dataset.grunge_librarypy import *
 
 def generate_unit_riff_nonzeros():
     unit_guitar_riff_dir = 'E:/unit_riffs/transposed/guitar/'

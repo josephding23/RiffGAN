@@ -1,9 +1,8 @@
 from music.db_fragments.riff import GuitarRiff, BassRiff
-from music.db_fragments.solo import GuitarSolo, BassSolo
+from music.db_fragments.solo import GuitarSolo
 import os
-import math
 import traceback
-from util.database import *
+from dataset.grunge_librarypy import *
 
 
 def scan_local_files():

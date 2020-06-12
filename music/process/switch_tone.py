@@ -1,8 +1,6 @@
-from util.database import *
+from dataset.grunge_librarypy import *
 from music.db_fragments.riff import *
-import os
 import shutil
-from music21 import interval, key
 
 
 def get_key_num(tonic):
