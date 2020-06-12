@@ -45,6 +45,13 @@ class RhythmPhrase(Phrase):
         self.riffs = []
         self.arrangement = []
 
+    def __eq__(self, other):
+        assert isinstance(other, RhythmPhrase)
+        return self.tonality == other.tonality and self.root_note == other.root_note and \
+               self.length == other.length and self.bpm == other.bpm and \
+               self.instr == other.instr and self.instr_type == other.instr_type and \
+               self.riffs == other.riffs and self.arrangement == other.arrangement
+
     def set_riffs(self, riffs):
         self.riffs = riffs
 
@@ -131,6 +138,12 @@ class DrumPhrase(Phrase):
 
         self.riffs = []
         self.arrangement = []
+
+    def __eq__(self, other):
+        assert isinstance(other, DrumPhrase)
+
+        return self.length == other.length and self.bpm == other.bpm and \
+               self.riffs == other.riffs and self.arrangement == other.arrangement
 
     def set_riffs(self, riffs):
         self.riffs = riffs

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+<head>
+    <meta charset="UTF-8">
+    <title>Phrases</title>
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <div class="card-deck">
+            <div class="row">
+                {% for phrase in phrases.rhythm_phrases %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Length: {{ phrase.length }}</h5>
+                            <p class="card-text">Tonality: {{ phrase.tonality }}</p>
+                            <p class="card-text">BPM: {{ phrase.bpm }}</p>
+                            <p class="card-text">Instrument type: {{ phrase.instr_type }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+
+                {% for phrase in phrases.drum_phrases %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Length: {{ phrase.length }}</h5>
+                            <p class="card-text">BPM: {{ phrase.bpm }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

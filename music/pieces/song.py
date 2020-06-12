@@ -123,6 +123,52 @@ class Song:
         }
         return info_dict
 
+    def get_all_riffs(self):
+        riffs_dict = {
+            'griff': [],
+            'briff': [],
+            'driff': []
+        }
+        for track in self.tracks:
+            for phrase in track.phrases:
+                if track.is_drum:
+                    assert isinstance(phrase, DrumPhrase)
+                    for riff in phrase.riffs:
+                        if riff not in [parse_driff_json(info) for info in riffs_dict['driff']]:
+                            riffs_dict['driff'].append(riff.export_json_dict())
+                else:
+                    assert isinstance(phrase, RhythmPhrase)
+                    if phrase.instr_type == 'guitar':
+                        for riff in phrase.riffs:
+                            if riff not in [parse_griff_json(info) for info in riffs_dict['griff']]:
+                                riffs_dict['griff'].append(riff.export_json_dict())
+                    else:
+                        assert phrase.instr_type == 'bass'
+                        for riff in phrase.riffs:
+                            if riff not in [parse_briff_json(info) for info in riffs_dict['briff']]:
+                                riffs_dict['briff'].append(riff.export_json_dict())
+        return riffs_dict
+
+    def get_all_phrases(self):
+        phrases_dict = {
+            'rhythm_phrases': [],
+            'drum_phrases': []
+        }
+        for track in self.tracks:
+            for phrase in track.phrases:
+                if track.is_drum:
+                    assert isinstance(phrase, DrumPhrase)
+                    if phrase not in [parse_drum_phrase_json(info) for info in phrases_dict['drum_phrases']]:
+                        phrases_dict['drum_phrases'].append(phrase.export_json_dict())
+                else:
+                    assert isinstance(phrase, RhythmPhrase)
+                    if phrase not in [parse_rhythm_phrase_json(info) for info in phrases_dict['rhythm_phrases']]:
+                        phrases_dict['rhythm_phrases'].append(phrase.export_json_dict())
+        return phrases_dict
+
+    def get_all_tracks(self):
+        return self.export_json_dict()['tracks']
+
 
 def create_song_drom_json(path):
     with open(path, 'r') as f:

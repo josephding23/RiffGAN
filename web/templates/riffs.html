@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+<head>
+    <meta charset="UTF-8">
+    <title>Riffs</title>
+</head>
+<body>
+{% block content %}
+    <div class="container">
+        <div class="card-deck">
+            <div class="row">
+                {% for griff in riffs.griff %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Length: {{ griff.length }}</h5>
+                            <p class="card-text">Degrees & Types: {{ griff.degrees_and_types }}</p>
+                            <p class="card-text">Timestamps: {{ griff.time_stamps }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+
+                {% for briff in riffs.briff %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Length: {{ briff.length }}</h5>
+                            <p class="card-text">Degrees & Types: {{ briff.degrees_and_types }}</p>
+                            <p class="card-text">Timestamps: {{ briff.time_stamps }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+
+                {% for driff in riffs.briff %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Length: {{ driff.length }}</h5>
+                            <p class="card-text">Degrees & Types: {{ driff.patten }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

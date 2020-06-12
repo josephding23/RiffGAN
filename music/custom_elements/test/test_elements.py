@@ -59,5 +59,17 @@ def driff_from_json():
     driff.play_it()
 
 
+def test_eq():
+    griff1 = GuitarRiff(measure_length=2,
+                        degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
+                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
+                        time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
+    griff2 = GuitarRiff(measure_length=2,
+                        degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
+                                          ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
+                        time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
+    print(griff1 == griff2)
+
+
 if __name__ == '__main__':
-    driff_from_json()
+    test_eq()

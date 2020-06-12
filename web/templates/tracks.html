@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+<head>
+    <meta charset="UTF-8">
+    <title>Tracks</title>
+</head>
+{% block content %}
+    <div class="container">
+        <div class="card-deck">
+            <div class="row">
+                {% for track in tracks %}
+                    <div class="col-lg-3">
+                    <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">Name: {{ track.name }} </h5>
+                            <p class="card-text">Is Drum: {{ tracks.is_drum }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                          </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<body>
+
+</body>
+</html>

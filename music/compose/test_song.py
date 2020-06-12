@@ -95,5 +95,12 @@ def song_from_json():
     song.play_it()
 
 
+def get_composition():
+    path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
+    song = create_song_drom_json(path)
+    info = song.get_all_phrases()
+    print(json.dumps(info, indent=2))
+
+
 if __name__ == "__main__":
-    song_from_json()
+    get_composition()

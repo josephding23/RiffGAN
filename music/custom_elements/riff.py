@@ -21,6 +21,10 @@ class Riff:
 
         self.pm = pretty_midi.PrettyMIDI()
 
+    def __eq__(self, other):
+        return self.measure_length == other.measure_length and self.degrees_and_types == other.degrees_and_types and \
+               self.time_stamps == other.time_stamps and self.velocity == other.velocity
+
     def add_notes_to_pm(self, root_note_name, bpm, instr):
         root_note = note_name_to_num(root_note_name)
         guitar = pretty_midi.Instrument(program=instr)
@@ -35,7 +39,7 @@ class Riff:
             chord = self.chords[i]
 
             for note_dist in chord:
-                note = pretty_midi.Note(velocity=velocity, pitch=note_dist+root_note,
+                note = pretty_midi.Note(velocity=velocity, pitch=note_dist + root_note,
                                         start=start_time, end=end_time)
                 guitar.notes.append(note)
 
@@ -128,4 +132,3 @@ def generate_briff_from_griff(guitar_riff):
     assert isinstance(guitar_riff, GuitarRiff)
     new_degrees_and_types = [(degree_and_type[0], '') for degree_and_type in guitar_riff.degrees_and_types]
     return BassRiff(guitar_riff.measure_length, new_degrees_and_types, guitar_riff.time_stamps, guitar_riff.velocity)
-
