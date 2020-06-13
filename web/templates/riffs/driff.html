@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %}Riffs{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/riffs.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+          <li role="presentation"><a href="{{ url_for('riffs', riff_type='all') }}">All</a></li>
+          <li role="presentation"><a href="{{ url_for('riffs', riff_type='griff') }}">Guitar</a></li>
+          <li role="presentation"><a href="{{ url_for('riffs', riff_type='briff') }}">Bass</a></li>
+          <li role="presentation" class="active"><a href="{{ url_for('riffs', riff_type='driff') }}">Drum</a></li>
+        </ul>
+
+        <div class="row">
+            {% for driff in riffs %}
+                <div class="col-lg-3">
+                    <div class="panel panel-default" style="max-height: 500px; overflow: scroll;">
+                      <div class="panel-heading">
+                          <h3>Drum Riff {{ driff.num }}</h3>
+                      </div>
+                      <ul class="list-group">
+                          <li class="list-group-item">Length: {{ driff.length }}</li>
+
+                          <li class="list-group-item">
+                              <h4 class="list-group-item-heading">Patterns:</h4>
+
+                              {% for type, pattern in driff.patterns.items() %}
+                                  <p>{{ type }}: {{ pattern }}</p>
+                              {% endfor %}
+                          </li>
+                          <li class="list-group-item">
+                            <div class="btn-group" role="group">
+                              <button type="button" id="edit" class="btn btn-primary">Edit</button>
+                              <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                            </div>
+                          </li>
+                      </ul>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

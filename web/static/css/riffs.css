@@ -1,19 +1,13 @@
 .panel-default
 {
-    height: 700px;
-    overflow: hidden;
+    max-height: 1000px;
+    overflow: scroll;
 }
 
-#riff_heading
-{
-    height: 50px;
-    overflow-y: auto;
-}
 
 #length
 {
-    min-height: 50px;
-    max-height: 50px;
+    height: 50px;
 }
 
 #info_heading
@@ -24,13 +18,12 @@
 
 #degrees_types
 {
-    min-height: 200px;
-    max-height: 200px;
+    height: 400px;
 }
 #degrees_types_display
 {
-    height: 200px;
-    overflow-y: auto;
+    max-height: 400px;
+    overflow-y: scroll;
 }
 #degree_type
 {
@@ -43,12 +36,11 @@
 
 #timestamps
 {
-    min-height: 150px;
-    max-height: 150px;
+    height: 300px;
 }
 #timestamps_display
 {
-    height: 150px;
+    max-height: 300px;
     overflow-y: scroll;
 }
 

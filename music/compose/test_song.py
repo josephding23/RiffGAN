@@ -103,4 +103,4 @@ def get_composition():
 
 
 if __name__ == "__main__":
-    get_composition()
+    test_song()

@@ -13,9 +13,12 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/riffs')
-def riffs():
-    return render_template('riffs.html', riffs=riffs)
+@app.route('/riffs/<riff_type>')
+def riffs(riff_type):
+    if riff_type == 'all':
+        return render_template('riffs/all_riffs.html', riffs=riffs)
+    else:
+        return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type])
 
 
 @app.route('/phrases')
@@ -36,9 +39,8 @@ if __name__ == '__main__':
     phrases = song.get_all_phrases()
     riffs = song.get_all_riffs()
 
-    '''
-    server = Server(app.wsgi_app)
-    server.watch('**/*.*')
-    server.serve()
-    '''
+    # server = Server(app.wsgi_app)
+    # server.watch('**/*.*')
+    # server.serve()
+
     app.run()

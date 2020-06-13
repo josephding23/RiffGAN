@@ -99,7 +99,7 @@ class DrumRiff:
     def export_json_dict(self):
         info_dict = {
             "length": self.measure_length,
-            "pattern": self.patterns
+            "patterns": self.patterns
         }
         return info_dict
 
@@ -116,7 +116,7 @@ def create_driff_from_json(path):
 
 def parse_driff_json(riff_info):
     driff = DrumRiff(measure_length=riff_info['length'])
-    driff.set_pattern(riff_info['pattern'])
+    driff.set_pattern(riff_info['patterns'])
     return driff
 
 
