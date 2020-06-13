@@ -1,10 +1,15 @@
 {% extends "bootstrap/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}
+        {{ super() }}
+        <meta charset="UTF-8">
+    {% endblock %}
+</head>
 
-{% block head %}
-    {{ super() }}
-    <title>{% block title %}{% endblock %} - MyFlask</title>
-{% endblock %}
-
+<body>
 {% block navbar %}
     <div class="navbar navbar-inverse" role="navigation">
         <div class="container">
@@ -19,15 +24,19 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('riffs') }}">Riff</a></li>
                     <li><a href="{{ url_for('phrases') }}">Phrases</a></li>
+                    <li><a href="{{ url_for('tracks') }}">Tracks</a></li>
                 </ul>
             </div>
         </div>
     </div>
 {% endblock %}
-
 {% block content %}
-
 {% endblock %}
+</body>
+</html>
+
+
+

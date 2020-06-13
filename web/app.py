@@ -1,16 +1,16 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, url_for
 from flask_bootstrap import Bootstrap
 from livereload import Server
 from music.pieces.song import *
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 Bootstrap(app)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def index():
+    return render_template('index.html')
 
 
 @app.route('/riffs')
@@ -36,7 +36,9 @@ if __name__ == '__main__':
     phrases = song.get_all_phrases()
     riffs = song.get_all_riffs()
 
+    '''
     server = Server(app.wsgi_app)
     server.watch('**/*.*')
     server.serve()
-    # app.run()
+    '''
+    app.run()

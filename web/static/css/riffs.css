@@ -1,0 +1,65 @@
+.panel-default
+{
+    height: 700px;
+    overflow: hidden;
+}
+
+#riff_heading
+{
+    height: 50px;
+    overflow-y: auto;
+}
+
+#length
+{
+    min-height: 50px;
+    max-height: 50px;
+}
+
+#info_heading
+{
+    min-height: 50px;
+    max-height: 50px;
+}
+
+#degrees_types
+{
+    min-height: 200px;
+    max-height: 200px;
+}
+#degrees_types_display
+{
+    height: 200px;
+    overflow-y: auto;
+}
+#degree_type
+{
+    min-height: 15px;
+    max-height: 15px;
+
+    min-width: 30px;
+    max-width: 30px;
+}
+
+#timestamps
+{
+    min-height: 150px;
+    max-height: 150px;
+}
+#timestamps_display
+{
+    height: 150px;
+    overflow-y: scroll;
+}
+
+#pattern
+{
+    min-height: 400px;
+    max-height: 400px;
+}
+
+#btns
+{
+    height: 50px;
+    overflow-y: scroll;
+}

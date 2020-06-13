@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% extends "base.html" %}
+
 <head>
     <meta charset="UTF-8">
     <title>Tracks</title>
@@ -11,13 +12,18 @@
             <div class="row">
                 {% for track in tracks %}
                     <div class="col-lg-3">
-                    <div class="card">
-                          <div class="card-body">
-                            <h5 class="card-title">Name: {{ track.name }} </h5>
-                            <p class="card-text">Is Drum: {{ tracks.is_drum }}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <div class="panel panel-default">
+                          <div class="panel-heading">Track: {{ track.name }}</div>
+                          <ul class="list-group">
+                              <li class="list-group-item" id="is_drum">Is Drum: {{ track.is_drum }}</li>
+                          </ul>
+                          <div class="panel-footer">
+                            <div class="btn-group" role="group" aria-label="...">
+                              <button type="button" id="edit" class="btn btn-primary">Edit</button>
+                              <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                            </div>
                           </div>
-                    </div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

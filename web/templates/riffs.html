@@ -1,55 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
 {% extends "base.html" %}
-<head>
-    <meta charset="UTF-8">
-    <title>Riffs</title>
-</head>
-<body>
+
+{% block title %}Riffs{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/riffs.css') }}">
+{% endblock %}
+
 {% block content %}
     <div class="container">
-        <div class="card-deck">
-            <div class="row">
-                {% for griff in riffs.griff %}
-                    <div class="col-lg-3">
-                    <div class="card">
-                          <div class="card-body">
-                            <h5 class="card-title">Length: {{ griff.length }}</h5>
-                            <p class="card-text">Degrees & Types: {{ griff.degrees_and_types }}</p>
-                            <p class="card-text">Timestamps: {{ griff.time_stamps }}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                          </div>
-                    </div>
-                    </div>
-                {% endfor %}
+        <div class="row">
+            {% for griff in riffs.griff %}
+                <div class="col-lg-3">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <h5>Guitar Riff {{ griff.num }}</h5>
+                      </div>
+                      <ul class="list-group">
+                          <li class="list-group-item">Length: {{ griff.length }}</li>
+                          <li class="list-group-item">
+                               <div class="panel" id="degrees_types_display">
+                                   <h4 class="list-group-item-heading" >Degrees & Types:</h4>
+                                    {% for degree_and_type in griff.degrees_and_types %}
+                                      <button class="btn btn-sm" type="button">
+                                          {{ degree_and_type.0 }} <span class="badge">{{ degree_and_type.1 }}</span>
+                                      </button>
+                                    {% endfor %}
+                               </div>
+                          </li>
+                          <li class="list-group-item">
+                              <div class="panel" id="timestamps_display">
+                                  <h4 class="list-group-item-heading" id="info_heading">Timestamps:</h4>
 
-                {% for briff in riffs.briff %}
-                    <div class="col-lg-3">
-                    <div class="card">
-                          <div class="card-body">
-                            <h5 class="card-title">Length: {{ briff.length }}</h5>
-                            <p class="card-text">Degrees & Types: {{ briff.degrees_and_types }}</p>
-                            <p class="card-text">Timestamps: {{ briff.time_stamps }}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                          </div>
-                    </div>
-                    </div>
-                {% endfor %}
+                                  {% for timestamp in griff.time_stamps %}
+                                      <button class="btn btn-sm" type="button">
+                                          {{ timestamp }}
+                                      </button>
+                                  {% endfor %}
+                              </div>
+                          </li>
+                          <li class="list-group-item">
+                            <div class="btn-group" role="group" aria-label="...">
+                              <button type="button" id="edit" class="btn btn-primary">Edit</button>
+                              <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                            </div>
+                          </li>
+                      </ul>
 
-                {% for driff in riffs.briff %}
-                    <div class="col-lg-3">
-                    <div class="card">
-                          <div class="card-body">
-                            <h5 class="card-title">Length: {{ driff.length }}</h5>
-                            <p class="card-text">Degrees & Types: {{ driff.patten }}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                          </div>
                     </div>
+                </div>
+            {% endfor %}
+
+            {% for briff in riffs.briff %}
+                <div class="col-lg-3">
+                    <div class="panel panel-default" id="riff_panel">
+                      <div class="panel-heading">
+                          <h5>Bass Riff {{ briff.num }}</h5>
+                      </div>
+                      <ul class="list-group">
+                          <li class="list-group-item">Length: {{ briff.length }}</li>
+                          <li class="list-group-item">
+                               <div class="panel" id="degrees_types_display">
+                                   <h4 class="list-group-item-heading" >Degrees & Types:</h4>
+                                    {% for degree_and_type in briff.degrees_and_types %}
+                                      <button class="btn btn-sm" type="button">
+                                          {{ degree_and_type.0 }} <span class="badge">{{ degree_and_type.1 }}</span>
+                                      </button>
+                                    {% endfor %}
+                               </div>
+                          </li>
+                          <li class="list-group-item">
+                              <div class="panel" id="timestamps_display">
+                                  <h4 class="list-group-item-heading" id="info_heading">Timestamps:</h4>
+
+                                  {% for timestamp in briff.time_stamps %}
+                                      <button class="btn btn-sm" type="button">
+                                          {{ timestamp }}
+                                      </button>
+                                  {% endfor %}
+                              </div>
+                          </li>
+                          <li class="list-group-item">
+                            <div class="btn-group" role="group" aria-label="..." id="btns">
+                              <button type="button" id="edit" class="btn btn-primary">Edit</button>
+                              <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                            </div>
+                          </li>
+                      </ul>
+
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
+
+            {% for driff in riffs.briff %}
+                <div class="col-lg-3" style="height: 700px;">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">Drum Riff {{ driff.num }}</div>
+                      <ul class="list-group">
+                          <li class="list-group-item" id="length">Length: {{ driff.length }}</li>
+                          <li class="list-group-item" id="pattern">Pattern: {{ driff.pattern }}</li>
+                      </ul>
+                      <div class="panel-footer">
+                        <div class="btn-group" role="group" aria-label="...">
+                          <button type="button" id="edit" class="btn btn-primary">Edit</button>
+                          <button type="button" id="delete" class="btn btn-danger">Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
-</body>
-</html>

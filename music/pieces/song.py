@@ -129,24 +129,37 @@ class Song:
             'briff': [],
             'driff': []
         }
+        griff_no = 0
+        briff_no = 0
+        driff_no = 0
+
         for track in self.tracks:
             for phrase in track.phrases:
                 if track.is_drum:
                     assert isinstance(phrase, DrumPhrase)
                     for riff in phrase.riffs:
                         if riff not in [parse_driff_json(info) for info in riffs_dict['driff']]:
-                            riffs_dict['driff'].append(riff.export_json_dict())
+                            driff_info = riff.export_json_dict()
+                            driff_info['num'] = driff_no + 1
+                            riffs_dict['driff'].append(driff_info)
+                            driff_no += 1
                 else:
                     assert isinstance(phrase, RhythmPhrase)
                     if phrase.instr_type == 'guitar':
                         for riff in phrase.riffs:
                             if riff not in [parse_griff_json(info) for info in riffs_dict['griff']]:
-                                riffs_dict['griff'].append(riff.export_json_dict())
+                                griff_info = riff.export_json_dict()
+                                griff_info['num'] = griff_no + 1
+                                riffs_dict['griff'].append(griff_info)
+                                griff_no += 1
                     else:
                         assert phrase.instr_type == 'bass'
                         for riff in phrase.riffs:
                             if riff not in [parse_briff_json(info) for info in riffs_dict['briff']]:
-                                riffs_dict['briff'].append(riff.export_json_dict())
+                                briff_info = riff.export_json_dict()
+                                briff_info['num'] = briff_no + 1
+                                riffs_dict['briff'].append(briff_info)
+                                briff_no += 1
         return riffs_dict
 
     def get_all_phrases(self):
@@ -154,16 +167,25 @@ class Song:
             'rhythm_phrases': [],
             'drum_phrases': []
         }
+        rhy_phrase_num = 0
+        drum_phrase_num = 0
+
         for track in self.tracks:
             for phrase in track.phrases:
                 if track.is_drum:
                     assert isinstance(phrase, DrumPhrase)
                     if phrase not in [parse_drum_phrase_json(info) for info in phrases_dict['drum_phrases']]:
-                        phrases_dict['drum_phrases'].append(phrase.export_json_dict())
+                        phrase_info = phrase.export_json_dict()
+                        phrase_info['num'] = rhy_phrase_num + 1
+                        phrases_dict['drum_phrases'].append(phrase_info)
+                        rhy_phrase_num += 1
                 else:
                     assert isinstance(phrase, RhythmPhrase)
                     if phrase not in [parse_rhythm_phrase_json(info) for info in phrases_dict['rhythm_phrases']]:
-                        phrases_dict['rhythm_phrases'].append(phrase.export_json_dict())
+                        phrase_info = phrase.export_json_dict()
+                        phrase_info['num'] = drum_phrase_num + 1
+                        phrases_dict['rhythm_phrases'].append(phrase_info)
+                        drum_phrase_num += 1
         return phrases_dict
 
     def get_all_tracks(self):
