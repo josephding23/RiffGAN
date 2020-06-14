@@ -6,7 +6,7 @@ import pretty_midi
 
 
 class Track:
-    def __init__(self, name, bpm_list, tonality_list, is_drum=False, is_rhythm=True):
+    def __init__(self, name, bpm_list, tonality_list, is_drum, instr_type):
         self.name = name
 
         self.phrases = []
@@ -16,7 +16,7 @@ class Track:
         self.tonality_list = tonality_list
 
         self.is_drum = is_drum
-        self.is_rhythm = is_rhythm
+        self.instr_type = instr_type
 
         self.pm = None
         self.save_path = '/PycharmProjects/RiffGAN/data/pieces/tracks/'
@@ -65,7 +65,7 @@ class Track:
     def add_phrases_to_pm(self):
         if self.is_drum:
             self.add_drum_phrases_to_pm()
-        elif self.is_rhythm:
+        else:
             self.add_rhythm_phrases_to_pm()
 
     def add_drum_phrases_to_pm(self):
@@ -159,9 +159,10 @@ class Track:
             "name": self.name,
             "bpm_list": self.bpm_list,
             "tonality_list": self.tonality_list,
+            "instr_type": self.instr_type,
             "is_drum": self.is_drum,
             "phrases": [phrase.export_json_dict() for phrase in self.phrases],
-            "arrangement": self.arrangement
+            "arrangements": self.arrangement
         }
 
         return info_dict
@@ -188,9 +189,10 @@ def parse_track_json(track_info):
         name=track_info['name'],
         bpm_list=track_info['bpm_list'],
         tonality_list=track_info['tonality_list'],
-        is_drum=is_drum
+        is_drum=track_info['is_drum'],
+        instr_type=track_info['instr_type']
     )
     track.set_phrases(phrases)
-    track.set_arrangement(track_info['arrangement'])
+    track.set_arrangement(track_info['arrangements'])
 
     return track

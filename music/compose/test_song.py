@@ -46,7 +46,9 @@ def test_song():
 
     track_guitar = Track(name="guitar",
                          bpm_list=[[0, 120]],
-                         tonality_list=[{}])
+                         tonality_list=[{}],
+                         is_drum=False,
+                         instr_type='guitar')
     track_guitar.set_phrases([phrase11])
     track_guitar.set_arrangement([[0, 0], [0, 8]])
     track_guitar.add_phrases_to_pm()
@@ -61,7 +63,10 @@ def test_song():
 
     track_bass = Track(name="bass",
                        bpm_list=[[0, 120]],
-                       tonality_list=[{}])
+                       tonality_list=[{}],
+                       is_drum=False,
+                       instr_type='bass'
+                       )
     track_bass.set_phrases([phrase21])
     track_bass.set_arrangement([[0, 0], [0, 8]])
 
@@ -72,20 +77,21 @@ def test_song():
     driff2 = DrumRiff(measure_length=2)
     driff2.set_pattern({"bass": "_________xxxxxxx", "tom": "_________1111___", "snare": "_____________xxx"})
 
-    phrase31 = DrumPhrase(0, bpm=120)
+    phrase31 = DrumPhrase(length=8, bpm=120)
     phrase31.set_riffs([driff1, driff2])
     phrase31.set_arrangement([0, 0, 0, 0, 0, 0, 1])
 
     track_drum = Track(name="drum",
                        bpm_list=[[0, 120]],
-                       tonality_list=[], is_drum=True)
+                       tonality_list=[],
+                       is_drum=True,
+                       instr_type=None)
     track_drum.set_phrases([phrase31])
     track_drum.set_arrangement([[0, 0], [0, 8]])
 
     song = Song("test_song")
     song.set_tracks([track_guitar, track_bass, track_drum])
-
-    # song.save_json()
+    song.save_json()
 
 
 def song_from_json():

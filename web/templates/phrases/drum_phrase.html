@@ -15,44 +15,57 @@
     </div>
     {% endif %}
     <div class="container-fluid align-center">
+        <ul class="nav nav-tabs nav-justified" style="padding-left: 400px; padding-right: 400px;">
+            <li role="presentation"><a href="{{ url_for('phrases', phrase_type='rhythm_guitar_phrase') }}">Rhythm Guitar Phrases</a></li>
+            <li role="presentation"><a href="{{ url_for('phrases', phrase_type='rhythm_bass_phrase') }}">Rhythm Bass Phrases</a></li>
+            <li role="presentation" class="active"><a href="{{ url_for('phrases', phrase_type='drum_phrase') }}">Drum Phrases</a></li>
+        </ul>
+
         <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
-            {% for track in tracks %}
+            {% for phrase in phrases %}
                 <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
                     <div class="panel panel-default" style="max-height: 520px; min-height: 520px; overflow: scroll;">
                       <div class="panel-heading">
-                          <h3>Track {{ track.name }}</h3>
+                          <h3>Drum Phrase {{ phrase.no }}</h3>
                       </div>
                         <ul class="list-group">
                           <li class="list-group-item">
-                              <h4 class="list-group-item-heading">
-                                  Phrase Info:
-                              </h4>
-                              {% for phrase_no in track.phrases_no %}
-                                  <button class="btn" type="button"
-                                          style="
-                                          height: 30px; width: 50px; border-radius: 13px; padding: 2px; margin: 2px">
-                                      {{ phrase_no }}
-                                  </button>
-                              {% endfor %}
+                              <h4>Length: {{ phrase.length }}</h4>
                           </li>
-                           <li class="list-group-item">
+                          <li class="list-group-item">
+                              <h4>BPM: {{ phrase.bpm }}</h4>
+                          </li>
+                          <li class="list-group-item">
                                <h4 class="list-group-item-heading" >
                                    Arrangement:
                                </h4>
-                                {% for arrangement in track.arrangements %}
+                                {% for arrangement in phrase.arrangements %}
                                   <button class="btn degree_type_btn" type="button"
                                           style="
                                           height: 30px; width: 50px; border-radius: 13px; padding: 2px; margin: 2px">
-                                      {{ arrangement.0 }} | {{ arrangement.1 }}
+                                      {{ arrangement }}
                                   </button>
                                 {% endfor %}
+                          </li>
+                          <li class="list-group-item">
+                              <h4 class="list-group-item-heading">
+                                  Riff Info:
+                              </h4>
+                              {% for riff_no in phrase.riffs_no %}
+                                  <button class="btn" type="button"
+                                          style="
+                                          height: 30px; width: 50px; border-radius: 13px; padding: 2px; margin: 2px">
+                                      {{ riff_no }}
+                                  </button>
+                              {% endfor %}
+
                           </li>
                       </ul>
                         <div class="panel-footer"  style="align-content: center">
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                 <div class="btn-group btn-group-justified" role="group"
                                     style="padding-left: 10px; padding-right: 20px;">
-                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_track%s_modal" % track.name}}" >Edit</button>
+                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_phrase%d_modal" % phrase.no}}" >Edit</button>
                                 </div>
 
                                 <div class="btn-group btn-group-justified" role="group"

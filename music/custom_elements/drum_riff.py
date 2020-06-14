@@ -11,27 +11,30 @@ class DrumRiff:
         self.measure_length = measure_length
 
         self.patterns = {
-            'hi-hat': None,
+            'hi-hat': '',
             # closed_hi-hat: 42, pedal_hi-hat: 44, open_hi-hat: 46
-            'snare': None,
+            'snare': '',
             # acoustic_snare: 38
-            'bass': None,
+            'bass': '',
             # acoustic_bass: 35
-            'tom': None,
+            'tom': '',
             # low_floor_tom: 41, high_floor_tom: 43,
             # low_tom: 45, low-mid_tom: 47,
             # hi-mid_tom: 48, high_tom: 50
-            'ride': None,
+            'ride': '',
             # ride_cymbal1: 51, ride_cymbal2: 59
-            'crash': None,
+            'crash': '',
             # crash_cymbal1: 49, crash_cymbal2: 57
-            'splash': None
+            'splash': ''
             # splash_cymbal: 55
         }
 
         self.pm = None
         self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
         self.midi_path = ''
+
+    def __eq__(self, other):
+        return self.measure_length == other.measure_length and self.patterns == other.patterns
 
     def set_specific_pattern(self, part, pattern):
         self.patterns[part] = pattern
@@ -67,7 +70,7 @@ class DrumRiff:
         drum = pretty_midi.Instrument(program=0, is_drum=True)
 
         for part, pattern in self.patterns.items():
-            if pattern is None:
+            if pattern is '':
                 continue
             else:
                 assert isinstance(pattern, str)

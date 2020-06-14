@@ -10,12 +10,12 @@ class Riff:
         self.measure_length = measure_length
 
         self.degrees_and_types = degrees_and_types
+        self.time_stamps = time_stamps
 
         self.save_dir = ''
         self.midi_path = ''
         self.saved = False
 
-        self.time_stamps = time_stamps
         self.chords = [get_chord(degree_and_type) for degree_and_type in self.degrees_and_types]
         self.velocity = velocity
 

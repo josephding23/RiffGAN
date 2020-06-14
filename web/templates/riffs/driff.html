@@ -9,43 +9,174 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="container">
-        <ul class="nav nav-tabs">
-          <li role="presentation"><a href="{{ url_for('all_riffs') }}">All</a></li>
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Error!</strong> {{ error }}
+    </div>
+    {% endif %}
+    <div class="container-fluid align-center">
+        <ul class="nav nav-tabs nav-justified" style="padding-left: 400px; padding-right: 400px;">
           <li role="presentation"><a href="{{ url_for('riffs', riff_type='griff') }}">Guitar</a></li>
           <li role="presentation"><a href="{{ url_for('riffs', riff_type='briff') }}">Bass</a></li>
           <li role="presentation" class="active"><a href="{{ url_for('riffs', riff_type='driff') }}">Drum</a></li>
         </ul>
 
-        <div class="row">
+        <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
             {% for driff in riffs %}
-                <div class="col-lg-3">
-                    <div class="panel panel-default" style="max-height: 500px; overflow: scroll;">
+                <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
+                    <div class="panel panel-default" style="max-height: 540px; min-height: 540px; overflow: scroll;">
                       <div class="panel-heading">
-                          <h3>Drum Riff {{ driff.num }}</h3>
+                          <h3>Drum Riff {{ driff.no }}</h3>
                       </div>
-                      <ul class="list-group">
-                          <li class="list-group-item">Length: {{ driff.length }}</li>
-
+                        <ul class="list-group">
                           <li class="list-group-item">
-                              <h4 class="list-group-item-heading">Patterns:</h4>
-
-                              {% for type, pattern in driff.patterns.items() %}
-                                  <p>{{ type }}: {{ pattern }}</p>
-                              {% endfor %}
+                              <h4>Length: {{ driff.length }}</h4>
                           </li>
-                          <li class="list-group-item">
-                            <div class="btn-group" role="group">
-                              <button type="button" id="edit" class="btn btn-primary">Edit</button>
-                              <button type="button" id="delete" class="btn btn-danger">Delete</button>
-                            </div>
+                          <li class="list-group-item"
+                              style="padding-right: 1px; padding-left: 1px; padding-bottom: 1px">
+                               <h4 class="list-group-item-heading" style="margin-left: 15px; margin-bottom: 10px">
+                                   Patterns:
+                               </h4>
+                              <table class="table table-bordered table-striped">
+                                  <tbody>
+                                    {% for part, pattern in driff.patterns.items() %}
+                                        <tr>
+                                            <td>{{ part }}</td>
+                                            <td>{{ pattern }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                  </tbody>
+                              </table>
+
                           </li>
                       </ul>
+                        <div class="panel-footer"  style="align-content: center">
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group btn-group-justified" role="group"
+                                    style="padding-left: 10px; padding-right: 20px;">
+                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_riff%d_modal" % driff.no}}" >Edit</button>
+                                </div>
+
+                                <div class="modal fade" id="{{ "edit_riff%d_modal" % driff.no}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog" style="align-content: center">
+                                        <div class="modal-content" style="align-content: center">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h3 class="modal-title" id="myModalLabel">Edit Bass Riff {{ driff.no }}</h3>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <form method="post" action="{{ url_for('edit_riff', riff_type=riff_type, riff_no=driff.no )}}">
+                                                    <div class="row">
+                                                        <div class="col-md-8 col-md-offset-2">
+                                                            <div class="form-group">
+                                                                <label for="edit_length_input">Length</label>
+                                                                <input type="text" class="form-control" value="{{ driff.length }}"
+                                                                       id="edit_length_input" name="edit_length_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="btn-group btn-group-justified" role="group">
+                                                        <div class="btn-group btn-group-justified" role="group"
+                                                            style="padding-left: 25px; padding-right: 15px">
+                                                           <input class="btn btn-primary" type="submit" value="Save">
+                                                        </div>
+                                                        <div class="btn-group btn-group-justified" role="group"
+                                                            style="padding-left: 15px; padding-right: 25px">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal -->
+                                  </div>
+
+                                <div class="btn-group btn-group-justified" role="group"
+                                     style="padding-left: 20px; padding-right: 10px;">
+                                    <form method="post" action="{{ url_for('delete_riff', riff_type=riff_type, riff_no=driff.num) }}">
+                                        <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>
             {% endfor %}
+                <div class="col-lg-3">
+                    <div class="panel panel-default" style="max-height: 500px; overflow: scroll;">
+                      <div class="panel-heading">
+                          <h3>New Bass Riff</h3>
+                      </div>
+                      <div class="panel-body" style="text-align: center">
+                        <p><button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add_riff_modal" role="button"
+                              style="margin-top: 100px; margin-bottom: 100px">Add</button></p>
+
+                          <div class="modal fade" id="add_riff_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h3 class="modal-title" id="myModalLabel">New Bass Riff</h3>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <form method="post" action="{{ url_for('new_riff', riff_type='driff') }}">
+                                            <div class="row">
+                                                <div class="col-md-8 col-md-offset-2">
+                                                    <div class="form-group">
+                                                        <label for="new_length_input">Length</label>
+                                                        <input type="text" class="form-control" placeholder="Length"
+                                                               id="new_length_input" name="new_length_input">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-10 col-md-offset-1">
+                                                    <div class="form-group">
+                                                        <label for="new_degrees_types_input"> Degrees & Types</label>
+                                                        <input type="text" class="form-control" placeholder="Degrees & Types"
+                                                               id="new_degrees_types_input" name="new_degrees_types_input">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-10 col-md-offset-1">
+                                                    <div class="form-group">
+                                                        <label for="new_timestamps_input"> Timestamps</label>
+                                                        <input type="text" class="form-control" placeholder="Timestamps"
+                                                               id="new_timestamps_input" name="new_timestamps_input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="btn-group btn-group-justified" role="group">
+                                                <div class="btn-group btn-group-justified" role="group"
+                                                    style="padding-left: 25px; padding-right: 15px">
+                                                   <input class="btn btn-primary" type="submit" value="Save">
+                                                </div>
+                                                <div class="btn-group btn-group-justified" role="group"
+                                                    style="padding-left: 15px; padding-right: 25px">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                          </div>
+
+                      </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

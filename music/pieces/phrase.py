@@ -99,7 +99,7 @@ class RhythmPhrase(Phrase):
             "instr": self.instr,
             "instr_type": self.instr_type,
             "riffs": [riff.export_json_dict() for riff in self.riffs],
-            "arrangement": self.arrangement
+            "arrangements": self.arrangement
         }
         return info_dict
 
@@ -127,7 +127,7 @@ def parse_rhythm_phrase_json(phrase_info):
     )
 
     rhythm_phrase.set_riffs(riffs)
-    rhythm_phrase.set_arrangement(phrase_info['arrangement'])
+    rhythm_phrase.set_arrangement(phrase_info['arrangements'])
 
     return rhythm_phrase
 
@@ -192,7 +192,7 @@ class DrumPhrase(Phrase):
             "length": self.length,
             "bpm": self.bpm,
             "riffs": [riff.export_json_dict() for riff in self.riffs],
-            "arrangement": self.arrangement
+            "arrangements": self.arrangement
         }
         return info_dict
 
@@ -210,7 +210,7 @@ def parse_drum_phrase_json(phrase_info):
     )
 
     drum_phrase.set_riffs([parse_driff_json(riff_info) for riff_info in phrase_info['riffs']])
-    drum_phrase.set_arrangement(phrase_info['arrangement'])
+    drum_phrase.set_arrangement(phrase_info['arrangements'])
 
     return drum_phrase
 

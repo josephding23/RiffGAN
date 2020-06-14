@@ -137,6 +137,7 @@ class Song:
                     for riff in phrase.riffs:
                         if riff not in [parse_driff_json(info) for info in riffs_dict['driff']]:
                             driff_info = riff.export_json_dict()
+                            driff_info['no'] = len(riffs_dict['driff']) + 1
                             riffs_dict['driff'].append(driff_info)
                 else:
                     assert isinstance(phrase, RhythmPhrase)
@@ -144,6 +145,7 @@ class Song:
                         for riff in phrase.riffs:
                             if riff not in [parse_griff_json(info) for info in riffs_dict['griff']]:
                                 griff_info = riff.export_json_dict()
+                                griff_info['no'] = len(riffs_dict['griff']) + 1
                                 griff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
                                 griff_info['raw_timestamps'] = riff.get_timestamps_str()
                                 riffs_dict['griff'].append(griff_info)
@@ -152,6 +154,7 @@ class Song:
                         for riff in phrase.riffs:
                             if riff not in [parse_briff_json(info) for info in riffs_dict['briff']]:
                                 briff_info = riff.export_json_dict()
+                                briff_info['no'] = len(riffs_dict['briff']) + 1
                                 briff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
                                 briff_info['raw_timestamps'] = riff.get_degrees_and_types_str()
                                 riffs_dict['briff'].append(briff_info)
@@ -159,26 +162,94 @@ class Song:
 
     def get_all_phrases(self):
         phrases_dict = {
-            'rhythm_phrases': [],
-            'drum_phrases': []
+            'rhythm_guitar_phrase': [],
+            'rhythm_bass_phrase': [],
+            'drum_phrase': []
         }
+
+        riffs_dict = self.get_all_riffs()
 
         for track in self.tracks:
             for phrase in track.phrases:
                 if track.is_drum:
                     assert isinstance(phrase, DrumPhrase)
-                    if phrase not in [parse_drum_phrase_json(info) for info in phrases_dict['drum_phrases']]:
+                    if phrase not in [parse_drum_phrase_json(info) for info in phrases_dict['drum_phrase']]:
                         phrase_info = phrase.export_json_dict()
-                        phrases_dict['drum_phrases'].append(phrase_info)
+
+                        phrase_riffs_no = []
+                        for riff_in_phrase in phrase.riffs:
+                            for reference_riff in riffs_dict['driff']:
+                                if riff_in_phrase == parse_driff_json(reference_riff):
+                                    phrase_riffs_no.append(reference_riff['no'])
+
+                        phrase_info['no'] = len(phrases_dict['drum_phrase']) + 1
+                        phrase_info['riffs_no'] = phrase_riffs_no
+                        phrases_dict['drum_phrase'].append(phrase_info)
                 else:
                     assert isinstance(phrase, RhythmPhrase)
-                    if phrase not in [parse_rhythm_phrase_json(info) for info in phrases_dict['rhythm_phrases']]:
-                        phrase_info = phrase.export_json_dict()
-                        phrases_dict['rhythm_phrases'].append(phrase_info)
+
+                    if phrase.instr_type == 'guitar':
+                        if phrase not in [parse_rhythm_phrase_json(info) for info in phrases_dict['rhythm_guitar_phrase']]:
+                            phrase_info = phrase.export_json_dict()
+
+                            phrase_riffs_no = []
+                            for riff_in_phrase in phrase.riffs:
+                                for reference_riff in riffs_dict['griff']:
+                                    if riff_in_phrase == parse_griff_json(reference_riff):
+                                        phrase_riffs_no.append(reference_riff['no'])
+
+                            phrase_info['no'] = len(phrases_dict['rhythm_guitar_phrase']) + 1
+                            phrase_info['riffs_no'] = phrase_riffs_no
+                            phrases_dict['rhythm_guitar_phrase'].append(phrase_info)
+
+                    else:
+                        assert phrase.instr_type == 'bass'
+                        if phrase not in [parse_rhythm_phrase_json(info) for info in phrases_dict['rhythm_bass_phrase']]:
+                            phrase_info = phrase.export_json_dict()
+                            phrase_riffs_no = []
+                            for riff_in_phrase in phrase.riffs:
+                                for reference_riff in riffs_dict['briff']:
+                                    if riff_in_phrase == parse_briff_json(reference_riff):
+                                        phrase_riffs_no.append(reference_riff['no'])
+
+                            phrase_info['no'] = len(phrases_dict['rhythm_bass_phrase']) + 1
+                            phrase_info['riffs_no'] = phrase_riffs_no
+                            phrases_dict['rhythm_bass_phrase'].append(phrase_info)
         return phrases_dict
 
     def get_all_tracks(self):
-        return self.export_json_dict()['tracks']
+        tracks_info = []
+        phrase_dict = self.get_all_phrases()
+
+        for track in self.tracks:
+            track_info = track.export_json_dict()
+            if track.is_drum:
+                phrases_no = []
+                for phrase_in_track in track.phrases:
+                    assert isinstance(phrase_in_track, DrumPhrase)
+                    for reference_phrase in phrase_dict['drum_phrase']:
+                        if phrase_in_track == parse_drum_phrase_json(reference_phrase):
+                            phrases_no.append(reference_phrase['no'])
+            else:
+                if track.instr_type == 'guitar':
+                    phrases_no = []
+                    for phrase_in_track in track.phrases:
+                        assert isinstance(phrase_in_track, RhythmPhrase)
+                        for reference_phrase in phrase_dict['rhythm_guitar_phrase']:
+                            if phrase_in_track == parse_rhythm_phrase_json(reference_phrase):
+                                phrases_no.append(reference_phrase['no'])
+                else:
+                    assert track.instr_type == 'bass'
+                    phrases_no = []
+                    for phrase_in_track in track.phrases:
+                        assert isinstance(phrase_in_track, RhythmPhrase)
+                        for reference_phrase in phrase_dict['rhythm_bass_phrase']:
+                            if phrase_in_track == parse_rhythm_phrase_json(reference_phrase):
+                                phrases_no.append(reference_phrase['no'])
+            track_info['phrases_no'] = phrases_no
+            tracks_info.append(track_info)
+
+        return tracks_info
 
 
 def create_song_drom_json(path):

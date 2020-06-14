@@ -25,8 +25,8 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('all_riffs') }}">Riffs</a></li>
-                    <li><a href="{{ url_for('phrases') }}">Phrases</a></li>
+                    <li><a href="{{ url_for('riffs', riff_type='griff') }}">Riffs</a></li>
+                    <li><a href="{{ url_for('phrases', phrase_type='rhythm_guitar_phrase') }}">Phrases</a></li>
                     <li><a href="{{ url_for('tracks') }}">Tracks</a></li>
                 </ul>
             </div>
