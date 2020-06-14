@@ -32,7 +32,10 @@ def get_relative_distance(degree, mode='major'):
     if alt != 0:
         clean_degree = clean_degree[:-1]
 
-    return degree_dict[clean_degree] + octave * 12 + alt
+    try:
+        return degree_dict[clean_degree] + octave * 12 + alt
+    except:
+        return None
 
     # print(clean_degree, octave, alt)
 
@@ -198,6 +201,26 @@ def get_chord_pattern(chord_type):
     return chord
 
 
+def get_degrees_and_types_from_raw(raw_degrees_and_types):
+    degrees_and_types = []
+
+    for degree_and_type in raw_degrees_and_types.split('; '):
+        degree = degree_and_type.split(' ')[0]
+        chord_type = degree_and_type.split(' ')[1]
+        if get_relative_distance(degree) is None or get_chord_pattern(chord_type) is None:
+            raise Exception()
+        else:
+            degrees_and_types.append([degree, chord_type])
+    return degrees_and_types
+
+
+def get_timestamps_from_raw(raw_time_stamps):
+    timestamps = []
+    for timestamp in raw_time_stamps.split(' '):
+        timestamps.append(float(timestamp))
+    return timestamps
+
+
 def time_stamps_convert(simple_ts, bpm):
     detailed_ts = []
     current_start = 0.0
@@ -214,4 +237,5 @@ def time_stamps_convert(simple_ts, bpm):
 
 
 if __name__ == '__main__':
-    print(time_stamps_convert([1, 1, 2, 0.5], 120))
+    # get_degrees_and_types_from_raw('I 5; II 5')
+    get_timestamps_from_raw('raw')

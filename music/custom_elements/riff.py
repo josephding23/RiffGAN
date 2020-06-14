@@ -45,6 +45,18 @@ class Riff:
 
         self.pm.instruments.append(guitar)
 
+    def get_degrees_and_types_str(self):
+        info_str = ''
+        for degree_and_type in self.degrees_and_types:
+            info_str += degree_and_type[0] + ' ' + degree_and_type[1] + '; '
+        return info_str[:-2]
+
+    def get_timestamps_str(self):
+        info_str = ''
+        for timestamp in self.time_stamps:
+            info_str += str(timestamp) + ' '
+        return info_str[:-1]
+
     def save_midi(self, name):
         self.midi_path = self.save_dir + name + '.mid'
         self.pm.write(self.midi_path)

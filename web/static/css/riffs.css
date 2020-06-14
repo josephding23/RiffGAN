@@ -1,57 +1,17 @@
-.panel-default
+#riff_panel
 {
-    max-height: 1000px;
+    max-height: 500px;
     overflow: scroll;
 }
 
-
-#length
+.form-control
 {
-    height: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
-#info_heading
-{
-    min-height: 50px;
-    max-height: 50px;
-}
-
-#degrees_types
-{
-    height: 400px;
-}
-#degrees_types_display
-{
-    max-height: 400px;
-    overflow-y: scroll;
-}
-#degree_type
-{
-    min-height: 15px;
-    max-height: 15px;
-
-    min-width: 30px;
-    max-width: 30px;
-}
-
-#timestamps
-{
-    height: 300px;
-}
-#timestamps_display
-{
-    max-height: 300px;
-    overflow-y: scroll;
-}
-
-#pattern
-{
-    min-height: 400px;
-    max-height: 400px;
-}
-
-#btns
-{
-    height: 50px;
-    overflow-y: scroll;
+button.degree_type_btn {
+    height: 30px;
+    width: 50px;
+    border-radius: 12px;
 }

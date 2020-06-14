@@ -71,5 +71,3 @@ def test_eq():
     print(griff1 == griff2)
 
 
-if __name__ == '__main__':
-    test_eq()

@@ -84,7 +84,8 @@ def test_song():
 
     song = Song("test_song")
     song.set_tracks([track_guitar, track_bass, track_drum])
-    song.save_json()
+
+    # song.save_json()
 
 
 def song_from_json():

@@ -1,1 +1,515 @@
-{"name": "test_song", "tracks": [{"name": "guitar", "bpm_list": [[0, 120]], "tonality_list": [{}], "is_drum": false, "phrases": [{"length": 8, "tonality": ["G2", "major"], "bpm": 120, "instr": 29, "instr_type": "guitar", "riffs": [{"length": 2, "degrees_and_types": [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"], ["III", "5"], ["VI", "5"], ["V", "5"], ["III", "5"], ["I", "5"], ["IV", ""], ["V", ""], ["IV", ""], ["III", ""], ["I", ""]], "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 1, 0.125, 0.125, 0.25, 0.5, 0.5]}, {"length": 2, "degrees_and_types": [["I", "5"], ["I", "5"], ["II", "5"], ["V", "5"], ["III", "5"], ["I", "5"], ["III", "5"], ["VI", "5"], ["V", "M"], ["V", "M"], ["V", "M"], ["V", "M"], ["IV", "M"], ["IV", "M"], ["IV", "M"]], "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]}], "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]}], "arrangement": [[0, 0], [0, 8]]}, {"name": "bass", "bpm_list": [[0, 120]], "tonality_list": [{}], "is_drum": false, "phrases": [{"length": 8, "tonality": ["G1", "major"], "bpm": 120, "instr": 33, "instr_type": "bass", "riffs": [{"length": 2, "degrees_and_types": [["I", ""], ["I", ""], ["II", ""], ["V", ""], ["III", ""], ["I", ""], ["III", ""], ["VI", ""], ["V", ""], ["III", ""], ["I", ""], ["IV", ""], ["V", ""], ["IV", ""], ["III", ""], ["I", ""]], "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 1, 0.125, 0.125, 0.25, 0.5, 0.5]}, {"length": 2, "degrees_and_types": [["I", ""], ["I", ""], ["II", ""], ["V", ""], ["III", ""], ["I", ""], ["III", ""], ["VI", ""], ["V", ""], ["V", ""], ["V", ""], ["V", ""], ["IV", ""], ["IV", ""], ["IV", ""]], "time_stamps": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]}], "arrangement": [[0, "I"], [0, "V"], [0, "III"], [1, "I"]]}], "arrangement": [[0, 0], [0, 8]]}, {"name": "drum", "bpm_list": [[0, 120]], "tonality_list": [], "is_drum": true, "phrases": [{"length": 0, "bpm": 120, "riffs": [{"length": 1, "patterns": {"hi-hat": "ccccoccococco_cc", "snare": "____x__x_x__x___", "bass": "xxxxxxxx", "tom": null, "ride": null, "crash": null, "splash": null}}, {"length": 2, "patterns": {"hi-hat": null, "snare": "_____________xxx", "bass": "_________xxxxxxx", "tom": "_________1111___", "ride": null, "crash": null, "splash": null}}], "arrangement": [0, 0, 0, 0, 0, 0, 1]}], "arrangement": [[0, 0], [0, 8]]}]}
+{
+  "name": "test_song",
+  "tracks": [
+    {
+      "name": "guitar",
+      "bpm_list": [
+        [
+          0,
+          120
+        ]
+      ],
+      "tonality_list": [
+        {}
+      ],
+      "is_drum": false,
+      "phrases": [
+        {
+          "length": 8,
+          "tonality": [
+            "G2",
+            "major"
+          ],
+          "bpm": 120,
+          "instr": 29,
+          "instr_type": "guitar",
+          "riffs": [
+            {
+              "length": 2,
+              "degrees_and_types": [
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "II",
+                  "5"
+                ],
+                [
+                  "V",
+                  "5"
+                ],
+                [
+                  "III",
+                  "5"
+                ],
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "III",
+                  "5"
+                ],
+                [
+                  "VI",
+                  "5"
+                ],
+                [
+                  "V",
+                  "5"
+                ],
+                [
+                  "III",
+                  "5"
+                ],
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ]
+              ],
+              "time_stamps": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                1,
+                0.5,
+                0.5,
+                1,
+                0.125,
+                0.125,
+                0.25,
+                0.5,
+                0.5
+              ]
+            },
+            {
+              "length": 2,
+              "degrees_and_types": [
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "II",
+                  "5"
+                ],
+                [
+                  "V",
+                  "5"
+                ],
+                [
+                  "III",
+                  "5"
+                ],
+                [
+                  "I",
+                  "5"
+                ],
+                [
+                  "III",
+                  "5"
+                ],
+                [
+                  "VI",
+                  "5"
+                ],
+                [
+                  "V",
+                  "M"
+                ],
+                [
+                  "V",
+                  "M"
+                ],
+                [
+                  "V",
+                  "M"
+                ],
+                [
+                  "V",
+                  "M"
+                ],
+                [
+                  "IV",
+                  "M"
+                ],
+                [
+                  "IV",
+                  "M"
+                ],
+                [
+                  "IV",
+                  "M"
+                ]
+              ],
+              "time_stamps": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                1,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            }
+          ],
+          "arrangement": [
+            [
+              0,
+              "I"
+            ],
+            [
+              0,
+              "V"
+            ],
+            [
+              0,
+              "III"
+            ],
+            [
+              1,
+              "I"
+            ]
+          ]
+        }
+      ],
+      "arrangement": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          8
+        ]
+      ]
+    },
+    {
+      "name": "bass",
+      "bpm_list": [
+        [
+          0,
+          120
+        ]
+      ],
+      "tonality_list": [
+        {}
+      ],
+      "is_drum": false,
+      "phrases": [
+        {
+          "length": 8,
+          "tonality": [
+            "G1",
+            "major"
+          ],
+          "bpm": 120,
+          "instr": 33,
+          "instr_type": "bass",
+          "riffs": [
+            {
+              "length": 2,
+              "degrees_and_types": [
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "II",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "VI",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ]
+              ],
+              "time_stamps": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                1,
+                0.5,
+                0.5,
+                1,
+                0.125,
+                0.125,
+                0.25,
+                0.5,
+                0.5
+              ]
+            },
+            {
+              "length": 2,
+              "degrees_and_types": [
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "II",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "I",
+                  ""
+                ],
+                [
+                  "III",
+                  ""
+                ],
+                [
+                  "VI",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "V",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ],
+                [
+                  "IV",
+                  ""
+                ]
+              ],
+              "time_stamps": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                1,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            }
+          ],
+          "arrangement": [
+            [
+              0,
+              "I"
+            ],
+            [
+              0,
+              "V"
+            ],
+            [
+              0,
+              "III"
+            ],
+            [
+              1,
+              "I"
+            ]
+          ]
+        }
+      ],
+      "arrangement": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          8
+        ]
+      ]
+    },
+    {
+      "name": "drum",
+      "bpm_list": [
+        [
+          0,
+          120
+        ]
+      ],
+      "tonality_list": [],
+      "is_drum": true,
+      "phrases": [
+        {
+          "length": 0,
+          "bpm": 120,
+          "riffs": [
+            {
+              "length": 1,
+              "patterns": {
+                "hi-hat": "ccccoccococco_cc",
+                "snare": "____x__x_x__x___",
+                "bass": "xxxxxxxx",
+                "tom": null,
+                "ride": null,
+                "crash": null,
+                "splash": null
+              }
+            },
+            {
+              "length": 2,
+              "patterns": {
+                "hi-hat": null,
+                "snare": "_____________xxx",
+                "bass": "_________xxxxxxx",
+                "tom": "_________1111___",
+                "ride": null,
+                "crash": null,
+                "splash": null
+              }
+            }
+          ],
+          "arrangement": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "arrangement": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          8
+        ]
+      ]
+    }
+  ]
+}
