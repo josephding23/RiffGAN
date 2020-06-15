@@ -141,7 +141,9 @@
 
                                 <div class="btn-group btn-group-justified" role="group"
                                      style="padding-left: 20px; padding-right: 10px;">
-                                    <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    <form method="post" action="{{ url_for('phrases.delete_phrase', phrase_type=phrase_type, index=loop.index) }}">
+                                        <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    </form>
                                 </div>
                             </div>
 

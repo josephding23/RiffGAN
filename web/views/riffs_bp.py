@@ -1,13 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from music.pieces.song import *
+from music.custom_elements.toolkit import get_all_used_riffs
+from web.data.song import phrases, riffs
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
-
-json_path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
-
-song = create_song_drom_json(json_path)
-riffs = song.get_all_riffs()
-
 
 @riffs_bp.route('/<riff_type>', methods=['GET'])
 def get_riffs(riff_type):
@@ -24,6 +20,20 @@ def get_riffs(riff_type):
 
 @riffs_bp.route('/delete/<riff_type>/<index>', methods=['POST'])
 def delete_riff(riff_type, index):
+    according_riffs_dict = {
+        'griff': 'rhythm_guitar_phrase',
+        'briff': 'rhythm_bass_phrase',
+        'driff': 'drum_phrase'
+    }
+    riff_no_to_delete = riffs[riff_type][int(index)-1]['no']
+
+    riff_no_in_use = get_all_used_riffs(phrases, according_riffs_dict[riff_type])
+
+    if riff_no_to_delete in riff_no_in_use:
+        error = 'Riff you tend to delete is in use.'
+        return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type,
+                               error=error)
+
     riffs[riff_type].pop(int(index)-1)
     return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
@@ -60,6 +70,7 @@ def edit_riff(riff_type, index):
                                        error=error)
 
             riffs[riff_type][int(index)-1] = {
+                    'no': riffs[riff_type][int(index)-1]['no'],
                     'length': length,
                     'degrees_and_types': degrees_and_types,
                     'time_stamps': timestamps,
@@ -99,6 +110,7 @@ def edit_riff(riff_type, index):
                                                        error=error)
 
             riffs[riff_type][int(index) - 1] = {
+                'no': riffs[riff_type][int(index) - 1]['no'],
                 'length': length,
                 "patterns": patterns_dict
             }
@@ -117,19 +129,19 @@ def new_riff(riff_type):
                 length = int(raw_length)
             except Exception:
                 error = 'Length must be integer'
-                return render_template('riffs/griff.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
+                return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
 
             try:
                 degrees_and_types = get_degrees_and_types_from_raw(raw_degrees_and_types)
             except Exception:
                 error = 'Invalid Degrees & Types format.'
-                return render_template('riffs/griff.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
+                return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
 
             try:
                 timestamps = get_timestamps_from_raw(raw_timestamps)
             except Exception:
                 error = 'Invalid Timestamps format.'
-                return render_template('riffs/griff.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
+                return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type, error=error)
 
             riffs[riff_type].append(
                 {
@@ -141,8 +153,6 @@ def new_riff(riff_type):
                     'raw_timestamps': raw_timestamps
                  }
             )
-
-            return redirect(url_for('riffs.get_riffs', riff_type=riff_type, riffs=riffs[riff_type]))
 
         else:
             assert riff_type == 'driff'
@@ -178,4 +188,5 @@ def new_riff(riff_type):
                 'length': length,
                 "patterns": patterns_dict
             })
-            return redirect(url_for('riffs.get_riffs', riff_type=riff_type, riffs=riffs[riff_type]))
+
+        return redirect(url_for('riffs.get_riffs', riff_type=riff_type, riffs=riffs[riff_type]))

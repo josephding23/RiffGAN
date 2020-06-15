@@ -283,6 +283,16 @@ def get_bass_str(code):
     return info_dict[code]
 
 
+def get_all_used_riffs(phrase_dict, phrase_type):
+    used_riffs_no = []
+    for phrase_info in phrase_dict[phrase_type]:
+        used_riffs = phrase_info['riffs_no']
+        for riff_no in used_riffs:
+            if riff_no not in used_riffs_no:
+                used_riffs_no.append(riff_no)
+    return used_riffs_no
+
+
 if __name__ == '__main__':
     # get_degrees_and_types_from_raw('I 5; II 5')
-    print(get_degrees_and_types_from_raw('I 5; II 5'))
+    print(note_name_to_num('ae'))
