@@ -91,7 +91,16 @@ def test_song():
 
     song = Song("test_song")
     song.set_tracks([track_guitar, track_bass, track_drum])
+
     song.save_json()
+
+    riffs_dict = song.get_all_riffs()
+    phrases_dict = song.get_all_phrases()
+
+    print(json.dumps(riffs_dict, indent=2))
+
+    set_used_riff_num_info(phrases_dict, riffs_dict)
+    print(json.dumps(phrases_dict, indent=2))
 
 
 def song_from_json():

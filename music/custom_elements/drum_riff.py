@@ -142,3 +142,36 @@ def translate_symbol(part, symbol):
     }
 
     return symbol_dict[part][symbol]
+
+
+def examine_drum_patterns(_patterns):
+    for part, pattern in _patterns.items():
+        if pattern != '':
+            for symbol in pattern:
+                if symbol != '_':
+                    try:
+                        translate_symbol(part, symbol)
+                    except:
+                        raise Exception('Invalid Pattern')
+
+
+if __name__ == '__main__':
+    patterns = {
+        'hi-hat': '_o',
+        # closed_hi-hat: 42, pedal_hi-hat: 44, open_hi-hat: 46
+        'snare': '',
+        # acoustic_snare: 38
+        'bass': '',
+        # acoustic_bass: 35
+        'tom': '',
+        # low_floor_tom: 41, high_floor_tom: 43,
+        # low_tom: 45, low-mid_tom: 47,
+        # hi-mid_tom: 48, high_tom: 50
+        'ride': '',
+        # ride_cymbal1: 51, ride_cymbal2: 59
+        'crash': '',
+        # crash_cymbal1: 49, crash_cymbal2: 57
+        'splash': ''
+        # splash_cymbal: 55
+    }
+    examine_drum_patterns(patterns)

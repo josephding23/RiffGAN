@@ -41,6 +41,11 @@ class RhythmPhrase(Phrase):
 
         self.instr = instr
         self.instr_type = instr_type
+        if instr_type == 'guitar':
+            self.instr_str = get_guitar_str(self.instr)
+        else:
+            assert self.instr_type == 'bass'
+            self.instr_str = get_bass_str(self.instr)
 
         self.riffs = []
         self.arrangement = []
@@ -91,6 +96,12 @@ class RhythmPhrase(Phrase):
 
         self.pm.instruments.append(instr)
 
+    def get_arrangement_str(self):
+        info_str = ''
+        for arrangement in self.arrangement:
+            info_str += str(arrangement[0]) + ' ' + arrangement[1] + '; '
+        return info_str[:-2]
+
     def export_json_dict(self):
         info_dict = {
             "length": self.length,
@@ -98,6 +109,7 @@ class RhythmPhrase(Phrase):
             "bpm": self.bpm,
             "instr": self.instr,
             "instr_type": self.instr_type,
+            "instr_str": self.instr_str,
             "riffs": [riff.export_json_dict() for riff in self.riffs],
             "arrangements": self.arrangement
         }
@@ -186,6 +198,12 @@ class DrumPhrase(Phrase):
             riff_start += length_per_measure * riff.measure_length
 
         self.pm.instruments.append(drum)
+
+    def get_arrangement_str(self):
+        info_str = ''
+        for arrangement in self.arrangement:
+            info_str += str(arrangement) + ' '
+        return info_str[:-1]
 
     def export_json_dict(self):
         info_dict = {

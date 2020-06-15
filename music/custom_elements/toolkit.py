@@ -205,12 +205,20 @@ def get_degrees_and_types_from_raw(raw_degrees_and_types):
     degrees_and_types = []
 
     for degree_and_type in raw_degrees_and_types.split('; '):
-        degree = degree_and_type.split(' ')[0]
-        chord_type = degree_and_type.split(' ')[1]
-        if get_relative_distance(degree) is None or get_chord_pattern(chord_type) is None:
-            raise Exception()
+
+        if len(degree_and_type.split(' ')) == 1:
+            degree = degree_and_type.split(' ')[0]
+            if get_relative_distance(degree) is None:
+                raise Exception()
+            else:
+                degrees_and_types.append([degree, ''])
         else:
-            degrees_and_types.append([degree, chord_type])
+            degree = degree_and_type.split(' ')[0]
+            chord_type = degree_and_type.split(' ')[1]
+            if get_relative_distance(degree) is None or get_chord_pattern(chord_type) is None:
+                raise Exception()
+            else:
+                degrees_and_types.append([degree, chord_type])
     return degrees_and_types
 
 
@@ -219,6 +227,15 @@ def get_timestamps_from_raw(raw_time_stamps):
     for timestamp in raw_time_stamps.split(' '):
         timestamps.append(float(timestamp))
     return timestamps
+
+
+def get_largest_num_of_json(json_dict):
+    max_num = 0
+    for info in json_dict:
+        current_no = info['no']
+        if current_no > max_num:
+            max_num = current_no
+    return max_num
 
 
 def time_stamps_convert(simple_ts, bpm):
@@ -236,6 +253,36 @@ def time_stamps_convert(simple_ts, bpm):
     return detailed_ts
 
 
+def get_guitar_str(code):
+    assert code in range(24, 32)
+    info_dict = {
+        24: 'Acoustic Guitar (nylon)',
+        25: 'Acoustic Guitar (steel)',
+        26: 'Electric Guitar (jazz)',
+        27: 'Electric Guitar (clean)',
+        28: 'Electric Guitar (muted)',
+        29: 'Overdriven Guitar',
+        30: 'Distortion Guitar',
+        31: 'Guitar harmonics'
+    }
+    return info_dict[code]
+
+
+def get_bass_str(code):
+    assert code in range(32, 40)
+    info_dict = {
+        32: 'Acoustic Bass',
+        33: 'Electric Bass (finger)',
+        34: 'Electric Bass (pick)',
+        35: 'Fretless Bass',
+        36: 'Slap Bass 1',
+        37: 'Slap Bass 2',
+        38: 'Synth Bass 1',
+        39: 'Synth Bass 2'
+    }
+    return info_dict[code]
+
+
 if __name__ == '__main__':
     # get_degrees_and_types_from_raw('I 5; II 5')
-    get_timestamps_from_raw('raw')
+    print(get_degrees_and_types_from_raw('I 5; II 5'))
