@@ -1,5 +1,6 @@
 from music.custom_elements.riff import parse_griff_json, parse_briff_json
 from music.custom_elements.drum_riff import parse_driff_json
+from music.pieces.phrase import parse_rhythm_phrase_json, parse_drum_phrase_json
 from music.custom_elements.toolkit import *
 
 
@@ -40,6 +41,41 @@ def set_used_riff_num_info(phrases_dict, riffs_dict):
         phrase_info['riffs_no'] = used_no
         phrase_info['raw_riffs_no'] = ' '.join([str(no) for no in used_no])
         phrases_dict['drum_phrase'][i] = phrase_info
+
+
+def set_used_phrase_num_info(tracks_dict, phrases_dict):
+    for i in range(len(tracks_dict)):
+        used_no = []
+        track_info = tracks_dict[i]
+
+        if track_info['is_drum']:
+            for used_phrase in track_info['phrases']:
+                for reference_phrase in phrases_dict['drum_phrase']:
+                    if parse_drum_phrase_json(used_phrase) == parse_drum_phrase_json(reference_phrase):
+                        used_no.append(reference_phrase['no'])
+            track_info['phrases_no'] = used_no
+            track_info['raw_phrases_no'] = ' '.join([str(no) for no in used_no])
+            tracks_dict[i] = track_info
+
+        else:
+            if track_info['instr_type'] == 'guitar':
+                for used_phrase in track_info['phrases']:
+                    for reference_phrase in phrases_dict['rhythm_guitar_phrase']:
+                        if parse_rhythm_phrase_json(used_phrase) == parse_rhythm_phrase_json(reference_phrase):
+                            used_no.append(reference_phrase['no'])
+                track_info['phrases_no'] = used_no
+                track_info['raw_phrases_no'] = ' '.join([str(no) for no in used_no])
+                tracks_dict[i] = track_info
+
+            else:
+                assert track_info['instr_type'] == 'bass'
+                for used_phrase in track_info['phrases']:
+                    for reference_phrase in phrases_dict['rhythm_bass_phrase']:
+                        if parse_rhythm_phrase_json(used_phrase) == parse_rhythm_phrase_json(reference_phrase):
+                            used_no.append(reference_phrase['no'])
+                track_info['phrases_no'] = used_no
+                track_info['raw_phrases_no'] = ' '.join([str(no) for no in used_no])
+                tracks_dict[i] = track_info
 
 
 def get_used_riffs_from_raw(raw_used_riffs):

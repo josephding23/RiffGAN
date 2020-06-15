@@ -154,6 +154,24 @@ class Track:
         assert os.path.exists(self.midi_path)
         play_music(self.midi_path)
 
+    def get_arrangement_str(self):
+        info_str = ''
+        for arrangement in self.arrangement:
+            info_str += str(arrangement[0]) + ' ' + str(arrangement[1]) + '; '
+        return info_str[:-2]
+
+    def get_bpm_info_str(self):
+        info_str = ''
+        for bpm_info in self.bpm_list:
+            info_str += str(bpm_info[0]) + ' ' + str(bpm_info[1]) + '; '
+        return info_str[:-2]
+
+    def get_tonality_info_str(self):
+        info_str = ''
+        for tonality_info in self.tonality_list:
+            info_str += str(tonality_info[0]) + ' ' + str(tonality_info[1][0]) + ' ' + str(tonality_info[1][1]) + '; '
+        return info_str[:-2]
+
     def export_json_dict(self):
         info_dict = {
             "name": self.name,

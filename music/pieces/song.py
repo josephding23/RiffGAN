@@ -200,34 +200,23 @@ class Song:
 
     def get_all_tracks(self):
         tracks_info = []
-        phrase_dict = self.get_all_phrases()
 
         for track in self.tracks:
             track_info = track.export_json_dict()
             if track.is_drum:
-                phrases_no = []
-                for phrase_in_track in track.phrases:
-                    assert isinstance(phrase_in_track, DrumPhrase)
-                    for reference_phrase in phrase_dict['drum_phrase']:
-                        if phrase_in_track == parse_drum_phrase_json(reference_phrase):
-                            phrases_no.append(reference_phrase['no'])
+                track_info['raw_bpm_info'] = track.get_bpm_info_str()
+                track_info['raw_arrangements'] = track.get_arrangement_str()
             else:
                 if track.instr_type == 'guitar':
-                    phrases_no = []
-                    for phrase_in_track in track.phrases:
-                        assert isinstance(phrase_in_track, RhythmPhrase)
-                        for reference_phrase in phrase_dict['rhythm_guitar_phrase']:
-                            if phrase_in_track == parse_rhythm_phrase_json(reference_phrase):
-                                phrases_no.append(reference_phrase['no'])
+                    track_info['raw_bpm_info'] = track.get_bpm_info_str()
+                    track_info['raw_arrangements'] = track.get_arrangement_str()
+                    track_info['raw_tonality_info'] = track.get_tonality_info_str()
                 else:
                     assert track.instr_type == 'bass'
-                    phrases_no = []
-                    for phrase_in_track in track.phrases:
-                        assert isinstance(phrase_in_track, RhythmPhrase)
-                        for reference_phrase in phrase_dict['rhythm_bass_phrase']:
-                            if phrase_in_track == parse_rhythm_phrase_json(reference_phrase):
-                                phrases_no.append(reference_phrase['no'])
-            track_info['phrases_no'] = phrases_no
+                    track_info['raw_bpm_info'] = track.get_bpm_info_str()
+                    track_info['raw_arrangements'] = track.get_arrangement_str()
+                    track_info['raw_tonality_info'] = track.get_tonality_info_str()
+
             tracks_info.append(track_info)
 
         return tracks_info

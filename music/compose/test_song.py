@@ -46,7 +46,7 @@ def test_song():
 
     track_guitar = Track(name="guitar",
                          bpm_list=[[0, 120]],
-                         tonality_list=[{}],
+                         tonality_list=[[0, ['G', 'major']]],
                          is_drum=False,
                          instr_type='guitar')
     track_guitar.set_phrases([phrase11])
@@ -63,7 +63,7 @@ def test_song():
 
     track_bass = Track(name="bass",
                        bpm_list=[[0, 120]],
-                       tonality_list=[{}],
+                       tonality_list=[[0, ['G', 'major']]],
                        is_drum=False,
                        instr_type='bass'
                        )
@@ -93,14 +93,7 @@ def test_song():
     song.set_tracks([track_guitar, track_bass, track_drum])
 
     song.save_json()
-
-    riffs_dict = song.get_all_riffs()
-    phrases_dict = song.get_all_phrases()
-
-    print(json.dumps(riffs_dict, indent=2))
-
-    set_used_riff_num_info(phrases_dict, riffs_dict)
-    print(json.dumps(phrases_dict, indent=2))
+    print(json.dumps(song.get_all_tracks(), indent=2))
 
 
 def song_from_json():

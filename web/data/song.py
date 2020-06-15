@@ -10,3 +10,4 @@ phrases = song.get_all_phrases()
 tracks = song.get_all_tracks()
 
 set_used_riff_num_info(phrases, riffs)
+set_used_phrase_num_info(tracks, phrases)

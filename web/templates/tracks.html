@@ -18,14 +18,54 @@
         <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
             {% for track in tracks %}
                 <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
-                    <div class="panel panel-default" style="max-height: 520px; min-height: 520px; overflow: scroll;">
+                    <div class="panel panel-default" style="max-height: 560px; min-height: 560px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>Track {{ track.name }}</h3>
                       </div>
                         <ul class="list-group">
                           <li class="list-group-item">
                               <h4 class="list-group-item-heading">
-                                  Phrase Info:
+                                  Is Drum: {{ track.is_drum }}
+                              </h4>
+
+                          </li>
+                            {% if not track.is_drum %}
+                              <li class="list-group-item">
+                                  <h4 class="list-group-item-heading">
+                                      Instrument Type: {{ track.instr_type }}
+                                  </h4>
+                              </li>
+                            {% endif %}
+
+                           <li class="list-group-item">
+                              <h4 class="list-group-item-heading">
+                                  BPM Info:</h4>
+                                {% for bpm_info in track.bpm_list %}
+                                  <button class="btn degree_type_btn" type="button"
+                                          style="
+                                          height: 30px; width: 60px; border-radius: 13px; padding: 2px; margin: 2px">
+                                      {{ bpm_info.0 }} | {{ bpm_info.1 }}
+                                  </button>
+                                {% endfor %}
+                          </li>
+
+                            {% if not track.is_drum %}
+                          <li class="list-group-item">
+                              <h4 class="list-group-item-heading">
+                                  Tonality Info:</h4>
+                                {% for tonality in track.tonality_list %}
+                                  <button class="btn degree_type_btn" type="button"
+                                          style="
+                                          height: 30px; width: 80px; border-radius: 13px; padding: 2px; margin: 2px">
+                                      {{ tonality.0 }} | {{ tonality.1.0 }} {{ tonality.1.1 }}
+                                  </button>
+                                {% endfor %}
+                          </li>
+                          {% endif %}
+
+                          <li class="list-group-item">
+                              <h4 class="list-group-item-heading">
+                                  Used Phrases:
                               </h4>
                               {% for phrase_no in track.phrases_no %}
                                   <button class="btn" type="button"
@@ -52,12 +92,105 @@
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                 <div class="btn-group btn-group-justified" role="group"
                                     style="padding-left: 10px; padding-right: 20px;">
-                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_track%s_modal" % track.name}}" >Edit</button>
+                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_track%d_modal" % loop.index}}" >Edit</button>
                                 </div>
+
+                                <div class="modal fade" id="{{ "edit_track%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog" style="align-content: center">
+                                        <div class="modal-content" style="align-content: center">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h3 class="modal-title" id="myModalLabel">Edit Track {{ track.name }}</h3>
+                                            </div>
+
+                                            <form method="post" action="{{ url_for('tracks.edit_track', index=loop.index )}}">
+                                                <div class="modal-body">
+
+                                                    <div class="row">
+                                                        <div class="col-md-8 col-md-offset-2">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_is_drum_input" style="font-weight: normal">Is Drum</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.is_drum }}"
+                                                                       id="edit_is_drum_input" name="edit_is_drum_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-8 col-md-offset-2">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_instr_type_input" style="font-weight: normal">Instrument Type</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.instr_type }}"
+                                                                       id="edit_instr_type_input" name="edit_instr_type_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-10 col-md-offset-1">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_bpm_info_input" style="font-weight: normal">BPM Info</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.raw_bpm_info }}"
+                                                                       id="edit_bpm_info_input" name="edit_bpm_info_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-10 col-md-offset-1">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_tonality_info_input" style="font-weight: normal">Tonality Info</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.raw_tonality_info }}"
+                                                                       id="edit_tonality_info_input" name="edit_tonality_info_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-10 col-md-offset-1">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_used_phrases_input" style="font-weight: normal">Used Phrases</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.raw_phrases_no }}"
+                                                                       id="edit_used_phrases_input" name="edit_used_phrases_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-10 col-md-offset-1">
+                                                            <div class="form-group">
+                                                                <h4><label for="edit_arrangements_input" style="font-weight: normal"> Arrangements</label></h4>
+                                                                <input type="text" class="form-control" value="{{ track.raw_arrangements }}"
+                                                                       id="edit_arrangements_input" name="edit_arrangements_input">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="modal-footer">
+                                                        <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                                        <div class="btn-group btn-group-justified" role="group"
+                                                            style="padding-left: 25px; padding-right: 15px">
+                                                           <input class="btn btn-primary" type="submit" value="Save">
+                                                        </div>
+                                                        <div class="btn-group btn-group-justified" role="group"
+                                                            style="padding-left: 15px; padding-right: 25px">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                             </div>
+                                            </form>
+
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal -->
+                                  </div>
 
                                 <div class="btn-group btn-group-justified" role="group"
                                      style="padding-left: 20px; padding-right: 10px;">
-                                    <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    <form method="post" action="{{ url_for('tracks.delete_track', index=loop.index) }}">
+                                        <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    </form>
                                 </div>
                             </div>
 

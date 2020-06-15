@@ -61,7 +61,7 @@
                                   <button class="btn degree_type_btn" type="button"
                                           style="
                                           height: 30px; width: 50px; border-radius: 13px; padding: 2px; margin: 2px">
-                                      {{ arrangement.0 }}{{ arrangement.1 }}
+                                      {{ arrangement.0 }} {{ arrangement.1 }}
                                   </button>
                                 {% endfor %}
                           </li>
@@ -71,7 +71,7 @@
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                 <div class="btn-group btn-group-justified" role="group"
                                     style="padding-left: 10px; padding-right: 20px;">
-                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_phrase%d_modal" % phrase.no}}" >Edit</button>
+                                  <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_phrase%d_modal" % loop.index}}" >Edit</button>
                                 </div>
 
                                 <div class="modal fade" id="{{ "edit_phrase%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">

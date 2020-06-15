@@ -114,7 +114,7 @@ def edit_riff(riff_type, index):
                 'length': length,
                 "patterns": patterns_dict
             }
-            return redirect(url_for('riffs.get_riffs', riff_type=riff_type, riffs=riffs[riff_type]))
+            return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
 @riffs_bp.route('/new/<riff_type>', methods=['POST'])
@@ -189,4 +189,4 @@ def new_riff(riff_type):
                 "patterns": patterns_dict
             })
 
-        return redirect(url_for('riffs.get_riffs', riff_type=riff_type, riffs=riffs[riff_type]))
+        return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
