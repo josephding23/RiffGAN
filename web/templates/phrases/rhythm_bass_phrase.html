@@ -21,9 +21,9 @@
             <li role="presentation"><a href="{{ url_for('phrases.get_phrases', phrase_type='drum_phrase') }}">Drum Phrases</a></li>
         </ul>
 
-        <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
+        <div class="row" style="margin-top: 15px; margin-left: 40px; margin-right: 40px">
             {% for phrase in phrases %}
-                <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="max-height: 560px; min-height: 560px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>Rhythm Bass Phrase {{ phrase.no }}</h3>
@@ -194,7 +194,7 @@
                     </div>
                 </div>
             {% endfor %}
-                <div class="col-lg-3">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:560px; max-height: 560px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>New Rhythm Bass Phrase</h3>
@@ -250,9 +250,8 @@
                                                             <div class="form-group">
                                                                 <h4><label for="new_instr_input" style="font-weight: normal">Instrument</label></h4>
                                                                 <select class="form-control" id="new_instr_input" name="new_instr_input">
-                                                                    <option></option>
+                                                                    <option value=32>Acoustic Bass</option>
                                                                     {% for code, name in {
-                                                                            32: 'Acoustic Bass',
                                                                             33: 'Electric Bass (finger)',
                                                                             34: 'Electric Bass (pick)',
                                                                             35: 'Fretless Bass',

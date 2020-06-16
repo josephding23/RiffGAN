@@ -21,9 +21,9 @@
             <li role="presentation" class="active"><a href="{{ url_for('phrases.get_phrases', phrase_type='drum_phrase') }}">Drum Phrases</a></li>
         </ul>
 
-        <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
+        <div class="row" style="margin-top: 15px; margin-left: 40px; margin-right: 40px">
             {% for phrase in phrases %}
-                <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="max-height: 480px; min-height: 480px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>Drum Phrase {{ phrase.no }}</h3>
@@ -152,7 +152,7 @@
                     </div>
                 </div>
             {% endfor %}
-                <div class="col-lg-3">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:480px; max-height: 480px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>New Drum Phrase</h3>

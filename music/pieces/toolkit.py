@@ -110,3 +110,46 @@ def get_available_riff_no(riff_dict, riff_type):
     for riff_info in riff_dict[riff_type]:
         available_no_list.append(riff_info['no'])
     return available_no_list
+
+
+def get_available_phrase_no(phrase_dict, phrase_type):
+    available_no_list = []
+    for phrase_info in phrase_dict[phrase_type]:
+        available_no_list.append(phrase_info['no'])
+    return available_no_list
+
+
+def get_bpm_info_from_raw(raw_bpm_info):
+    bpm_info_list = []
+    for bpm_info in raw_bpm_info.split('; '):
+        start_measure = int(bpm_info.split(' ')[0])
+        bpm = int(bpm_info.split(' ')[1])
+
+        bpm_info_list.append([start_measure, bpm])
+    return bpm_info_list
+
+
+def get_tonality_info_from_raw(raw_tonality_info):
+    tonality_info_list = []
+    for tonality_info in raw_tonality_info.split('; '):
+        start_measure = int(tonality_info[0])
+        tonality = tonality_info[1]
+
+        tonality_info_list.append([start_measure, tonality])
+    return tonality_info_list
+
+
+def get_used_phrases_from_raw(raw_used_phrases):
+    used_phrases = []
+    for used_phrase in raw_used_phrases.split(' '):
+        used_phrases.append(int(used_phrase))
+    return used_phrases
+
+
+def get_phrase_arrangements_from_raw(raw_arrangements):
+    arrangements = []
+    for arrangement in raw_arrangements.split('; '):
+        phrase_no = int(arrangement.split(' ')[0])
+        start_measure = int(arrangement.split(' ')[1])
+        arrangements.append([phrase_no, start_measure])
+    return arrangements

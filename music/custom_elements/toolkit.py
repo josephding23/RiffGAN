@@ -293,6 +293,31 @@ def get_all_used_riffs(phrase_dict, phrase_type):
     return used_riffs_no
 
 
+def get_all_used_phrases(track_dict, track_type):
+    used_riffs_no = []
+    track_type_transform = {
+        'drum': {
+            'is_drum': True,
+            'instr_type': None
+        },
+        'guitar': {
+            'is_drum': False,
+            'instr_type': 'guitar'
+        },
+        'bass': {
+            'is_drum': False,
+            'instr_type': 'bass'
+        }
+    }
+    for track_info in track_dict:
+        if track_info['is_drum'] == track_type_transform[track_type]['is_drum'] and track_info['instr_type'] == track_type_transform[track_type]['instr_type']:
+            used_phrases = track_info['phrases_no']
+            for riff_no in used_phrases:
+                if riff_no not in used_riffs_no:
+                    used_riffs_no.append(riff_no)
+    return used_riffs_no
+
+
 if __name__ == '__main__':
     # get_degrees_and_types_from_raw('I 5; II 5')
     print(note_name_to_num('ae'))

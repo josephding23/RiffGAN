@@ -1,27 +1,34 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from music.pieces.song import *
 from music.pieces.toolkit import set_used_riff_num_info, get_available_riff_no
-from web.data.song import riffs, phrases
+from web.data.song import riffs, phrases, tracks
 
 phrases_bp = Blueprint('phrases', __name__, template_folder='templates', static_folder='static', url_prefix='/phrases')
 
 
 @phrases_bp.route('/<phrase_type>', methods=['GET'])
 def get_phrases(phrase_type):
-    if phrase_type == 'rhythm_guitar_phrase':
-        return render_template('phrases/rhythm_guitar_phrase.html',
-                               phrases=phrases['rhythm_guitar_phrase'], phrase_type='rhythm_guitar_phrase')
-    elif phrase_type == 'rhythm_bass_phrase':
-        return render_template('phrases/rhythm_bass_phrase.html',
-                               phrases=phrases['rhythm_bass_phrase'], phrase_type='rhythm_bass_phrase')
-    else:
-        assert phrase_type == 'drum_phrase'
-        return render_template('phrases/drum_phrase.html',
-                               phrases=phrases['drum_phrase'], phrase_type='drum_phrase')
+    return render_template('phrases/' + phrase_type + '.html',
+                           phrases=phrases[phrase_type], phrase_type=phrase_type)
 
 
 @phrases_bp.route('/delete/<phrase_type>/<index>', methods=['POST'])
 def delete_phrase(phrase_type, index):
+    according_phrases_dict = {
+        'rhythm_guitar_phrase': 'guitar',
+        'rhythm_bass_phrase': 'bass',
+        'drum_phrase': 'drum'
+    }
+    phrase_no_to_delete = phrases[phrase_type][int(index) - 1]['no']
+
+    phrase_no_in_use = get_all_used_phrases(tracks, according_phrases_dict[phrase_type])
+    print(phrase_no_in_use)
+
+    if phrase_no_to_delete in phrase_no_in_use:
+        error = 'Phrase you tend to delete is in use.'
+        return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type], phrase_type=phrase_type,
+                               error=error)
+
     phrases[phrase_type].pop(int(index)-1)
     return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
@@ -46,8 +53,7 @@ def edit_phrase(phrase_type, index):
                 length = int(raw_length)
             except Exception:
                 error = 'Length must be integer'
-                return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
-                                       phrase_type=phrase_type, error=error)
+
 
             try:
                 bpm = float(raw_bpm)

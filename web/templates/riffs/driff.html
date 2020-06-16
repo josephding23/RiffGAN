@@ -22,9 +22,9 @@
           <li role="presentation" class="active"><a href="{{ url_for('riffs.get_riffs', riff_type='driff') }}">Drum</a></li>
         </ul>
 
-        <div class="row" style="margin-top: 15px; margin-left: 15px; margin-right: 15px">
+        <div class="row" style="margin-top: 15px; margin-left: 40px; margin-right: 40px">
             {% for driff in riffs %}
-                <div class="col-sm-3" style="margin-left: 10px; margin-right: 10px;">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="max-height: 540px; min-height: 540px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>Drum Riff {{ driff.no }}</h3>
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             {% endfor %}
-                <div class="col-lg-3">
+                <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:560px; max-height: 560px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>New Drum Riff</h3>

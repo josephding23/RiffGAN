@@ -5,17 +5,10 @@ from web.data.song import phrases, riffs
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
 
+
 @riffs_bp.route('/<riff_type>', methods=['GET'])
 def get_riffs(riff_type):
-    if riff_type == 'griff':
-        return render_template('riffs/griff.html', riffs=riffs['griff'], riff_type='griff')
-
-    elif riff_type == 'briff':
-        return render_template('riffs/briff.html', riffs=riffs['briff'], riff_type='briff')
-
-    else:
-        assert riff_type == 'driff'
-        return render_template('riffs/driff.html', riffs=riffs['driff'], riff_type='driff')
+    return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type)
 
 
 @riffs_bp.route('/delete/<riff_type>/<index>', methods=['POST'])
