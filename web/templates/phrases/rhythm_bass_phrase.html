@@ -24,10 +24,28 @@
         <div class="row" style="margin-top: 15px; margin-left: 40px; margin-right: 40px">
             {% for phrase in phrases %}
                 <div class="col-md-3">
-                    <div class="panel panel-default" style="max-height: 560px; min-height: 560px; overflow: scroll;">
+                    <div class="panel panel-default" style="max-height: 570px; min-height: 570px; overflow: scroll;">
+
                       <div class="panel-heading">
-                          <h3>Rhythm Bass Phrase {{ phrase.no }}</h3>
+                          <div class="row">
+                              <div class="col-md-10">
+                                  <h3>Rhythm Bass Phrase {{ phrase.no }}</h3>
+                              </div>
+                              <div class="col-md-2" style=''>
+                                  <div class="row">
+                                      <form method="post" action="{{ url_for('phrases.play_phrase', phrase_type=phrase_type, index=loop.index) }}">
+                                          <input type="submit" id="play" class="btn btn-default" value="Play" style="margin-bottom: 5px">
+                                      </form>
+                                  </div>
+                                  <div class="row">
+                                      <form method="post" action="{{ url_for('phrases.stop_phrase', phrase_type=phrase_type) }}">
+                                          <input type="submit" id="stop" class="btn btn-default" value="Stop">
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
+
                         <ul class="list-group">
                           <li class="list-group-item">
                               <h4>Length: {{ phrase.length }}</h4>

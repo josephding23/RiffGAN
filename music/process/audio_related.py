@@ -68,3 +68,17 @@ def play_music(path):
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         clock.tick(30)
+
+
+def play_music_without_init(path):
+    clock = pygame.time.Clock()
+
+    try:
+        pygame.mixer.music.load(path)
+    except :
+        import traceback
+        print(traceback.format_exc())
+
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        clock.tick(30)

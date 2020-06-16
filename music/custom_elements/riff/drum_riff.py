@@ -1,5 +1,4 @@
-from music.custom_elements.toolkit import *
-from util.npy_related import *
+from music.custom_elements.riff.toolkit import *
 import pretty_midi
 from music.process.audio_related import play_music
 import os
@@ -30,7 +29,7 @@ class DrumRiff:
         }
 
         self.pm = None
-        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
+        self.save_dir = '../data/custom_element/drum_riff/'
         self.midi_path = ''
 
     def __eq__(self, other):

@@ -1,9 +1,19 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from music.pieces.song import *
-from music.pieces.toolkit import set_used_riff_num_info, get_available_riff_no
 from web.data.song import riffs, phrases, tracks
+from music.custom_elements.riff.toolkit import *
+from music.pieces.phrase.toolkit import *
+from music.pieces.track.toolkit import *
+import pygame
+
 
 phrases_bp = Blueprint('phrases', __name__, template_folder='templates', static_folder='static', url_prefix='/phrases')
+
+freq = 44100
+bitsize = -16
+channels = 2
+buffer = 1024
+pygame.mixer.init(freq, bitsize, channels, buffer)
+pygame.mixer.music.set_volume(1)
 
 
 @phrases_bp.route('/<phrase_type>', methods=['GET'])
@@ -33,6 +43,40 @@ def delete_phrase(phrase_type, index):
     return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
 
+@phrases_bp.route('/play/<phrase_type>/<index>', methods=['POST'])
+def play_phrase(phrase_type, index):
+    if request.method == 'POST':
+
+        phrase_info = phrases[phrase_type][int(index)-1]
+        refresh_riff_info(phrase_info, phrase_type, riffs)
+
+        if phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase']:
+            phrase = parse_rhythm_phrase_json(phrase_info)
+            phrase.add_riffs_to_pm()
+            phrase.save_midi(f'temp_{phrase_type}_{index}')
+            phrase.play_with_no_init()
+
+        else:
+            assert phrase_type == 'drum_phrase'
+            phrase = parse_drum_phrase_json(phrase_info)
+            phrase.add_riffs_to_pm()
+            phrase.save_midi(f'temp_{phrase_type}_{index}')
+            phrase.play_with_no_init()
+
+        return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
+
+
+@phrases_bp.route('/stop/<phrase_type>', methods=['POST'])
+def stop_phrase(phrase_type):
+    if request.method == 'POST':
+
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.stop()
+
+        return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
+
+
 @phrases_bp.route('/edit/<phrase_type>/<index>', methods=['POST'])
 def edit_phrase(phrase_type, index):
     according_riffs_dict = {
@@ -53,7 +97,8 @@ def edit_phrase(phrase_type, index):
                 length = int(raw_length)
             except Exception:
                 error = 'Length must be integer'
-
+                return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
+                                       phrase_type=phrase_type, error=error)
 
             try:
                 bpm = float(raw_bpm)
@@ -89,7 +134,6 @@ def edit_phrase(phrase_type, index):
                         error = f'Riff No.{riff_no} is not available.'
                         return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                                phrase_type=phrase_type, error=error)
-
                 print(get_available_riff_no(riffs, 'griff'))
             except Exception:
                 error = 'Invalid used riffs format'
@@ -116,6 +160,10 @@ def edit_phrase(phrase_type, index):
                 'arrangements': arrangements,
                 'raw_arrangements': raw_arrangements
             }
+
+            refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
+
+            return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
         else:
             assert phrase_type == 'drum_phrase'
@@ -169,7 +217,9 @@ def edit_phrase(phrase_type, index):
                 'raw_arrangements': raw_arrangements
             }
 
-        return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
+            refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
+
+            return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
 
 @phrases_bp.route('/new/<phrase_type>', methods=['POST'])
@@ -243,7 +293,7 @@ def new_phrase(phrase_type):
                 return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                        phrase_type=phrase_type, error=error)
 
-            phrases[phrase_type].append({
+            phrase_info = {
                 'no': get_largest_num_of_json(phrases[phrase_type]) + 1,
                 'length': length,
                 'bpm': bpm,
@@ -255,7 +305,11 @@ def new_phrase(phrase_type):
                 'raw_riffs_no': raw_used_riffs,
                 'arrangements': arrangements,
                 'raw_arrangements': raw_arrangements
-            })
+            }
+
+            refresh_riff_info(phrase_info, phrase_type, riffs)
+
+            phrases[phrase_type].append(phrase_info)
 
         else:
             assert phrase_type == 'drum_phrase'
@@ -299,7 +353,7 @@ def new_phrase(phrase_type):
                 return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                        phrase_type=phrase_type, error=error)
 
-            phrases[phrase_type].append({
+            phrase_info = {
                 'no': get_largest_num_of_json(phrases[phrase_type]) + 1,
                 'length': length,
                 'bpm': bpm,
@@ -307,7 +361,10 @@ def new_phrase(phrase_type):
                 'raw_riffs_no': raw_used_riffs,
                 'arrangements': arrangements,
                 'raw_arrangements': raw_arrangements
-            })
+            }
 
+            refresh_riff_info(phrase_info, phrase_type, riffs)
+
+            phrases[phrase_type].append(phrase_info)
 
         return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))

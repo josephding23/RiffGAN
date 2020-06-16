@@ -1,8 +1,8 @@
-from music.custom_elements.toolkit import *
+from music.custom_elements.riff.toolkit import *
 from util.npy_related import *
 import json
 import os
-from music.process.audio_related import play_music
+from music.process.audio_related import play_music, play_music_without_init
 
 
 class Riff:
@@ -65,6 +65,10 @@ class Riff:
         assert self.midi_path is not '' and os.path.exists(self.midi_path)
         play_music(self.midi_path)
 
+    def play_with_no_init(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music_without_init(self.midi_path)
+
     def export_json_dict(self):
         info_dict = {
             "length": self.measure_length,
@@ -78,69 +82,3 @@ class Riff:
         with open(self.save_dir + 'json/' + name + '.json', 'w') as f:
             json.dump(self.export_json_dict(), f)
 
-
-class GuitarRiff(Riff):
-    def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
-        Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
-        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/guitar_riff/'
-        '''
-        24 Acoustic Guitar (nylon)
-        25 Acoustic Guitar (steel)
-        26 Electric Guitar (jazz)
-        27 Electric Guitar (clean)
-        28 Electric Guitar (muted)
-        29 Overdriven Guitar
-        30 Distortion Guitar
-        31 Guitar harmonics
-        '''
-
-
-class BassRiff(Riff):
-    def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
-        Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
-        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/bass_riff/'
-
-        '''
-        32 Acoustic Bass
-        33 Electric Bass (finger)
-        34 Electric Bass (pick)
-        35 Fretless Bass
-        36 Slap Bass 1
-        37 Slap Bass 2
-        38 Synth Bass 1
-        39 Synth Bass 2
-        '''
-
-
-def create_griff_from_json(path):
-    with open(path, 'r') as f:
-        riff_info = json.loads(f.read())
-        return parse_griff_json(riff_info)
-
-
-def parse_griff_json(riff_info):
-    return GuitarRiff(
-        measure_length=riff_info['length'],
-        degrees_and_types=riff_info['degrees_and_types'],
-        time_stamps=riff_info['time_stamps']
-    )
-
-
-def create_briff_from_json(path):
-    with open(path, 'r') as f:
-        riff_info = json.loads(f.read())
-        return parse_briff_json(riff_info)
-
-
-def parse_briff_json(riff_info):
-    return BassRiff(
-        measure_length=riff_info['length'],
-        degrees_and_types=riff_info['degrees_and_types'],
-        time_stamps=riff_info['time_stamps']
-    )
-
-
-def generate_briff_from_griff(guitar_riff):
-    assert isinstance(guitar_riff, GuitarRiff)
-    new_degrees_and_types = [(degree_and_type[0], '') for degree_and_type in guitar_riff.degrees_and_types]
-    return BassRiff(guitar_riff.measure_length, new_degrees_and_types, guitar_riff.time_stamps, guitar_riff.velocity)

@@ -1,7 +1,5 @@
-from music.custom_elements.riff import *
-from music.pieces.toolkit import *
-from music.pieces.phrase import *
-from music.custom_elements.drum_riff import *
+from music.pieces.phrase.drum_phrase import *
+from music.pieces.phrase.rhythm_phrase import *
 import pretty_midi
 
 
@@ -84,7 +82,7 @@ class Track:
             for arrange in phrase.arrangement:
                 riff = phrase.riffs[arrange]
                 for part, pattern in riff.patterns.items():
-                    if pattern is None:
+                    if pattern is '':
                         continue
                     else:
                         assert isinstance(pattern, str)

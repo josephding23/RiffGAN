@@ -1,9 +1,18 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from music.pieces.song import *
-from music.custom_elements.toolkit import get_all_used_riffs
 from web.data.song import phrases, riffs
+from music.custom_elements.riff.toolkit import *
+from music.pieces.phrase.toolkit import *
+from music.custom_elements.riff.drum_riff import examine_drum_patterns
+import pygame
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
+
+freq = 44100
+bitsize = -16
+channels = 2
+buffer = 1024
+pygame.mixer.init(freq, bitsize, channels, buffer)
+pygame.mixer.music.set_volume(1)
 
 
 @riffs_bp.route('/<riff_type>', methods=['GET'])
@@ -39,21 +48,32 @@ def play_riff(riff_type, index):
         if riff_type == 'griff':
             riff = parse_griff_json(riff_info)
             riff.add_notes_to_pm('E2', 120, 27)
-            riff.save_midi(f'temp_{riff_type}_{index}.mid')
-            riff.play_it()
+            riff.save_midi(f'temp_{riff_type}_{index}')
+            riff.play_with_no_init()
 
         elif riff_type == 'briff':
             riff = parse_briff_json(riff_info)
             riff.add_notes_to_pm('E1', 120, 27)
-            riff.save_midi(f'temp_{riff_type}_{index}.mid')
-            riff.play_it()
+            riff.save_midi(f'temp_{riff_type}_{index}')
+            riff.play_with_no_init()
 
         else:
             assert riff_type == 'driff'
             riff = parse_driff_json(riff_info)
             riff.add_all_patterns_to_pm(120)
-            riff.save_midi(f'temp_{riff_type}_{index}.mid')
-            riff.play_it()
+            riff.save_midi(f'temp_{riff_type}_{index}')
+            riff.play_with_no_init()
+
+        return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
+
+
+@riffs_bp.route('/stop/<riff_type>', methods=['POST'])
+def stop_riff(riff_type):
+    if request.method == 'POST':
+
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.stop()
 
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
@@ -75,7 +95,6 @@ def edit_riff(riff_type, index):
 
             try:
                 degrees_and_types = get_degrees_and_types_from_raw(raw_degrees_and_types)
-                print(degrees_and_types)
             except Exception:
                 error = 'Invalid Degrees & Types format.'
                 return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type,
@@ -83,7 +102,6 @@ def edit_riff(riff_type, index):
 
             try:
                 timestamps = get_timestamps_from_raw(raw_timestamps)
-                print(timestamps)
             except Exception:
                 error = 'Invalid Timestamps format.'
                 return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type,
@@ -98,6 +116,7 @@ def edit_riff(riff_type, index):
                     'raw_timestamps': raw_timestamps
                 }
 
+            refresh_all_phrases(phrases, riffs)
             return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
         else:
@@ -134,6 +153,9 @@ def edit_riff(riff_type, index):
                 'length': length,
                 "patterns": patterns_dict
             }
+
+            refresh_all_phrases(phrases, riffs)
+
             return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 

@@ -1,4 +1,6 @@
-from music.pieces.track import *
+from music.pieces.track.track import *
+from music.pieces.phrase.rhythm_phrase import *
+from music.pieces.phrase.drum_phrase import *
 import pretty_midi
 from music.process.audio_related import *
 import os
@@ -39,7 +41,7 @@ class Song:
                     for arrange in phrase.arrangement:
                         riff = phrase.riffs[arrange]
                         for part, pattern in riff.patterns.items():
-                            if pattern is None:
+                            if pattern is '':
                                 continue
                             else:
                                 assert isinstance(pattern, str)
@@ -156,7 +158,7 @@ class Song:
                                 briff_info = riff.export_json_dict()
                                 briff_info['no'] = len(riffs_dict['briff']) + 1
                                 briff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
-                                briff_info['raw_timestamps'] = riff.get_degrees_and_types_str()
+                                briff_info['raw_timestamps'] = riff.get_timestamps_str()
                                 riffs_dict['briff'].append(briff_info)
         return riffs_dict
 

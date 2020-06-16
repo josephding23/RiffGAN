@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from music.custom_elements.toolkit import *
+from music.custom_elements.riff.toolkit import *
 from util.npy_related import plot_data
 
 

@@ -318,6 +318,13 @@ def get_all_used_phrases(track_dict, track_type):
     return used_riffs_no
 
 
+def get_riff_of_no(riff_dict, riff_type, no):
+    for riff_info in riff_dict[riff_type]:
+        current_no = riff_info['no']
+        if current_no == no:
+            return riff_info
+
+
 if __name__ == '__main__':
     # get_degrees_and_types_from_raw('I 5; II 5')
     print(note_name_to_num('ae'))
