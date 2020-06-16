@@ -26,9 +26,20 @@
             {% for riff in riffs %}
                 <div class="col-md-3">
                     <div class="panel panel-default" style="max-height: 520px; min-height: 520px; overflow: scroll;">
+
                       <div class="panel-heading">
-                          <h3>Guitar Riff {{ riff.no }}</h3>
+                          <div class="row">
+                              <div class="col-md-8">
+                                  <h3>Guitar Riff {{ riff.no }}</h3>
+                              </div>
+                              <div class="col-md-4" style="margin-top: 13px">
+                                  <form method="post" action="{{ url_for('riffs.play_riff', riff_type=riff_type, index=loop.index) }}">
+                                      <input type="submit" id="play" class="btn btn-default" value="Play">
+                                  </form>
+                              </div>
+                          </div>
                       </div>
+
                         <ul class="list-group">
                           <li class="list-group-item">
                               <h4>Length: {{ riff.length }}</h4>

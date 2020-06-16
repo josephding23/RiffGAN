@@ -31,6 +31,33 @@ def delete_riff(riff_type, index):
     return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
+@riffs_bp.route('/play/<riff_type>/<index>', methods=['POST'])
+def play_riff(riff_type, index):
+    if request.method == 'POST':
+        riff_info = riffs[riff_type][int(index)-1]
+
+        if riff_type == 'griff':
+            riff = parse_griff_json(riff_info)
+            riff.add_notes_to_pm('E2', 120, 27)
+            riff.save_midi(f'temp_{riff_type}_{index}.mid')
+            riff.play_it()
+
+        elif riff_type == 'briff':
+            riff = parse_briff_json(riff_info)
+            riff.add_notes_to_pm('E1', 120, 27)
+            riff.save_midi(f'temp_{riff_type}_{index}.mid')
+            riff.play_it()
+
+        else:
+            assert riff_type == 'driff'
+            riff = parse_driff_json(riff_info)
+            riff.add_all_patterns_to_pm(120)
+            riff.save_midi(f'temp_{riff_type}_{index}.mid')
+            riff.play_it()
+
+        return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
+
+
 @riffs_bp.route('/edit/<riff_type>/<index>', methods=['POST'])
 def edit_riff(riff_type, index):
     if request.method == 'POST':
