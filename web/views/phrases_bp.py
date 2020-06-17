@@ -162,7 +162,7 @@ def edit_phrase(phrase_type, index):
             }
 
             refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
-
+            refresh_all_tracks(tracks, phrases)
             return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
         else:
@@ -218,7 +218,7 @@ def edit_phrase(phrase_type, index):
             }
 
             refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
-
+            refresh_all_tracks(tracks, phrases)
             return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
 

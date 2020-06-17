@@ -9,13 +9,26 @@ import os
 class Song:
     def __init__(self, name):
         self.name = name
+        self.songwriter = ''
+        self.genre = ''
+
         self.tracks = []
+        self.excluded_tracks_index = []
         self.pm = None
 
         self.save_dir = '/PycharmProjects/RiffGAN/data/pieces/songs/'
         self.midi_path = self.save_dir + 'midi/' + self.name + '.mid'
         self.json_path = self.save_dir + 'json/' + self.name + '.json'
         self.wav_path = self.save_dir + 'audio/' + self.name + '.wav'
+
+    def set_writer(self, writer):
+        self.songwriter = writer
+
+    def set_genre(self, genre):
+        self.genre = genre
+
+    def set_excluded_tracks_index(self, excluded_tracks_index):
+        self.excluded_tracks_index = excluded_tracks_index
 
     def add_track(self, track):
         assert isinstance(track, Track)
@@ -26,7 +39,9 @@ class Song:
 
     def add_tracks_to_pm(self):
         self.pm = pretty_midi.PrettyMIDI()
-        for track in self.tracks:
+        for i, track in enumerate(self.tracks):
+            if i in self.excluded_tracks_index:
+                continue
             instr = pretty_midi.Instrument(program=0, name=track.name, is_drum=track.is_drum)
 
             if track.is_drum:
@@ -110,6 +125,10 @@ class Song:
         assert os.path.exists(self.midi_path)
         play_music(self.midi_path)
 
+    def play_with_no_init(self):
+        assert os.path.exists(self.midi_path)
+        play_music_without_init(self.midi_path)
+
     def export_wav(self):
         assert os.path.exists(self.midi_path)
         export_as_wav(self.midi_path, self.wav_path)
@@ -121,7 +140,10 @@ class Song:
     def export_json_dict(self):
         info_dict = {
             "name": self.name,
-            "tracks": [track.export_json_dict() for track in self.tracks]
+            'songwriter': self.songwriter,
+            'genre': self.genre,
+            "tracks": [track.export_json_dict() for track in self.tracks],
+            'excluded_track_index': self.excluded_tracks_index
         }
         return info_dict
 
@@ -232,6 +254,9 @@ def create_song_drom_json(path):
 
 def parse_song_json(song_info):
     song = Song(song_info['name'])
+    song.set_writer(song_info['songwriter'])
+    song.set_genre(song_info['genre'])
+    song.set_excluded_tracks_index(song_info['excluded_track_index'])
     song.set_tracks([parse_track_json(track_info) for track_info in song_info['tracks']])
 
     return song

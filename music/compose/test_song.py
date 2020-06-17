@@ -1,4 +1,4 @@
-from music.pieces.song import *
+from music.pieces.song.song import *
 
 
 def test_griff():
@@ -90,10 +90,11 @@ def test_song():
     track_drum.set_arrangement([[0, 0], [0, 8]])
 
     song = Song("test_song")
+    song.set_writer('troodeec')
+    song.set_genre('Grunge')
     song.set_tracks([track_guitar, track_bass, track_drum])
 
     song.save_json()
-    print(json.dumps(song.get_all_tracks(), indent=2))
 
 
 def song_from_json():

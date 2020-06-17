@@ -101,7 +101,7 @@ def refresh_phrase_info(track_info, phrase_dict):
                 phrase = get_phrase_of_no(phrase_dict, 'rhythm_bass_phrase', phrase_no)
                 phrase_list.append(phrase)
 
-    phrase_list['phrases'] = phrase_list
+    track_info['phrases'] = phrase_list
 
 
 def refresh_all_tracks(tracks, phrases):

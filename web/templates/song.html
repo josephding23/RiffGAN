@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %}Song{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Error!</strong> {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="container-fluid align-center">
+        <div class="row" style="margin-top: 15px; margin-left: 40px; margin-right: 40px">
+            <div class="col-md-offset-3 col-md-6">
+
+            <div class="panel panel-default">
+              <div class="panel-heading" style="text-align: center;" >
+                <h2>Song {{ song.name }}</h2>
+              </div>
+
+                <ul class="list-group">
+                  <li class="list-group-item">
+                      <h4 class="list-group-item-heading" style="padding: 5px">
+                          Songwriter: {{ song.songwriter }}
+                      </h4>
+                  </li>
+
+                    <li class="list-group-item">
+                      <h4 class="list-group-item-heading" style="padding: 5px">
+                          Genre: {{ song.genre }}
+                      </h4>
+                  </li>
+                </ul>
+
+                <form method="post" action="{{ url_for('song.play_song') }}">
+                    <ul class="list-group" style="margin: 10px">
+                        <h4 class="list-group-item-heading" style="padding: 8px">
+                              Tracks:
+                          </h4>
+                        {% for track in song.tracks %}
+                          <li class="list-group-item">
+                          <div class="row">
+                              <div class="col-md-8" style="padding-left: 40px">
+                                  <h4 class="list-group-item-heading">
+                                      Track {{ track.name }}
+                                  </h4>
+                              </div>
+                              <div class="col-lg-offset-3 col-md-1" style="margin-right: 0">
+                                  <label for="{{ "include_track_%d" % loop.index }}"></label>
+
+                                  <input type="checkbox" id="{{ "include_track_%d" % loop.index }}"
+                                         name="include_track" value="{{ loop.index }}" checked="checked">
+                              </div>
+                          </div>
+                          </li>
+                        {% endfor %}
+                    </ul>
+
+                      <div class="row">
+                          <div class="col-md-offset-4 col-md-4" style="text-align: center">
+                              <input type="submit" id="play" class="btn btn-default" value="Play" style="margin-bottom: 5px">
+                          </div>
+                      </div>
+                </form>
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-md-offset-4 col-md-4" style="text-align: center">
+                         <form method="post" action="{{ url_for('song.stop_song') }}">
+                              <input type="submit" id="stop" class="btn btn-default" value="Stop">
+                          </form>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -15,11 +15,11 @@ class Track:
 
         self.is_drum = is_drum
         self.instr_type = instr_type
+        self.is_rhythm = True
 
         self.pm = None
-        self.save_path = '/PycharmProjects/RiffGAN/data/pieces/tracks/'
-        self.midi_path = self.save_path + 'midi/' + self.name + '.mid'
-        self.json_path = self.save_path + 'json/' + self.name + '.json'
+        self.save_dir = '../data/pieces/tracks/'
+        self.midi_path = ''
 
     def get_measure_start_time(self, measure):
         start_time = 0
@@ -145,12 +145,17 @@ class Track:
 
         self.pm.instruments.append(instr)
 
-    def save_midi(self):
+    def save_midi(self, name):
+        self.midi_path = self.save_dir + 'midi/' + name + '.mid'
         self.pm.write(self.midi_path)
 
     def play_it(self):
-        assert os.path.exists(self.midi_path)
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
         play_music(self.midi_path)
+
+    def play_with_no_init(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music_without_init(self.midi_path)
 
     def get_arrangement_str(self):
         info_str = ''
@@ -183,8 +188,8 @@ class Track:
 
         return info_dict
 
-    def save_json(self):
-        with open(self.json_path, 'w') as f:
+    def save_json(self, path):
+        with open(path, 'w') as f:
             json.dump(self.export_json_dict(), f)
 
 
