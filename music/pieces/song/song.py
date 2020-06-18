@@ -296,7 +296,17 @@ def get_empty_song():
         'songwriter': '',
         'genre': '',
         "tracks": [],
-        'excluded_track_index': []
+        'excluded_track_index': [],
+        'phrases': {
+            'rhythm_guitar_phrase': [],
+            'rhythm_bass_phrase': [],
+            'drum_phrase': []
+        },
+        'riffs': {
+            'griff': [],
+            'driff': [],
+            'briff': []
+        }
     }
     return info_dict
 

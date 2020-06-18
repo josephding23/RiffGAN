@@ -39,6 +39,7 @@ def play_track(index):
     if request.method == 'POST':
 
         track_info = get_temp_tracks()[int(index)-1]
+        print(track_info)
         # phrases = get_temp_phrases()
 
         # refresh_phrase_info(track_info, phrases)
@@ -116,13 +117,24 @@ def edit_track(index):
             instr_type = request.form['edit_instr_type_input']
             raw_tonality_info = request.form['edit_tonality_info_input']
 
+            according_phrases_dict = {
+                'guitar': 'rhythm_guitar_phrase',
+                'bass': 'rhythm_bass_phrase'
+            }
+            used_phrases = get_used_phrases_from_raw(raw_used_phrases)
+            available_phrases = get_available_phrase_no(phrases, according_phrases_dict[instr_type])
+            for phrase_no in used_phrases:
+                if phrase_no not in available_phrases:
+                    error = f'Phrase No.{phrase_no} is not available.'
+                    return render_template('tracks.html', tracks=tracks, error=error)
+
             try:
                 tonality_info = get_tonality_info_from_raw(raw_tonality_info)
             except:
                 error = 'Invalid tonality info format'
                 return render_template('tracks.html', tracks=tracks, error=error)
 
-            tracks[int(index) - 1] = {
+            track_info = {
                 'name': tracks[int(index) - 1]['name'],
                 'is_drum': is_drum,
                 'instr_type': instr_type,
@@ -137,12 +149,23 @@ def edit_track(index):
                 'raw_arrangements': raw_arrangements
             }
 
+            refresh_phrase_info(track_info, phrases)
+
+            tracks[int(index) - 1] = track_info
+
             refresh_all_tracks_in_song(song, tracks)
 
             save_temp_tracks(tracks)
 
         else:
-            tracks[int(index) - 1] = {
+            used_phrases = get_used_phrases_from_raw(raw_used_phrases)
+            available_phrases = get_available_phrase_no(phrases, 'drum_phrase')
+            for phrase_no in used_phrases:
+                if phrase_no not in available_phrases:
+                    error = f'Phrase No.{phrase_no} is not available.'
+                    return render_template('tracks.html', tracks=tracks, error=error)
+
+            track_info = {
                 'name': tracks[int(index) - 1]['name'],
                 'is_drum': is_drum,
                 'bpm_list': bpm_info,
@@ -153,6 +176,11 @@ def edit_track(index):
                 'raw_phrases_no': raw_used_phrases,
                 'raw_arrangements': raw_arrangements
             }
+
+            refresh_phrase_info(track_info, phrases)
+
+            tracks[int(index) - 1] = track_info
+
             refresh_all_tracks_in_song(song, tracks)
 
             save_temp_tracks(tracks)
@@ -171,7 +199,8 @@ def new_track():
         name = request.form['new_name_input']
 
         raw_is_drum = request.form['new_is_drum_input']
-        is_drum = bool(raw_is_drum)
+
+        is_drum = bool(int(raw_is_drum))
 
         raw_bpm_info = request.form['new_bpm_info_input']
         raw_used_phrases = request.form['new_used_phrases_input']
@@ -185,6 +214,22 @@ def new_track():
 
         try:
             used_phrases = get_used_phrases_from_raw(raw_used_phrases)
+            if is_drum:
+                phrase_type = 'drum_phrase'
+            else:
+                instr_type = request.form['edit_instr_type_input']
+                if instr_type == 'guitar':
+                    phrase_type = 'rhythm_guitar_phrase'
+                else:
+                    assert instr_type == 'bass'
+                    phrase_type = 'rhythm_bass_phrase'
+
+            available_phrases = get_available_phrase_no(phrases, phrase_type)
+            for phrase_no in used_phrases:
+                if phrase_no not in available_phrases:
+                    error = f'Phrase No.{phrase_no} is not available.'
+                    return render_template('tracks.html', tracks=tracks, error=error)
+
         except:
             error = 'Invalid used phrases format'
             return render_template('tracks.html', tracks=tracks, error=error)
@@ -196,8 +241,9 @@ def new_track():
             return render_template('tracks.html', tracks=tracks, error=error)
 
         if not is_drum:
-            instr_type = request.form['edit_instr_type_input']
-            raw_tonality_info = request.form['edit_tonality_info_input']
+            instr_type = request.form['new_instr_type_input']
+            raw_tonality_info = request.form['new_tonality_info_input']
+
 
             try:
                 tonality_info = get_tonality_info_from_raw(raw_tonality_info)
@@ -224,10 +270,12 @@ def new_track():
             tracks.append(track_info)
 
             refresh_all_tracks_in_song(song, tracks)
-
             save_temp_tracks(tracks)
 
+            return redirect(url_for('tracks.get_tracks'))
+
         else:
+
             track_info = {
                 'name': name,
                 'is_drum': is_drum,
@@ -244,7 +292,6 @@ def new_track():
             tracks.append(track_info)
 
             refresh_all_tracks_in_song(song, tracks)
-
             save_temp_tracks(tracks)
 
-        return redirect(url_for('tracks.get_tracks'))
+            return redirect(url_for('tracks.get_tracks'))

@@ -25,8 +25,7 @@ if __name__ == '__main__':
     # server = Server(app.wsgi_app)
     # server.watch('**/*.*')
     # server.serve()
-    load_song_and_duplicate_as_temp('test_song')
-
+    # load_song_and_duplicate_as_temp('test_song')
     app.run()
 
 

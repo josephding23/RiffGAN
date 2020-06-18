@@ -20,6 +20,7 @@ def refresh_all_tracks_in_song(song, tracks):
 
 def get_all_genres():
     genres_list = [
+        '',
         'Acid rock',
         'Alternative metal',
         'Alternative rock',

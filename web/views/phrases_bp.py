@@ -25,7 +25,7 @@ def get_phrases(phrase_type):
 
 @phrases_bp.route('/delete/<phrase_type>/<index>', methods=['POST'])
 def delete_phrase(phrase_type, index):
-    phrases = get_temp_riffs()
+    phrases = get_temp_phrases()
     tracks = get_temp_tracks()
 
     according_phrases_dict = {
@@ -53,7 +53,7 @@ def delete_phrase(phrase_type, index):
 def play_phrase(phrase_type, index):
     if request.method == 'POST':
 
-        phrases = get_temp_riffs()
+        phrases = get_temp_phrases()
 
         phrase_info = phrases[phrase_type][int(index)-1]
         # refresh_riff_info(phrase_info, phrase_type, riffs)
@@ -248,7 +248,7 @@ def edit_phrase(phrase_type, index):
 
 @phrases_bp.route('/new/<phrase_type>', methods=['POST'])
 def new_phrase(phrase_type):
-    phrases = get_temp_riffs()
+    phrases = get_temp_phrases()
     riffs = get_temp_riffs()
 
     according_riffs_dict = {

@@ -16,6 +16,14 @@ def load_song_and_duplicate_as_temp(name):
     song.save_to_db()
 
 
+def create_new_song_and_duplicate_as_temp():
+    song_info = get_empty_song()
+    song = parse_song_json(song_info)
+
+    song.name = 'temp'
+    song.save_to_db()
+
+
 def save_temp_song(song):
     get_song_table().update_one(
         {'name': 'temp'},

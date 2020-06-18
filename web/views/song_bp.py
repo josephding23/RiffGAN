@@ -20,18 +20,27 @@ pygame.mixer.music.set_volume(1)
 @song_bp.route('/new_song', methods=['POST'])
 def new_song():
     if request.method == 'POST':
-        return render_template('song.html', song=get_temp_song())
+        create_new_song_and_duplicate_as_temp()
+
+        return redirect(url_for('song.get_song'))
 
 
 @song_bp.route('/open_song', methods=['POST'])
 def open_song():
     if request.method == 'POST':
-        return render_template('song.html', song=get_temp_song())
+        load_song_and_duplicate_as_temp('test_song')
+
+        return redirect(url_for('song.get_song'))
 
 
 @song_bp.route('/', methods=['GET'])
 def get_song():
-    return render_template('song.html', song=get_temp_song())
+    return render_template('song.html', song=get_temp_song(), genres_list=get_all_genres())
+
+
+@song_bp.route('/edit', methods=['POST'])
+def edit_song():
+    return redirect(url_for('song.get_song'))
 
 
 @song_bp.route('/play', methods=['POST'])
@@ -43,7 +52,7 @@ def play_song():
         checked_info = request.form.getlist('include_track')
         checked_list = [int(checked_index)-1 for checked_index in checked_info]
 
-        refresh_track_info(song_info, tracks, checked_list)
+        refresh_included_tracks_info(song_info, tracks, checked_list)
 
         save_temp_song(song_info)
 

@@ -58,10 +58,11 @@ def get_bpm_info_from_raw(raw_bpm_info):
 def get_tonality_info_from_raw(raw_tonality_info):
     tonality_info_list = []
     for tonality_info in raw_tonality_info.split('; '):
-        start_measure = int(tonality_info[0])
-        tonality = tonality_info[1]
+        start_measure = int(tonality_info.split(' ')[0])
+        tonic = tonality_info.split(' ')[1]
+        mode = tonality_info.split(' ')[2]
 
-        tonality_info_list.append([start_measure, tonality])
+        tonality_info_list.append([start_measure, [tonic, mode]])
     return tonality_info_list
 
 

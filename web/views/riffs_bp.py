@@ -233,6 +233,7 @@ def new_riff(riff_type):
                     'raw_timestamps': raw_timestamps
                  }
             )
+            save_temp_riffs(riffs)
 
         else:
             assert riff_type == 'driff'
