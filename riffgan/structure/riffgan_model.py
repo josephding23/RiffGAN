@@ -258,7 +258,7 @@ class RiffGAN(object):
         griff.add_notes_to_pm(root_note_name='G2', bpm=120, instr=27)
         pm, shape = generate_nonzeros_from_pm(griff.pm, 120, 2)
         data = generate_sparse_matrix_from_nonzeros(pm, shape)
-        # plot_data(data[0, :, :])
+        # plot_data(database[0, :, :])
 
         torch.cuda.empty_cache()
 
@@ -270,7 +270,7 @@ class RiffGAN(object):
 
         for i in range(5):
 
-            # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
+            # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
             # noise = generate_random_seed(1)
             noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std).to(

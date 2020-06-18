@@ -6,7 +6,7 @@ import json
 class BassRiff(Riff):
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
-        self.save_dir = '../data/custom_element/bass_riff/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/bass_riff/'
 
         '''
         32 Acoustic Bass

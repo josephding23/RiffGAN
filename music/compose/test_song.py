@@ -94,12 +94,12 @@ def test_song():
     song.set_genre('Grunge')
     song.set_tracks([track_guitar, track_bass, track_drum])
 
-    song.save_json()
+    song.save_to_db()
 
 
 def song_from_json():
     path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
-    song = create_song_drom_json(path)
+    song = create_song_from_json(path)
     song.add_tracks_to_pm()
     song.save_midi()
     song.play_it()
@@ -107,7 +107,7 @@ def song_from_json():
 
 def get_composition():
     path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
-    song = create_song_drom_json(path)
+    song = create_song_from_json(path)
     info = song.get_all_phrases()
     print(json.dumps(info, indent=2))
 

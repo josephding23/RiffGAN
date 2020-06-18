@@ -1,5 +1,5 @@
 
-def refresh_track_info(song_info, track_list, included_tracks):
+def refresh_included_tracks_info(song_info, track_list, included_tracks):
 
     tracks = []
 
@@ -12,6 +12,10 @@ def refresh_track_info(song_info, track_list, included_tracks):
 
     song_info['tracks'] = tracks
     song_info['excluded_track_index'] = excluded_tracks
+
+
+def refresh_all_tracks_in_song(song, tracks):
+    song['tracks'] = tracks
 
 
 def get_all_genres():

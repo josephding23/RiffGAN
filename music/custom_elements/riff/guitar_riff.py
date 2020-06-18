@@ -5,7 +5,7 @@ import json
 class GuitarRiff(Riff):
     def __init__(self, measure_length, degrees_and_types, time_stamps, velocity=100):
         Riff.__init__(self, measure_length, degrees_and_types, time_stamps, velocity)
-        self.save_dir = '../data/custom_element/guitar_riff/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/guitar_riff/'
         '''
         24 Acoustic Guitar (nylon)
         25 Acoustic Guitar (steel)

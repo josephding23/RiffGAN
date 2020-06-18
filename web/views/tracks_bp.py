@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from music.pieces.track.toolkit import *
+from music.pieces.song.toolkit import *
 from music.pieces.track.track import *
 import pygame
 
-from web.data.song import riffs, phrases, tracks
+from web.database.song import *
 
 tracks_bp = Blueprint('tracks', __name__, template_folder='templates', static_folder='static', url_prefix='/tracks')
 
@@ -17,12 +17,20 @@ pygame.mixer.music.set_volume(1)
 
 @tracks_bp.route('/', methods=['GET'])
 def get_tracks():
-    return render_template('tracks.html', tracks=tracks)
+    return render_template('tracks.html', tracks=get_temp_tracks())
 
 
 @tracks_bp.route('/delete/<index>', methods=['POST'])
 def delete_track(index):
+    song = get_temp_song()
+
+    tracks = get_temp_tracks()
     tracks.pop(int(index)-1)
+
+    refresh_all_tracks_in_song(song, tracks)
+
+    save_temp_tracks(tracks)
+
     return redirect(url_for('tracks.get_tracks'))
 
 
@@ -30,8 +38,11 @@ def delete_track(index):
 def play_track(index):
     if request.method == 'POST':
 
-        track_info = tracks[int(index)-1]
-        refresh_phrase_info(track_info, phrases)
+        track_info = get_temp_tracks()[int(index)-1]
+        # phrases = get_temp_phrases()
+
+        # refresh_phrase_info(track_info, phrases)
+        # save_temp_tracks(track_info)
 
         track = parse_track_json(track_info)
         track.add_phrases_to_pm()
@@ -55,6 +66,11 @@ def stop_track():
 @tracks_bp.route('/edit/<index>', methods=['POST'])
 def edit_track(index):
     if request.method == 'POST':
+        song = get_temp_song()
+
+        tracks = get_temp_tracks()
+        phrases = get_temp_phrases()
+
         raw_is_drum = request.form['edit_is_drum_input']
         is_drum = bool(int(raw_is_drum))
 
@@ -121,6 +137,10 @@ def edit_track(index):
                 'raw_arrangements': raw_arrangements
             }
 
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_tracks(tracks)
+
         else:
             tracks[int(index) - 1] = {
                 'name': tracks[int(index) - 1]['name'],
@@ -133,6 +153,9 @@ def edit_track(index):
                 'raw_phrases_no': raw_used_phrases,
                 'raw_arrangements': raw_arrangements
             }
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_tracks(tracks)
 
         return redirect(url_for('tracks.get_tracks'))
 
@@ -140,6 +163,11 @@ def edit_track(index):
 @tracks_bp.route('/new', methods=['POST'])
 def new_track():
     if request.method == 'POST':
+        song = get_temp_song()
+
+        tracks = get_temp_tracks()
+        phrases = get_temp_phrases()
+
         name = request.form['new_name_input']
 
         raw_is_drum = request.form['new_is_drum_input']
@@ -195,6 +223,10 @@ def new_track():
             refresh_phrase_info(track_info, phrases)
             tracks.append(track_info)
 
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_tracks(tracks)
+
         else:
             track_info = {
                 'name': name,
@@ -210,5 +242,9 @@ def new_track():
 
             refresh_phrase_info(track_info, phrases)
             tracks.append(track_info)
+
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_tracks(tracks)
 
         return redirect(url_for('tracks.get_tracks'))

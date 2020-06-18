@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from web.data.song import phrases, riffs
+from web.database.song import *
 from music.custom_elements.riff.toolkit import *
 from music.pieces.phrase.toolkit import *
+from music.pieces.song.toolkit import *
 from music.custom_elements.riff.drum_riff import examine_drum_patterns
 import pygame
+import time
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
 
@@ -17,32 +19,45 @@ pygame.mixer.music.set_volume(1)
 
 @riffs_bp.route('/<riff_type>', methods=['GET'])
 def get_riffs(riff_type):
+    riffs = get_temp_riffs()
+    print(riffs)
     return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type)
 
 
 @riffs_bp.route('/delete/<riff_type>/<index>', methods=['POST'])
 def delete_riff(riff_type, index):
-    according_riffs_dict = {
-        'griff': 'rhythm_guitar_phrase',
-        'briff': 'rhythm_bass_phrase',
-        'driff': 'drum_phrase'
-    }
-    riff_no_to_delete = riffs[riff_type][int(index)-1]['no']
 
-    riff_no_in_use = get_all_used_riffs(phrases, according_riffs_dict[riff_type])
+    if request.method == 'POST':
 
-    if riff_no_to_delete in riff_no_in_use:
-        error = 'Riff you tend to delete is in use.'
-        return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type,
-                               error=error)
+        riffs = get_temp_riffs()
+        phrases = get_temp_phrases()
 
-    riffs[riff_type].pop(int(index)-1)
-    return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
+        according_riffs_dict = {
+            'griff': 'rhythm_guitar_phrase',
+            'briff': 'rhythm_bass_phrase',
+            'driff': 'drum_phrase'
+        }
+        riff_no_to_delete = riffs[riff_type][int(index)-1]['no']
+
+        riff_no_in_use = get_all_used_riffs(phrases, according_riffs_dict[riff_type])
+
+        if riff_no_to_delete in riff_no_in_use:
+            error = 'Riff you tend to delete is in use.'
+            return render_template('riffs/' + riff_type + '.html', riffs=riffs[riff_type], riff_type=riff_type,
+                                   error=error)
+
+        riffs[riff_type].pop(int(index)-1)
+
+        save_temp_riffs(riffs)
+
+        return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
 @riffs_bp.route('/play/<riff_type>/<index>', methods=['POST'])
 def play_riff(riff_type, index):
     if request.method == 'POST':
+        riffs = get_temp_riffs()
+
         riff_info = riffs[riff_type][int(index)-1]
 
         if riff_type == 'griff':
@@ -81,6 +96,12 @@ def stop_riff(riff_type):
 @riffs_bp.route('/edit/<riff_type>/<index>', methods=['POST'])
 def edit_riff(riff_type, index):
     if request.method == 'POST':
+
+        riffs = get_temp_riffs()
+        phrases = get_temp_phrases()
+        tracks = get_temp_tracks()
+        song = get_temp_song()
+
         if riff_type in ['griff', 'briff']:
             raw_length = request.form['edit_length_input']
             raw_degrees_and_types = request.form['edit_degrees_types_input']
@@ -117,7 +138,15 @@ def edit_riff(riff_type, index):
                 }
 
             refresh_all_phrases(phrases, riffs)
+            refresh_all_tracks(tracks, phrases)
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_riffs(riffs)
+            save_temp_phrases(phrases)
+            save_temp_tracks(tracks)
+
             return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
+
 
         else:
             assert riff_type == 'driff'
@@ -155,12 +184,21 @@ def edit_riff(riff_type, index):
             }
 
             refresh_all_phrases(phrases, riffs)
+            refresh_all_tracks(tracks, phrases)
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_riffs(riffs)
+            save_temp_phrases(phrases)
+            save_temp_tracks(tracks)
 
             return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
 @riffs_bp.route('/new/<riff_type>', methods=['POST'])
 def new_riff(riff_type):
+
+    riffs = get_temp_riffs()
+
     if request.method == 'POST':
         if riff_type in ['griff', 'briff']:
             raw_length = request.form['new_length_input']
@@ -230,5 +268,7 @@ def new_riff(riff_type):
                 'length': length,
                 "patterns": patterns_dict
             })
+
+            save_temp_riffs(riffs)
 
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))

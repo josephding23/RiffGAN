@@ -17,9 +17,16 @@
 
     <div class="container-fluid align-center">
         <div class="jumbotron">
-          <h1 class="display-4">Welcome to RiffGAN!</h1>
-          <p class="lead">Using this website to create your very own rock'n'roll music!</p>
-          <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+              <h1 class="display-4">Welcome to RiffGAN!</h1>
+              <p class="lead">Using this website to create your very own rock'n'roll music!</p>
+
+             <form method="post" action="{{ url_for('song.new_song') }}">
+                <input type="submit" id="delete" class="btn btn-default" value="New">
+            </form>
+
+            <form method="post" action="{{ url_for('song.open_song') }}">
+                <input type="submit" id="delete" class="btn btn-default" value="Open">
+            </form>
         </div>
     </div>
 

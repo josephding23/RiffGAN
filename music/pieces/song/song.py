@@ -1,8 +1,13 @@
 from music.pieces.track.track import *
 from music.pieces.phrase.rhythm_phrase import *
 from music.pieces.phrase.drum_phrase import *
+
+from music.pieces.phrase.toolkit import set_used_riff_num_info
+from music.pieces.track.toolkit import set_used_phrase_num_info
+
 import pretty_midi
 from music.process.audio_related import *
+from dataset.web_db import get_song_table
 import os
 
 
@@ -16,7 +21,7 @@ class Song:
         self.excluded_tracks_index = []
         self.pm = None
 
-        self.save_dir = '/PycharmProjects/RiffGAN/data/pieces/songs/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/'
         self.midi_path = self.save_dir + 'midi/' + self.name + '.mid'
         self.json_path = self.save_dir + 'json/' + self.name + '.json'
         self.wav_path = self.save_dir + 'audio/' + self.name + '.wav'
@@ -137,6 +142,29 @@ class Song:
         with open(self.json_path, 'w') as f:
             json.dump(self.export_json_dict(), f)
 
+    def save_to_db(self):
+        song_table = get_song_table()
+        song_info = self.export_json_dict()
+
+        riffs = self.get_all_riffs()
+        phrases = self.get_all_phrases()
+        tracks = self.get_all_tracks()
+
+        set_used_riff_num_info(phrases, riffs)
+        set_used_phrase_num_info(tracks, phrases)
+
+        song_info['riffs'] = riffs
+        song_info['phrases'] = phrases
+        song_info['tracks'] = tracks
+
+        if song_table.find_one({'name': self.name}) is None:
+            song_table.insert_one(song_info)
+        else:
+            song_table.update_one(
+                {'name': self.name},
+                {'$set': song_info}
+            )
+
     def export_json_dict(self):
         info_dict = {
             "name": self.name,
@@ -246,10 +274,31 @@ class Song:
         return tracks_info
 
 
-def create_song_drom_json(path):
+def create_song_from_json(path):
     with open(path, 'r') as f:
         song_info = json.loads(f.read())
         return parse_song_json(song_info)
+
+
+def load_song_from_db(name):
+    song_table = get_song_table()
+
+    song = song_table.find_one({'name': name})
+    if song is None:
+        raise Exception(f'No song found in name of {name}')
+    else:
+        return song
+
+
+def get_empty_song():
+    info_dict = {
+        "name": '',
+        'songwriter': '',
+        'genre': '',
+        "tracks": [],
+        'excluded_track_index': []
+    }
+    return info_dict
 
 
 def parse_song_json(song_info):

@@ -110,7 +110,7 @@ def parse_song_from_json(path):
 
 
 def test_parse_json():
-    json_path = '/PycharmProjects/RiffGAN/data/jsons/test1.json'
+    json_path = '/PycharmProjects/RiffGAN/database/jsons/test1.json'
     song = parse_song_from_json(json_path)
     song.add_tracks_to_pm()
     song.save_midi()

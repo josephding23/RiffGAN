@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from web.data.song import riffs, phrases, tracks
+from web.database.song import *
 from music.custom_elements.riff.toolkit import *
 from music.pieces.phrase.toolkit import *
 from music.pieces.track.toolkit import *
+from music.pieces.song.toolkit import *
 import pygame
 
 
@@ -19,11 +20,14 @@ pygame.mixer.music.set_volume(1)
 @phrases_bp.route('/<phrase_type>', methods=['GET'])
 def get_phrases(phrase_type):
     return render_template('phrases/' + phrase_type + '.html',
-                           phrases=phrases[phrase_type], phrase_type=phrase_type)
+                           phrases=get_temp_phrases()[phrase_type], phrase_type=phrase_type)
 
 
 @phrases_bp.route('/delete/<phrase_type>/<index>', methods=['POST'])
 def delete_phrase(phrase_type, index):
+    phrases = get_temp_riffs()
+    tracks = get_temp_tracks()
+
     according_phrases_dict = {
         'rhythm_guitar_phrase': 'guitar',
         'rhythm_bass_phrase': 'bass',
@@ -40,6 +44,8 @@ def delete_phrase(phrase_type, index):
                                error=error)
 
     phrases[phrase_type].pop(int(index)-1)
+    save_temp_phrases(phrases)
+
     return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
 
@@ -47,8 +53,10 @@ def delete_phrase(phrase_type, index):
 def play_phrase(phrase_type, index):
     if request.method == 'POST':
 
+        phrases = get_temp_riffs()
+
         phrase_info = phrases[phrase_type][int(index)-1]
-        refresh_riff_info(phrase_info, phrase_type, riffs)
+        # refresh_riff_info(phrase_info, phrase_type, riffs)
 
         if phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase']:
             phrase = parse_rhythm_phrase_json(phrase_info)
@@ -85,6 +93,12 @@ def edit_phrase(phrase_type, index):
         'drum_phrase': 'driff'
     }
     if request.method == 'POST':
+
+        riffs = get_temp_riffs()
+        phrases = get_temp_phrases()
+        tracks = get_temp_tracks()
+        song = get_temp_song()
+
         if phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase']:
             raw_length = request.form['edit_length_input']
             raw_bpm = request.form['edit_bpm_input']
@@ -163,6 +177,11 @@ def edit_phrase(phrase_type, index):
 
             refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
             refresh_all_tracks(tracks, phrases)
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_phrases(phrases)
+            save_temp_tracks(tracks)
+
             return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
         else:
@@ -217,13 +236,21 @@ def edit_phrase(phrase_type, index):
                 'raw_arrangements': raw_arrangements
             }
 
-            refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
+            refresh_riff_info(phrases[phrase_type][int(index) - 1], phrase_type, riffs)
             refresh_all_tracks(tracks, phrases)
+            refresh_all_tracks_in_song(song, tracks)
+
+            save_temp_phrases(phrases)
+            save_temp_tracks(tracks)
+
             return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
 
 @phrases_bp.route('/new/<phrase_type>', methods=['POST'])
 def new_phrase(phrase_type):
+    phrases = get_temp_riffs()
+    riffs = get_temp_riffs()
+
     according_riffs_dict = {
         'rhythm_guitar_phrase': 'griff',
         'rhythm_bass_phrase': 'briff',
@@ -310,6 +337,7 @@ def new_phrase(phrase_type):
             refresh_riff_info(phrase_info, phrase_type, riffs)
 
             phrases[phrase_type].append(phrase_info)
+            save_temp_phrases(phrases)
 
         else:
             assert phrase_type == 'drum_phrase'
@@ -366,5 +394,6 @@ def new_phrase(phrase_type):
             refresh_riff_info(phrase_info, phrase_type, riffs)
 
             phrases[phrase_type].append(phrase_info)
+            save_temp_phrases(phrases)
 
         return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))

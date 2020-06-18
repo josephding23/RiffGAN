@@ -6,7 +6,7 @@ from web.views.riffs_bp import riffs_bp
 from web.views.phrases_bp import phrases_bp
 from web.views.tracks_bp import tracks_bp
 from web.views.song_bp import song_bp
-from web.data.song import tracks
+from web.database.song import *
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.register_blueprint(riffs_bp, url_prefix='/riffs')
@@ -25,6 +25,8 @@ if __name__ == '__main__':
     # server = Server(app.wsgi_app)
     # server.watch('**/*.*')
     # server.serve()
+    load_song_and_duplicate_as_temp('test_song')
+
     app.run()
 
 

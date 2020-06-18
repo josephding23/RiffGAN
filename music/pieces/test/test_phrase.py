@@ -28,14 +28,14 @@ def test_drum_phrase():
 
 
 def drum_phrase_from_json():
-    drum_phrase = create_drum_phrase_from_json('D:/PycharmProjects/RiffGAN/data/pieces/phrases/json/drum1.json')
+    drum_phrase = create_drum_phrase_from_json('D:/PycharmProjects/RiffGAN/database/pieces/phrases/json/drum1.json')
     drum_phrase.add_riffs_to_pm()
     drum_phrase.save_midi('drum_from_midi')
     drum_phrase.play_it()
 
 
 def rhythm_phrase_from_json():
-    rhythm_phrase = create_rhythm_phrase_from_json('D:/PycharmProjects/RiffGAN/data/pieces/phrases/json/test1.json')
+    rhythm_phrase = create_rhythm_phrase_from_json('D:/PycharmProjects/RiffGAN/database/pieces/phrases/json/test1.json')
     rhythm_phrase.add_riffs_to_pm()
     rhythm_phrase.save_midi('rhythm_from_midi')
     rhythm_phrase.play_it()

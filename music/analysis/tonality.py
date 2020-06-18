@@ -64,7 +64,7 @@ def analyse_tonality():
 
 
 def test_tonal():
-    path = 'E:/data/test.mid'
+    path = 'E:/database/test.mid'
     guitar_riff = GuitarRiff(path)
     print(guitar_riff.get_note_lengths_divided_by_measure())
 

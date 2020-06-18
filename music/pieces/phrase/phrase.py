@@ -10,7 +10,7 @@ class Phrase(object):
 
         self.pm = None
 
-        self.save_dir = '../data/pieces/phrases/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN//data/pieces/phrases/'
         self.midi_path = ''
 
     def save_midi(self, name):

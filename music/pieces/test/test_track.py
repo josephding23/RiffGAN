@@ -20,7 +20,7 @@ def test_track():
                   tonality_list=[{}])
     track.set_phrases([phrase1, phrase2])
     track.add_phrases_to_pm()
-    track.save('../../data/custom_element/track/test1.mid')
+    track.save('../../database/custom_element/track/test1.mid')
 
 
 def test_drum_track():
@@ -38,7 +38,7 @@ def test_drum_track():
     track = Track('drum_test', [(0, 120)], [], True)
     track.set_phrases([drum_phrase1, drum_phrase2])
     track.add_phrases_to_pm()
-    track.save('../../../data/custom_element/track/test2.mid')
+    track.save('../../../database/custom_element/track/test2.mid')
 
 
 def test_track_json_not_drum():

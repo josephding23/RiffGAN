@@ -18,7 +18,7 @@ class Track:
         self.is_rhythm = True
 
         self.pm = None
-        self.save_dir = '../data/pieces/tracks/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/pieces/tracks/'
         self.midi_path = ''
 
     def get_measure_start_time(self, measure):
