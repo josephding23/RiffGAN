@@ -28,7 +28,18 @@ def new_song():
 @song_bp.route('/open_song', methods=['POST'])
 def open_song():
     if request.method == 'POST':
-        load_song_and_duplicate_as_temp('test_song')
+        name = request.form['open_name_input']
+        load_song_and_duplicate_as_temp(name)
+
+        return redirect(url_for('song.get_song'))
+
+
+@song_bp.route('/save_song', methods=['POST'])
+def save_song():
+    if request.method == 'POST':
+        name = request.form['save_name_input']
+
+        save_temp_song_as(name)
 
         return redirect(url_for('song.get_song'))
 
@@ -40,7 +51,20 @@ def get_song():
 
 @song_bp.route('/edit', methods=['POST'])
 def edit_song():
-    return redirect(url_for('song.get_song'))
+    if request.method == 'POST':
+
+        title = request.form['edit_title_input']
+        songwriter = request.form['edit_songwriter_input']
+        genre = request.form['edit_genre_input']
+
+        song = get_temp_song()
+        song['title'] = title
+        song['songwriter'] = songwriter
+        song['genre'] = genre
+
+        save_temp_song(song)
+
+        return redirect(url_for('song.get_song'))
 
 
 @song_bp.route('/play', methods=['POST'])

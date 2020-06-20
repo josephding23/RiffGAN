@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 
-{% block title %}Song{% endblock %}
+{% block title %}Song - RiffGAN{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -22,87 +22,32 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                   <div class="row">
-                      <div class="col-md-10">
+                      <div class="col-md-9">
                           <h2>Song {{ song.name }}</h2>
                       </div>
 
-                      <div class="col-md-2" style=''>
-                          <div class="btn-group btn-group-justified" role="group"
-                               style="padding-left: 10px; padding-right: 20px;">
-                              <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target=edit_song_modal">Edit</button>
+                      <div class="col-md-3" style=''>
+                          <div class="btn-group btn-group-justified" role="group">
+                              <div class="btn-group btn-group-justified" role="group" style="padding-left: 20px; padding-right: 10px;">
+                                  <button class="btn-lg btn-primary" data-toggle="modal" data-target="#edit_song_modal" role="button">Edit</button>
+                              </div>
+                              <div class="btn-group btn-group-justified" role="group" style="padding-left: 10px; padding-right: 20px;">
+                                  <button class="btn-lg btn-primary" data-toggle="modal" data-target="#save_song_modal" role="button">Save</button>
+                              </div>
                           </div>
-
-                      <div class="modal fade" id="edit_song_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog" style="align-content: center">
-                            <div class="modal-content" style="align-content: center">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h3 class="modal-title" id="myModalLabel">Edit Song</h3>
-                                </div>
-
-                                <form method="post" action="{{ url_for('song.edit_song')}}">
-                                    <div class="modal-body">
-
-                                        <div class="row">
-                                            <div class="col-md-10 col-md-offset-1">
-                                                <div class="form-group">
-                                                    <h4><label for="edit_name_input" style="font-weight: normal">Name</label></h4>
-                                                    <input type="text" class="form-control" value="{{ song.name }}"
-                                                           id="edit_name_input" name="edit_name_input">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-10 col-md-offset-1">
-                                                <div class="form-group">
-                                                    <h4><label for="edit_songwriter_input" style="font-weight: normal">Name</label></h4>
-                                                    <input type="text" class="form-control" value="{{ song.songwrite }}"
-                                                           id="edit_songwriter_input" name="edit_songwriter_input">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-10 col-md-offset-1">
-                                                <div class="form-group">
-                                                    <h4><label for="edit_genre_input" style="font-weight: normal">genre</label></h4>
-                                                    <select class="form-control" id="edit_genre_input" name="edit_genre_input">
-                                                        {% for genre in genres_list%}
-                                                            {% if genre == song.genre %}
-                                                                <option value={{ genre }} selected="selected">{{ genre }}</option>
-                                                            {% else %}
-                                                                <option value={{ genre }}>{{ genre }}</option>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
-                                            <div class="btn-group btn-group-justified" role="group"
-                                                style="padding-left: 25px; padding-right: 15px">
-                                               <input class="btn btn-primary" type="submit" value="Save">
-                                            </div>
-                                            <div class="btn-group btn-group-justified" role="group"
-                                                style="padding-left: 15px; padding-right: 25px">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </form>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal -->
                       </div>
-                                                </div>
+
 
                   </div>
               </div>
 
                 <ul class="list-group">
+                  <li class="list-group-item">
+                      <h4 class="list-group-item-heading" style="padding: 5px">
+                          Title: {{ song.title }}
+                      </h4>
+                  </li>
+
                   <li class="list-group-item">
                       <h4 class="list-group-item-heading" style="padding: 5px">
                           Songwriter: {{ song.songwriter }}
@@ -158,6 +103,114 @@
             </div>
             </div>
         </div>
+
+        <div class="modal fade" id="edit_song_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" style="align-content: center">
+                <div class="modal-content" style="align-content: center">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">Edit Song</h3>
+                    </div>
+
+                    <form method="post" action="{{ url_for('song.edit_song')}}">
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="edit_title_input" style="font-weight: normal">Title</label></h4>
+                                        <input type="text" class="form-control" value="{{ song.title }}"
+                                               id="edit_title_input" name="edit_title_input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="edit_songwriter_input" style="font-weight: normal">Songwriter</label></h4>
+                                        <input type="text" class="form-control" value="{{ song.songwriter }}"
+                                               id="edit_songwriter_input" name="edit_songwriter_input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="edit_genre_input" style="font-weight: normal">Genre</label></h4>
+                                        <select class="form-control" id="edit_genre_input" name="edit_genre_input">
+                                            {% for genre in genres_list%}
+                                                {% if genre == song.genre %}
+                                                    <option value={{ genre }} selected="selected">{{ genre }}</option>
+                                                {% else %}
+                                                    <option value={{ genre }}>{{ genre }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                <div class="btn-group btn-group-justified" role="group"
+                                    style="padding-left: 25px; padding-right: 15px">
+                                   <input class="btn btn-primary" type="submit" value="Save">
+                                </div>
+                                <div class="btn-group btn-group-justified" role="group"
+                                    style="padding-left: 15px; padding-right: 25px">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+          </div>
+
+            <div class="modal fade" id="save_song_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="align-content: center">
+                    <div class="modal-content" style="align-content: center">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 class="modal-title" id="myModalLabel">Save Song</h3>
+                        </div>
+
+                    <form method="post" action="{{ url_for('song.save_song')}}">
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="save_name_input" style="font-weight: normal">Name</label></h4>
+                                        <input type="text" class="form-control" placeholder="Name"
+                                               id="save_name_input" name="save_name_input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                <div class="btn-group btn-group-justified" role="group"
+                                    style="padding-left: 25px; padding-right: 15px">
+                                   <input class="btn btn-primary" type="submit" value="Save">
+                                </div>
+                                <div class="btn-group btn-group-justified" role="group"
+                                    style="padding-left: 15px; padding-right: 25px">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+          </div>
+
     </div>
+
 
 {% endblock %}

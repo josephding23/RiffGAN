@@ -90,6 +90,7 @@ def test_song():
     track_drum.set_arrangement([[0, 0], [0, 8]])
 
     song = Song("test_song")
+    song.set_title('demo grunge')
     song.set_writer('troodeec')
     song.set_genre('Grunge')
     song.set_tracks([track_guitar, track_bass, track_drum])

@@ -1,18 +1,17 @@
-
-from music.pieces.phrase.toolkit import *
-from music.pieces.track.toolkit import *
 from music.pieces.song.song import *
 from music.pieces.song.song import create_song_from_json, get_empty_song, parse_song_json
 import json
+from dataset.web_db import get_song_table
 
 json_path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
 
 
 def load_song_and_duplicate_as_temp(name):
     song_info = load_song_from_db(name)
-    song = parse_song_json(song_info)
 
+    song = parse_song_json(song_info)
     song.name = 'temp'
+
     song.save_to_db()
 
 
@@ -21,6 +20,14 @@ def create_new_song_and_duplicate_as_temp():
     song = parse_song_json(song_info)
 
     song.name = 'temp'
+    song.save_to_db()
+
+
+def save_temp_song_as(name):
+    song_info = get_temp_song()
+    song = parse_song_json(song_info)
+
+    song.name = name
     song.save_to_db()
 
 

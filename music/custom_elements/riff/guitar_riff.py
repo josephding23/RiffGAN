@@ -1,4 +1,5 @@
 from music.custom_elements.riff.riff import Riff
+from dataset.web_db import get_griff_table
 import json
 
 
@@ -16,6 +17,20 @@ class GuitarRiff(Riff):
         30 Distortion Guitar
         31 Guitar harmonics
         '''
+
+    def save_to_db(self, name):
+        riff_table = get_griff_table()
+        riff_info = self.export_json_dict()
+
+        riff_info['name'] = name
+
+        if riff_table.find_one({'name': name}) is None:
+            riff_table.insert_one(riff_info)
+        else:
+            riff_table.update_one(
+                {'name': name},
+                {'$set': riff_info}
+            )
 
 
 def create_griff_from_json(path):

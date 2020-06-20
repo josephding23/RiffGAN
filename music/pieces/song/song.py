@@ -14,6 +14,7 @@ import os
 class Song:
     def __init__(self, name):
         self.name = name
+        self.title = ''
         self.songwriter = ''
         self.genre = ''
 
@@ -25,6 +26,9 @@ class Song:
         self.midi_path = self.save_dir + 'midi/' + self.name + '.mid'
         self.json_path = self.save_dir + 'json/' + self.name + '.json'
         self.wav_path = self.save_dir + 'audio/' + self.name + '.wav'
+
+    def set_title(self, title):
+        self.title = title
 
     def set_writer(self, writer):
         self.songwriter = writer
@@ -168,6 +172,7 @@ class Song:
     def export_json_dict(self):
         info_dict = {
             "name": self.name,
+            'title': self.title,
             'songwriter': self.songwriter,
             'genre': self.genre,
             "tracks": [track.export_json_dict() for track in self.tracks],
@@ -293,6 +298,7 @@ def load_song_from_db(name):
 def get_empty_song():
     info_dict = {
         "name": '',
+        'title': '',
         'songwriter': '',
         'genre': '',
         "tracks": [],
@@ -313,6 +319,7 @@ def get_empty_song():
 
 def parse_song_json(song_info):
     song = Song(song_info['name'])
+    song.set_title(song_info['title'])
     song.set_writer(song_info['songwriter'])
     song.set_genre(song_info['genre'])
     song.set_excluded_tracks_index(song_info['excluded_track_index'])

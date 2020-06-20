@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 
-{% block title %}Phrases{% endblock %}
+{% block title %}Drum Phrases - RiffGAN{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -79,83 +79,13 @@
                                 {% endfor %}
                           </li>
                       </ul>
+
                         <div class="panel-footer"  style="align-content: center">
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                 <div class="btn-group btn-group-justified" role="group"
                                     style="padding-left: 10px; padding-right: 20px;">
                                   <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_phrase%d_modal" % loop.index}}" >Edit</button>
                                 </div>
-
-                                <div class="modal fade" id="{{ "edit_phrase%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog" style="align-content: center">
-                                        <div class="modal-content" style="align-content: center">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h3 class="modal-title" id="myModalLabel">Edit Bass Phrase {{ phrase.no }}</h3>
-                                            </div>
-
-                                            <form method="post" action="{{ url_for('phrases.edit_phrase', phrase_type=phrase_type, index=loop.index )}}">
-                                                <div class="modal-body">
-
-                                                    <div class="row">
-                                                        <div class="col-md-8 col-md-offset-2">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_length_input" style="font-weight: normal">Length</label></h4>
-                                                                <input type="text" class="form-control" value="{{ phrase.length }}"
-                                                                       id="edit_length_input" name="edit_length_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-8 col-md-offset-2">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_bpm_input" style="font-weight: normal">BPM</label></h4>
-                                                                <input type="text" class="form-control" value="{{ phrase.bpm }}"
-                                                                       id="edit_bpm_input" name="edit_bpm_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_used_riffs_input" style="font-weight: normal">Used Riffs</label></h4>
-                                                                <input type="text" class="form-control" value="{{ phrase.raw_riffs_no }}"
-                                                                       id="edit_used_riffs_input" name="edit_used_riffs_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_arrangements_input" style="font-weight: normal"> Arrangements</label></h4>
-                                                                <input type="text" class="form-control" value="{{ phrase.raw_arrangements }}"
-                                                                       id="edit_arrangements_input" name="edit_arrangements_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="modal-footer">
-                                                        <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
-                                                        <div class="btn-group btn-group-justified" role="group"
-                                                            style="padding-left: 25px; padding-right: 15px">
-                                                           <input class="btn btn-primary" type="submit" value="Save">
-                                                        </div>
-                                                        <div class="btn-group btn-group-justified" role="group"
-                                                            style="padding-left: 15px; padding-right: 25px">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                             </div>
-                                            </form>
-
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal -->
-                                  </div>
 
                                 <div class="btn-group btn-group-justified" role="group"
                                      style="padding-left: 20px; padding-right: 10px;">
@@ -164,11 +94,81 @@
                                     </form>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
+
+                <div class="modal fade" id="{{ "edit_phrase%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" style="align-content: center">
+                        <div class="modal-content" style="align-content: center">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title" id="myModalLabel">Edit Bass Phrase {{ phrase.no }}</h3>
+                            </div>
+
+                            <form method="post" action="{{ url_for('phrases.edit_phrase', phrase_type=phrase_type, index=loop.index )}}">
+                                <div class="modal-body">
+
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="form-group">
+                                                <h4><label for="edit_length_input" style="font-weight: normal">Length</label></h4>
+                                                <input type="text" class="form-control" value="{{ phrase.length }}"
+                                                       id="edit_length_input" name="edit_length_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="form-group">
+                                                <h4><label for="edit_bpm_input" style="font-weight: normal">BPM</label></h4>
+                                                <input type="text" class="form-control" value="{{ phrase.bpm }}"
+                                                       id="edit_bpm_input" name="edit_bpm_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            <div class="form-group">
+                                                <h4><label for="edit_used_riffs_input" style="font-weight: normal">Used Riffs</label></h4>
+                                                <input type="text" class="form-control" value="{{ phrase.raw_riffs_no }}"
+                                                       id="edit_used_riffs_input" name="edit_used_riffs_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            <div class="form-group">
+                                                <h4><label for="edit_arrangements_input" style="font-weight: normal"> Arrangements</label></h4>
+                                                <input type="text" class="form-control" value="{{ phrase.raw_arrangements }}"
+                                                       id="edit_arrangements_input" name="edit_arrangements_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal-footer">
+                                        <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 25px; padding-right: 15px">
+                                           <input class="btn btn-primary" type="submit" value="Save">
+                                        </div>
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 15px; padding-right: 25px">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                            </form>
+
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                  </div>
+
             {% endfor %}
                 <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:480px; max-height: 480px; overflow: scroll;">
@@ -179,80 +179,80 @@
                           <div style="text-align: center">
                         <p><button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#new_phrase_modal" role="button"
                                    style="margin-top: 140px; margin-bottom: 140px; text-align: center">Add</button></p></div>
-
-                          <div class="modal fade" id="new_phrase_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog" style="align-content: center">
-                                        <div class="modal-content" style="align-content: center">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h3 class="modal-title" id="myModalLabel">New Drum Bass Phrase</h3>
-                                            </div>
-
-                                            <form method="post" action="{{ url_for('phrases.new_phrase', phrase_type=phrase_type)}}">
-                                                <div class="modal-body">
-
-                                                    <div class="row">
-                                                        <div class="col-md-8 col-md-offset-2">
-                                                            <div class="form-group">
-                                                                <h4><label for="new_length_input" style="font-weight: normal">Length</label></h4>
-                                                                <input type="text" class="form-control" placeholder="Length"
-                                                                       id="new_length_input" name="new_length_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-8 col-md-offset-2">
-                                                            <div class="form-group">
-                                                                <h4><label for="new_bpm_input" style="font-weight: normal">BPM</label></h4>
-                                                                <input type="text" class="form-control" placeholder="BPM"
-                                                                       id="new_bpm_input" name="new_bpm_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="new_used_riffs_input" style="font-weight: normal">Used Riffs</label></h4>
-                                                                <input type="text" class="form-control" placeholder="Used Riffs"
-                                                                       id="new_used_riffs_input" name="new_used_riffs_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="new_arrangements_input" style="font-weight: normal">Arrangements</label></h4>
-                                                                <input type="text" class="form-control" placeholder="Arrangements"
-                                                                       id="new_arrangements_input" name="new_arrangements_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="modal-footer">
-                                                        <div class="btn-group btn-group-justified" role="group">
-                                                            <div class="btn-group btn-group-justified" role="group"
-                                                                style="padding-left: 25px; padding-right: 15px">
-                                                               <input class="btn btn-primary" type="submit" value="Save">
-                                                            </div>
-                                                            <div class="btn-group btn-group-justified" role="group"
-                                                                style="padding-left: 15px; padding-right: 25px">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                             </div>
-                                            </form>
-
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal -->
-                                  </div>
                           </div>
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="new_phrase_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="align-content: center">
+                    <div class="modal-content" style="align-content: center">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 class="modal-title" id="myModalLabel">New Drum Bass Phrase</h3>
+                        </div>
+
+                        <form method="post" action="{{ url_for('phrases.new_phrase', phrase_type=phrase_type)}}">
+                            <div class="modal-body">
+
+                                <div class="row">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <div class="form-group">
+                                            <h4><label for="new_length_input" style="font-weight: normal">Length</label></h4>
+                                            <input type="text" class="form-control" placeholder="Length"
+                                                   id="new_length_input" name="new_length_input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <div class="form-group">
+                                            <h4><label for="new_bpm_input" style="font-weight: normal">BPM</label></h4>
+                                            <input type="text" class="form-control" placeholder="BPM"
+                                                   id="new_bpm_input" name="new_bpm_input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <div class="form-group">
+                                            <h4><label for="new_used_riffs_input" style="font-weight: normal">Used Riffs</label></h4>
+                                            <input type="text" class="form-control" placeholder="Used Riffs"
+                                                   id="new_used_riffs_input" name="new_used_riffs_input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <div class="form-group">
+                                            <h4><label for="new_arrangements_input" style="font-weight: normal">Arrangements</label></h4>
+                                            <input type="text" class="form-control" placeholder="Arrangements"
+                                                   id="new_arrangements_input" name="new_arrangements_input">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="modal-footer">
+                                    <div class="btn-group btn-group-justified" role="group">
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 25px; padding-right: 15px">
+                                           <input class="btn btn-primary" type="submit" value="Save">
+                                        </div>
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 15px; padding-right: 25px">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                         </div>
+                        </form>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+              </div>
+
         </div>
 {% endblock %}

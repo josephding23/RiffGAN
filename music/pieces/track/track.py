@@ -203,17 +203,25 @@ def parse_track_json(track_info):
     is_drum = track_info['is_drum']
     if is_drum:
         phrases = [parse_drum_phrase_json(phrase) for phrase in track_info['phrases']]
+        track = Track(
+            name=track_info['name'],
+            bpm_list=track_info['bpm_list'],
+            tonality_list=[],
+            is_drum=track_info['is_drum'],
+            instr_type=None
+        )
+        track.set_phrases(phrases)
+        track.set_arrangement(track_info['arrangements'])
     else:
         phrases = [parse_rhythm_phrase_json(phrase) for phrase in track_info['phrases']]
-
-    track = Track(
-        name=track_info['name'],
-        bpm_list=track_info['bpm_list'],
-        tonality_list=track_info['tonality_list'],
-        is_drum=track_info['is_drum'],
-        instr_type=track_info['instr_type']
-    )
-    track.set_phrases(phrases)
-    track.set_arrangement(track_info['arrangements'])
+        track = Track(
+            name=track_info['name'],
+            bpm_list=track_info['bpm_list'],
+            tonality_list=track_info['tonality_list'],
+            is_drum=track_info['is_drum'],
+            instr_type=track_info['instr_type']
+        )
+        track.set_phrases(phrases)
+        track.set_arrangement(track_info['arrangements'])
 
     return track

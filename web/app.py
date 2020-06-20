@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, url_for, request, redirect
+from flask import render_template, url_for, request, redirect, current_app, send_from_directory
 from flask_bootstrap import Bootstrap
 from livereload import Server
 from web.views.riffs_bp import riffs_bp
@@ -19,6 +19,12 @@ Bootstrap(app)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 if __name__ == '__main__':

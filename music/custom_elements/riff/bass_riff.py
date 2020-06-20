@@ -1,5 +1,6 @@
 from music.custom_elements.riff.riff import Riff
 from music.custom_elements.riff.guitar_riff import GuitarRiff
+from dataset.web_db import get_briff_table
 import json
 
 
@@ -18,6 +19,20 @@ class BassRiff(Riff):
         38 Synth Bass 1
         39 Synth Bass 2
         '''
+
+    def save_to_db(self, name):
+        riff_table = get_briff_table()
+        riff_info = self.export_json_dict()
+
+        riff_info['name'] = name
+
+        if riff_table.find_one({'name': name}) is None:
+            riff_table.insert_one(riff_info)
+        else:
+            riff_table.update_one(
+                {'name': name},
+                {'$set': riff_info}
+            )
 
 
 def create_briff_from_json(path):

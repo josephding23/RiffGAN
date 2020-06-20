@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 
-{% block title %}Riffs{% endblock %}
+{% block title %}Bass Riffs - RiffGAN{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -15,9 +15,16 @@
     </div>
     {% endif %}
 
+    {% if info %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+       {{ info }}
+    </div>
+    {% endif %}
+
     <div class="container-fluid align-center">
         <ul class="nav nav-tabs nav-justified" style="padding-left: 400px; padding-right: 400px;">
- <li role="presentation"><a href="{{ url_for('riffs.get_riffs', riff_type='griff') }}">Guitar</a></li>
+          <li role="presentation"><a href="{{ url_for('riffs.get_riffs', riff_type='griff') }}">Guitar</a></li>
           <li role="presentation" class="active"><a href="{{ url_for('riffs.get_riffs', riff_type='briff') }}">Bass</a></li>
           <li role="presentation"><a href="{{ url_for('riffs.get_riffs', riff_type='driff') }}">Drum</a></li>
         </ul>
@@ -84,149 +91,279 @@
                                   <button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#{{ "edit_riff%d_modal" % loop.index}}" >Edit</button>
                                 </div>
 
-                                <div class="modal fade" id="{{ "edit_riff%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog" style="align-content: center">
-                                        <div class="modal-content" style="align-content: center">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h3 class="modal-title" id="myModalLabel">Edit Bass Riff {{ riff.no }}</h3>
-                                            </div>
-
-                                            <form method="post" action="{{ url_for('riffs.edit_riff', riff_type=riff_type, index=loop.index )}}">
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-8 col-md-offset-2">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_length_input" style="font-weight: normal">Length</label></h4>
-                                                                <input type="text" class="form-control" value="{{ riff.length }}"
-                                                                       id="edit_length_input" name="edit_length_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_degrees_types_input" style="font-weight: normal"> Degrees & Types</label></h4>
-                                                                <input type="text" class="form-control" value="{{ riff.raw_degrees_and_types }}"
-                                                                       id="edit_degrees_types_input" name="edit_degrees_types_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-10 col-md-offset-1">
-                                                            <div class="form-group">
-                                                                <h4><label for="edit_timestamps_input" style="font-weight: normal"> Timestamps</label></h4>
-                                                                <input type="text" class="form-control" value="{{ riff.raw_timestamps }}"
-                                                                       id="edit_timestamps_input" name="edit_timestamps_input">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
-                                                        <div class="btn-group btn-group-justified" role="group"
-                                                            style="padding-left: 25px; padding-right: 15px">
-                                                           <input class="btn btn-primary" type="submit" value="Save">
-                                                        </div>
-                                                        <div class="btn-group btn-group-justified" role="group"
-                                                            style="padding-left: 15px; padding-right: 25px">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                             </div>
-                                            </form>
-
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal -->
-                                  </div>
-
                                 <div class="btn-group btn-group-justified" role="group"
-                                     style="padding-left: 20px; padding-right: 10px;">
+                                     style="padding-left: 20px; padding-right: 20px;">
                                     <form method="post" action="{{ url_for('riffs.delete_riff', riff_type=riff_type, index=loop.index) }}">
                                         <input type="submit" id="delete" class="btn btn-danger" value="Delete">
                                     </form>
                                 </div>
+
+                                <div class="btn-group btn-group-justified" role="group"
+                                     style="padding-left: 20px; padding-right: 10px;">
+                                  <button type="button" id="save" class="btn btn-primary" data-toggle="modal" data-target="#{{ "save_riff%d_modal" % loop.index }}" >Save</button>
+                                </div>
+
                             </div>
 
                         </div>
 
                     </div>
                 </div>
+
+                <div class="modal fade" id="{{ "edit_riff%d_modal" % loop.index}}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" style="align-content: center">
+                        <div class="modal-content" style="align-content: center">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title" id="myModalLabel">Edit Bass Riff {{ riff.no }}</h3>
+                            </div>
+
+                            <form method="post" action="{{ url_for('riffs.edit_riff', riff_type=riff_type, index=loop.index )}}">
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="form-group">
+                                                <h4><label for="edit_length_input" style="font-weight: normal">Length</label></h4>
+                                                <input type="text" class="form-control" value="{{ riff.length }}"
+                                                       id="edit_length_input" name="edit_length_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            <div class="form-group">
+                                                <h4><label for="edit_degrees_types_input" style="font-weight: normal"> Degrees & Types</label></h4>
+                                                <input type="text" class="form-control" value="{{ riff.raw_degrees_and_types }}"
+                                                       id="edit_degrees_types_input" name="edit_degrees_types_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            <div class="form-group">
+                                                <h4><label for="edit_timestamps_input" style="font-weight: normal"> Timestamps</label></h4>
+                                                <input type="text" class="form-control" value="{{ riff.raw_timestamps }}"
+                                                       id="edit_timestamps_input" name="edit_timestamps_input">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 25px; padding-right: 15px">
+                                           <input class="btn btn-primary" type="submit" value="Save">
+                                        </div>
+                                        <div class="btn-group btn-group-justified" role="group"
+                                            style="padding-left: 15px; padding-right: 25px">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                            </form>
+
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                  </div>
+
+                <div class="modal fade" id="{{ "save_riff%d_modal" % loop.index }}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" style="align-content: center">
+                        <div class="modal-content" style="align-content: center">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title" id="myModalLabel">Save Riff {{ riff.no }}</h3>
+                            </div>
+
+                        <form method="post" action="{{ url_for('riffs.save_riff', riff_type=riff_type, index=loop.index)}}">
+                            <div class="modal-body">
+
+                                <div class="row">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <div class="form-group">
+                                            <h4><label for="save_name_input" style="font-weight: normal">Name</label></h4>
+                                            <input type="text" class="form-control" placeholder="Name"
+                                                   id="save_name_input" name="save_name_input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                                    <div class="btn-group btn-group-justified" role="group"
+                                        style="padding-left: 25px; padding-right: 15px">
+                                       <input class="btn btn-primary" type="submit" value="Save">
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group"
+                                        style="padding-left: 15px; padding-right: 25px">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+              </div>
+
             {% endfor %}
+
                 <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:520px; max-height: 520px; overflow: scroll;">
                       <div class="panel-heading">
                           <h3>New Bass Riff</h3>
                       </div>
                       <div class="panel-body">
-                          <div style="text-align: center">
-                        <p><button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add_riff_modal" role="button"
-                                   style="margin-top: 140px; margin-bottom: 140px; text-align: center">Add</button></p></div>
-
-                          <div class="modal fade" id="add_riff_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h3 class="modal-title" id="myModalLabel">New Bass Riff</h3>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <form method="post" action="{{ url_for('riffs.new_riff', riff_type=riff_type) }}">
-                                            <div class="row">
-                                                <div class="col-md-8 col-md-offset-2">
-                                                    <div class="form-group">
-                                                        <h4><label for="new_length_input" style="font-weight: normal">Length</label></h4>
-                                                        <input type="text" class="form-control" placeholder="Length"
-                                                               id="new_length_input" name="new_length_input">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-10 col-md-offset-1">
-                                                    <div class="form-group">
-                                                        <h4><label for="new_degrees_types_input" style="font-weight: normal">Degrees & Types</label></h4>
-                                                        <input type="text" class="form-control" placeholder="Degrees & Types"
-                                                               id="new_degrees_types_input" name="new_degrees_types_input">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-10 col-md-offset-1">
-                                                    <div class="form-group">
-                                                        <h4><label for="new_timestamps_input" style="font-weight: normal">Timestamps</label></h4>
-                                                        <input type="text" class="form-control" placeholder="Timestamps"
-                                                               id="new_timestamps_input" name="new_timestamps_input">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <div class="btn-group btn-group-justified" role="group">
-                                                    <div class="btn-group btn-group-justified" role="group"
-                                                        style="padding-left: 25px; padding-right: 15px">
-                                                       <input class="btn btn-primary" type="submit" value="Save">
-                                                    </div>
-                                                    <div class="btn-group btn-group-justified" role="group"
-                                                        style="padding-left: 15px; padding-right: 25px">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                </div><!-- /.modal-content -->
-                            </div><!-- /.modal -->
+                          <div class="row" style="margin-top: 100px">
+                              <div class="col-md-offset-4 col-md-4" style="text-align: center">
+                                  <div class="btn-group">
+                                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add_riff_modal" role="button">Add New</button>
+                                  </div>
+                              </div>
                           </div>
-
+                          <div class="row" style="margin-top: 20px">
+                              <div class="col-md-offset-4 col-md-4" style="text-align: center">
+                                  <div class="btn-group">
+                                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#load_riff_modal" role="button">Load</button>
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                 </div>
             </div>
         </div>
+
+
+          <div class="row" style="margin-top: 50px">
+              <div class="col-md-offset-4 col-md-4" style="text-align: center">
+                  <div class="btn-group">
+                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#stored_riffs_managing" role="button">Edit Stored Riffs</button>
+                  </div>
+              </div>
+          </div>
+
+        <div class="modal fade" id="add_riff_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">New Bass Riff</h3>
+                    </div>
+
+                    <div class="modal-body">
+                        <form method="post" action="{{ url_for('riffs.new_riff', riff_type=riff_type) }}">
+                            <div class="row">
+                                <div class="col-md-8 col-md-offset-2">
+                                    <div class="form-group">
+                                        <h4><label for="new_length_input" style="font-weight: normal">Length</label></h4>
+                                        <input type="text" class="form-control" placeholder="Length"
+                                               id="new_length_input" name="new_length_input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="new_degrees_types_input" style="font-weight: normal">Degrees & Types</label></h4>
+                                        <input type="text" class="form-control" placeholder="Degrees & Types"
+                                               id="new_degrees_types_input" name="new_degrees_types_input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="form-group">
+                                        <h4><label for="new_timestamps_input" style="font-weight: normal">Timestamps</label></h4>
+                                        <input type="text" class="form-control" placeholder="Timestamps"
+                                               id="new_timestamps_input" name="new_timestamps_input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-group btn-group-justified" role="group">
+                                    <div class="btn-group btn-group-justified" role="group"
+                                        style="padding-left: 25px; padding-right: 15px">
+                                       <input class="btn btn-primary" type="submit" value="Save">
+                                    </div>
+                                    <div class="btn-group btn-group-justified" role="group"
+                                        style="padding-left: 15px; padding-right: 25px">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+          </div>
+
+        <div class="modal fade" id="load_riff_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">Load a Bass Riff</h3>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {% for riff in existed_riffs %}
+                              <li class="list-group-item">
+                                  <div class="row">
+                                      <div class="col-md-9">
+                                          <h4>Bass Riff {{ riff.name }}</h4>
+                                      </div>
+                                      <div>
+                                          <form method="post" action="{{ url_for('riffs.load_riff', riff_type=riff_type, index=loop.index) }}">
+                                              <input type="submit" id="load" class="btn btn-default" value="Load" style="margin-bottom: 5px">
+                                        </form>
+                                      </div>
+                                  </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+          </div>
+
+
+        <div class="modal fade" id="stored_riffs_managing" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">Edit Stored Bass Riffs</h3>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {% for riff in existed_riffs %}
+                              <li class="list-group-item">
+                                  <div class="row">
+                                      <div class="col-md-9">
+                                          <h4>Bass Riff {{ riff.name }}</h4>
+                                      </div>
+                                      <div>
+                                          <form method="post" action="{{ url_for('riffs.delete_stored_riff', riff_type=riff_type, index=loop.index) }}">
+                                              <input type="submit" id="delete" class="btn btn-danger" value="Delete" style="margin-bottom: 5px">
+                                          </form>
+                                      </div>
+                                  </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+          </div>
+
     </div>
 {% endblock %}

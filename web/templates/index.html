@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 
-{% block title %}Song{% endblock %}
+{% block title %}Welcome to RiffGAN! {% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -29,19 +29,55 @@
                              </form>
                         </div>
                         <div class="col-md-3">
-                             <form method="post" action="{{ url_for('song.open_song') }}">
-                                <input type="submit" id="delete" class="btn-lg btn-default-" value="Open">
-                             </form>
+                              <div class="btn-group btn-group-justified" role="group" style="padding-left: 10px; padding-right: 20px;">
+                                  <button class="btn-lg btn-primary" data-toggle="modal" data-target="#open_song_modal" role="button">Open</button>
+                              </div>
                         </div>
 
-
                     </div>
-
-
                 </div>
             </div>
         </div>
-
     </div>
+
+    <div class="modal fade" id="open_song_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" style="align-content: center">
+                <div class="modal-content" style="align-content: center">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="myModalLabel">Open Song</h3>
+                    </div>
+
+                <form method="post" action="{{ url_for('song.open_song')}}">
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                                <div class="form-group">
+                                    <h4><label for="open_name_input" style="font-weight: normal">Name</label></h4>
+                                    <input type="text" class="form-control" placeholder="Name"
+                                           id="open_name_input" name="open_name_input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
+                            <div class="btn-group btn-group-justified" role="group"
+                                style="padding-left: 25px; padding-right: 15px">
+                               <input class="btn btn-primary" type="submit" value="Save">
+                            </div>
+                            <div class="btn-group btn-group-justified" role="group"
+                                style="padding-left: 15px; padding-right: 25px">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+      </div>
 
 {% endblock %}

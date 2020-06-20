@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from music.pieces.song.toolkit import *
+from music.pieces.track.toolkit import *
 from music.pieces.track.track import *
 import pygame
 
@@ -214,10 +215,11 @@ def new_track():
 
         try:
             used_phrases = get_used_phrases_from_raw(raw_used_phrases)
+            print(used_phrases)
             if is_drum:
                 phrase_type = 'drum_phrase'
             else:
-                instr_type = request.form['edit_instr_type_input']
+                instr_type = request.form['new_instr_type_input']
                 if instr_type == 'guitar':
                     phrase_type = 'rhythm_guitar_phrase'
                 else:
@@ -225,6 +227,7 @@ def new_track():
                     phrase_type = 'rhythm_bass_phrase'
 
             available_phrases = get_available_phrase_no(phrases, phrase_type)
+            print(available_phrases)
             for phrase_no in used_phrases:
                 if phrase_no not in available_phrases:
                     error = f'Phrase No.{phrase_no} is not available.'

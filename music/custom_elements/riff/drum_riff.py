@@ -1,8 +1,9 @@
 from music.custom_elements.riff.toolkit import *
 import pretty_midi
-from music.process.audio_related import play_music
+from music.process.audio_related import play_music, play_music_without_init
 import os
 import json
+from dataset.web_db import get_driff_table
 
 
 class DrumRiff:
@@ -31,6 +32,20 @@ class DrumRiff:
         self.pm = None
         self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
         self.midi_path = ''
+
+    def save_to_db(self, name):
+        riff_table = get_driff_table()
+        riff_info = self.export_json_dict()
+
+        riff_info['name'] = name
+
+        if riff_table.find_one({'name': name}) is None:
+            riff_table.insert_one(riff_info)
+        else:
+            riff_table.update_one(
+                {'name': name},
+                {'$set': riff_info}
+            )
 
     def __eq__(self, other):
         return self.measure_length == other.measure_length and self.patterns == other.patterns
@@ -97,6 +112,10 @@ class DrumRiff:
     def play_it(self):
         assert self.midi_path is not '' and os.path.exists(self.midi_path)
         play_music(self.midi_path)
+
+    def play_with_no_init(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music_without_init(self.midi_path)
 
     def export_json_dict(self):
         info_dict = {
