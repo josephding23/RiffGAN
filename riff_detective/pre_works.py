@@ -81,8 +81,10 @@ def set_bpm_in_free_midi():
 
 def drop_duplicate_bpm():
     midi_table = get_midi_table()
-    for midi in midi_table.find({'bpm_list': {'$exists': False}}):
-        meta_info = midi['meta_info']
+    midi_table.update_many({}, {'$unset': {'BpmList': ''}})
+
+    for midi in midi_table.find({'BpmList': {'$exists': False}}):
+        meta_info = midi['MetaInfo']
         bpm_list = meta_info['tempo_changes']
 
         clean_bpm_list = []
@@ -93,7 +95,7 @@ def drop_duplicate_bpm():
                 'tempo': bpm_info['round_tempo']
             }
 
-            if bpm_info not in clean_bpm_list:
+            if bpm_info not in clean_bpm_list and bpm_info['tempo'] != clean_bpm_list[-1]['tempo']:
                 clean_bpm_list.append(bpm_info)
 
         midi_table.update_one(
@@ -101,7 +103,38 @@ def drop_duplicate_bpm():
             {'$set': {'bpm_list': clean_bpm_list}}
         )
 
-        print('Progress: {:.2%}\n'.format(midi_table.count({'bpm_list': {'$exists': True}}) / midi_table.count()))
+        print('Progress: {:.2%}\n'.format(midi_table.count({'BpmList': {'$exists': True}}) / midi_table.count()))
+
+
+def drop_duplicate_metre():
+    midi_table = get_midi_table()
+
+    for midi in midi_table.find({'MetreList': {'$exists': False}}):
+        meta_info = midi['MetaInfo']
+        metre_list = meta_info['time_signature']
+
+        metre_list.sort(key=time_info_sort)
+
+        clean_metre_list = []
+
+        for i, metre_info in enumerate(metre_list):
+            metre_info['time'] = round(metre_info['time'], 2)
+
+            if metre_info not in clean_metre_list:
+                if len(clean_metre_list) != 0:
+                    if metre_info['denominator'] == clean_metre_list[-1]['denominator'] and metre_info['numerator'] == clean_metre_list[-1]['numerator']:
+                        continue
+                    if metre_info['time'] - clean_metre_list[-1]['time'] < 1.0:
+                        continue
+                    clean_metre_list.append(metre_info)
+                clean_metre_list.append(metre_info)
+
+        midi_table.update_one(
+            {'_id': midi['_id']},
+            {'$set': {'MetreList': clean_metre_list}}
+        )
+
+        print('Progress: {:.2%}\n'.format(midi_table.count({'MetreList': {'$exists': True}}) / midi_table.count()))
 
 
 def create_time_info_list():
@@ -159,5 +192,5 @@ def count_bar_length(bpm, metre):
 
 
 if __name__ == '__main__':
-    create_time_info_list()
+    drop_duplicate_metre()
 
