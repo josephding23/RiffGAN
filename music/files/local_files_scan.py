@@ -2,7 +2,7 @@ from music.db_fragments.riff import GuitarRiff, BassRiff
 from music.db_fragments.solo import GuitarSolo
 import os
 import traceback
-from dataset.grunge_librarypy import *
+from dataset.grunge_library import *
 
 
 def scan_local_files():
