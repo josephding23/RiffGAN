@@ -124,8 +124,6 @@ def drop_duplicate_metre():
                 if len(clean_metre_list) != 0:
                     if metre_info['denominator'] == clean_metre_list[-1]['denominator'] and metre_info['numerator'] == clean_metre_list[-1]['numerator']:
                         continue
-                    if metre_info['time'] - clean_metre_list[-1]['time'] < 1.0:
-                        continue
                     clean_metre_list.append(metre_info)
                 clean_metre_list.append(metre_info)
 
@@ -134,16 +132,17 @@ def drop_duplicate_metre():
             {'$set': {'MetreList': clean_metre_list}}
         )
 
-        print('Progress: {:.2%}\n'.format(midi_table.count({'MetreList': {'$exists': True}}) / midi_table.count()))
+        # print('Progress: {:.2%}\n'.format(midi_table.count({'MetreList': {'$exists': True}}) / midi_table.count()))
 
 
 def create_time_info_list():
     midi_table = get_midi_table()
-    for midi in midi_table.find({'TimeInfoList': {'$exists': False}}):
+    num = 0
+    for midi in midi_table.find({'InvalidMetre': False}):
         path = 'E:/free_midi_library/raw_midi/' + midi['Genre'] + '/' + midi['md5'] + '.mid'
 
         bpm_list = midi['BpmList']
-        metre_list = midi['MetaInfo']['time_signature']
+        metre_list = midi['MetreList']
 
         whole_list = bpm_list + metre_list
         whole_list.sort(key=time_info_sort)
@@ -162,10 +161,42 @@ def create_time_info_list():
             if info not in info_list:
                 info_list.append(info)
 
+        if 'denominator' not in info_list[0].keys():
+            num += 1
+
         midi_table.update_one(
             {'_id': midi['_id']},
             {'$set': {'TimeInfoList': info_list}}
         )
+
+    print(num / midi_table.count())
+
+
+def time_info_list_improve():
+    midi_table = get_midi_table()
+    num = 0
+    for midi in midi_table.find({'InvalidMetre': False}):
+        bpm = midi['BpmList'][0]['tempo']
+        numerator, denominator = midi['MetreList'][0]['numerator'], midi['MetreList'][0]['denominator']
+
+        for i, time_info in enumerate(midi['TimeInfoList']):
+            if 'tempo' in time_info.keys():
+                bpm = time_info['tempo']
+            if 'numerator' in time_info.keys():
+                numerator, denominator = time_info['numerator'], time_info['denominator']
+
+            time = time_info['time']
+            if i == len(midi['TimeInfoList']) - 1:
+                pass
+            else:
+                next_time = midi['TimeInfoList'][i+1]['time']
+                bar_length = count_bar_length(bpm, (numerator, denominator))
+
+                if next_time - time < bar_length:
+                    num += 1
+                    break
+                    # print(midi['TimeInfoList'][i+1], time_info, bar_length)
+    print(num / midi_table.count())
 
 
 def rearrange_letter():
@@ -192,5 +223,4 @@ def count_bar_length(bpm, metre):
 
 
 if __name__ == '__main__':
-    drop_duplicate_metre()
-
+    time_info_list_improve()
