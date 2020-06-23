@@ -37,14 +37,25 @@ def generate_midi_segment_from_tensor(data, path, bpm=120):
     pm.write(path)
 
 
-def save_midis(bars, path):
+def save_midis(bars, path, instr_type):
     from util.npy_related import plot_data
     pm = pretty_midi.PrettyMIDI()
 
+    if instr_type == 'guitar':
+        note_range = (36, 96)
+        # standard tune: [E2, D6] -> [C2, C7)
+    else:
+        assert instr_type == 'bass'
+        note_range = (24, 72)
+        # standard tune: [E1, G4] -> [C1, C5)
+
+    '''
     padded_bars = np.concatenate((np.zeros((bars.shape[0], bars.shape[1], bars.shape[2], 24)),
                                   bars,
                                   np.zeros((bars.shape[0], bars.shape[1], bars.shape[2], 20))),
                                  axis=3)
+    '''
+    padded_bars = bars
     padded_bars = padded_bars.reshape((-1, padded_bars.shape[1], padded_bars.shape[2], padded_bars.shape[3]))
     padded_bars_list = []
     for ch_idx in range(padded_bars.shape[1]):
@@ -54,7 +65,8 @@ def save_midis(bars, path):
 
     pianoroll = padded_bars_list[0]
     pianoroll = pianoroll.reshape((pianoroll.shape[0] * pianoroll.shape[1], pianoroll.shape[2]))
-    pianoroll_diff = np.concatenate((np.zeros((1, 128), dtype=int), pianoroll, np.zeros((1, 128), dtype=int)))
+    pianoroll_diff = np.concatenate((np.zeros((1, note_range[1]-note_range[0]), dtype=int), pianoroll,
+                                     np.zeros((1, note_range[1]-note_range[0]), dtype=int)))
     pianoroll_search = np.diff(pianoroll_diff.astype(int), axis=0)
 
     instrument = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')
@@ -64,9 +76,9 @@ def save_midis(bars, path):
 
     tpp = 60.0 / tempo / float(beat_resolution)
     threshold = 60.0 / tempo / 16
-    phrase_end_time = 60.0 / tempo * 16 * pianoroll.shape[0]
+    phrase_end_time = 60.0 / tempo * 4 * pianoroll.shape[0]
 
-    for note_num in range(128):
+    for note_num in range(0, note_range[1]-note_range[0]):
         start_idx = (pianoroll_search[:, note_num] > 0).nonzero()
         start_time = list(tpp * (start_idx[0].astype(float)))
 
@@ -98,14 +110,14 @@ def save_midis(bars, path):
             start_time = start_time[:-d]
         for idx in range(len(start_time)):
             if duration[idx] >= threshold:
-                note = pretty_midi.Note(velocity=127, pitch=note_num, start=start_time[idx], end=end_time[idx])
+                note = pretty_midi.Note(velocity=127, pitch=note_num+note_range[0], start=start_time[idx], end=end_time[idx])
                 instrument.notes.append(note)
             else:
                 if start_time[idx] + threshold <= phrase_end_time:
-                    note = pretty_midi.Note(velocity=127, pitch=note_num, start=start_time[idx],
+                    note = pretty_midi.Note(velocity=127, pitch=note_num+note_range[0], start=start_time[idx],
                                             end=start_time[idx] + threshold)
                 else:
-                    note = pretty_midi.Note(velocity=127, pitch=note_num, start=start_time[idx],
+                    note = pretty_midi.Note(velocity=127, pitch=note_num+note_range[0], start=start_time[idx],
                                             end=phrase_end_time)
                 instrument.notes.append(note)
     instrument.notes.sort(key=lambda note: note.start)

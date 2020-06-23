@@ -186,19 +186,18 @@ class RiffGAN(object):
                 batch_size = data.size(0)
                 # print(batch_size)
 
-                real_label = torch.ones(size=[batch_size, 1, 16, 21], device=self.device)
-                fake_label = torch.zeros(size=[batch_size, 1, 16, 21], device=self.device)
+                real_label = torch.ones(size=[batch_size, 1, 16, int(self.opt.input_shape[2]/4)], device=self.device)
+                fake_label = torch.zeros(size=[batch_size, 1, 16, int(self.opt.input_shape[2]/4)], device=self.device)
 
                 ######################
                 # Generator
                 ######################
 
-                noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, 84]), std=self.opt.gaussian_std).to(self.device,
+                noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]), std=self.opt.gaussian_std).to(self.device,
                                                                                                        dtype=torch.float)
-                '''
-                noise = generate_random_seed(batch_size)
-                noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
-                '''
+
+                # noise = generate_random_seed(batch_size)
+                # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
 
                 fake_data = self.generator(noise)
                 D_fake = self.discriminator(fake_data)
@@ -256,7 +255,7 @@ class RiffGAN(object):
                                               ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
                            time_stamps=[1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1 / 2, 1 / 2, 1 / 2])
         griff.add_notes_to_pm(root_note_name='G2', bpm=120, instr=27)
-        pm, shape = generate_nonzeros_from_pm(griff.pm, 120, 2)
+        pm, shape = generate_nonzeros_from_pm(griff.pm, 120, 2, self.opt.instr_type)
         data = generate_sparse_matrix_from_nonzeros(pm, shape)
         # plot_data(database[0, :, :])
 
@@ -268,24 +267,24 @@ class RiffGAN(object):
 
         self.continue_from_latest_checkpoint()
 
-        for i in range(5):
+        for i in range(10):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
             # noise = generate_random_seed(1)
-            noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, 84]), std=self.opt.gaussian_std).to(
+            noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, self.opt.input_shape[2]]), std=self.opt.gaussian_std).to(
                 self.device,
                 dtype=torch.float)
 
-            noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
-            plot_data(noise[0, 0, :, :])
+            # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
+            # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
 
             fake_sample = self.generator(noise).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])
 
-            save_midis(fake_sample, f'../../data/generated_music/test{str(i+1)}.mid')
+            save_midis(fake_sample, f'../../data/generated_music/test{str(i+1)}.mid', self.opt.instr_type)
 
 
 def reduce_mean(x):

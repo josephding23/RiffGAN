@@ -24,6 +24,15 @@ class BarUnit(nn.Module):
                                  nn.ReLU(),
 
                                  nn.Conv2d(in_channels=128,
+                                           out_channels=128,
+                                           kernel_size=3,
+                                           stride=1,
+                                           padding=1,
+                                           bias=False),
+                                 nn.InstanceNorm2d(64, eps=1e-5),
+                                 nn.ReLU(),
+
+                                 nn.Conv2d(in_channels=128,
                                            out_channels=64,
                                            kernel_size=3,
                                            stride=1,
@@ -78,7 +87,6 @@ class Generator(nn.Module):
                                              nn.InstanceNorm2d(64, eps=1e-5),
                                              nn.ReLU(),
                                              )
-        '''
         init_weight_(self.paragraph_cnet1)
 
         self.bar_cnet1 = BarUnit(self.eta)
@@ -93,7 +101,6 @@ class Generator(nn.Module):
         init_weight_(self.bar_cnet2)
         init_weight_(self.bar_cnet3)
         init_weight_(self.bar_cnet4)
-        '''
 
         self.paragraph_cnet2 = nn.Sequential(nn.Conv2d(in_channels=64,
                                                        out_channels=128,
@@ -169,7 +176,6 @@ class Generator(nn.Module):
         # ↓
         # (batch * 64 * 64 * 84)
 
-        '''
         x1, x2, x3, x4 = x.split([16, 16, 16, 16], dim=2)
         # (batch * 64 * 16 * 84) * 4
 
@@ -183,7 +189,6 @@ class Generator(nn.Module):
         x = torch.cat([x1, x2, x3, x4], dim=2)
 
         # (batch * 64 * 64 * 84)
-        '''
 
         x = self.paragraph_cnet2(x)
         # ↓

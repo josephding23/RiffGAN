@@ -29,7 +29,7 @@ class Config(object):
         self.image_pool_info = 'pooled' if self.use_image_pool else 'not_pooled'
         self.image_pool_max_size = 20
 
-        self.bat_unit_eta = 0.2
+        self.bat_unit_eta = 0.25
 
         ##########################
 
@@ -43,7 +43,7 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.9  # Adam optimizer beta1 & 2
+        self.beta1 = 0.5  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.lr = 0.00005
@@ -54,12 +54,16 @@ class Config(object):
 
         self.no_flip = True
         self.num_threads = 0
-        self.batch_size = 32
+        self.batch_size = 16
         self.max_epoch = 30
         self.epoch_step = 5
 
-        self.data_shape = (self.batch_size, 1, 64, 84)
-        self.input_shape = (1, 64, 84)
+        # self.data_shape = (self.batch_size, 1, 64, 84)
+        if self.instr_type == 'guitar':
+            self.input_shape = (1, 64, 60)
+        else:
+            assert self.instr_type == 'bass'
+            self.input_shape = (1, 64, 48)
 
         self.plot_every = 100  # iterations
         self.save_every = 1  # epochs

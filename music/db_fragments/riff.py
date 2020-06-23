@@ -21,17 +21,20 @@ class UnitRiff(Riff):
     def __init__(self, path):
         Riff.__init__(self, path)
 
-    def save_nonzeros(self, save_path):
-        nonzeros, shape = generate_nonzeros_from_pm(self.pm, bpm=120, length=1)
-        print(shape)
-        np.savez_compressed(save_path, nonzeros=nonzeros, shape=shape)
-
 
 class UnitGuitarRiff(UnitRiff):
     def __init__(self, path):
         UnitRiff.__init__(self, path)
 
+    def save_nonzeros(self, save_path):
+        nonzeros, shape = generate_nonzeros_from_pm(self.pm, bpm=120, length=1, instr_type='guitar')
+        np.savez_compressed(save_path, nonzeros=nonzeros, shape=shape)
+
 
 class UnitBassRiff(UnitRiff):
     def __init__(self, path):
         UnitRiff.__init__(self, path)
+
+    def save_nonzeros(self, save_path):
+        nonzeros, shape = generate_nonzeros_from_pm(self.pm, bpm=120, length=1, instr_type='bass')
+        np.savez_compressed(save_path, nonzeros=nonzeros, shape=shape)
