@@ -193,8 +193,8 @@ class RiffGAN(object):
                 # Generator
                 ######################
 
-                noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]), std=self.opt.gaussian_std).to(self.device,
-                                                                                                       dtype=torch.float)
+                noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]),
+                                     std=self.opt.gaussian_std).to(self.device, dtype=torch.float)
 
                 # noise = generate_random_seed(batch_size)
                 # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
@@ -295,4 +295,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.train()
+    riff_gan.test()

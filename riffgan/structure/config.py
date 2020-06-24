@@ -29,7 +29,7 @@ class Config(object):
         self.image_pool_info = 'pooled' if self.use_image_pool else 'not_pooled'
         self.image_pool_max_size = 20
 
-        self.bat_unit_eta = 0.25
+        self.bat_unit_eta = 0.2
 
         ##########################
 
@@ -55,7 +55,7 @@ class Config(object):
         self.no_flip = True
         self.num_threads = 0
         self.batch_size = 16
-        self.max_epoch = 30
+        self.max_epoch = 50
         self.epoch_step = 5
 
         # self.data_shape = (self.batch_size, 1, 64, 84)

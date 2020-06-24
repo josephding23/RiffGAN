@@ -24,21 +24,11 @@ class BarUnit(nn.Module):
                                  nn.ReLU(),
 
                                  nn.Conv2d(in_channels=128,
-                                           out_channels=128,
-                                           kernel_size=3,
-                                           stride=1,
-                                           padding=1,
-                                           bias=False),
-                                 nn.InstanceNorm2d(64, eps=1e-5),
-                                 nn.ReLU(),
-
-                                 nn.Conv2d(in_channels=128,
                                            out_channels=64,
                                            kernel_size=3,
                                            stride=1,
                                            padding=1,
                                            bias=False),
-                                 nn.InstanceNorm2d(64, eps=1e-5),
                                  nn.ReLU()
                                  )
 
@@ -75,6 +65,7 @@ class Generator(nn.Module):
                                                        stride=1,
                                                        padding=0,
                                                        bias=False),
+                                             nn.InstanceNorm2d(32, eps=1e-5),
                                              nn.ReLU(),
 
                                              nn.ReflectionPad2d((1, 1, 1, 1)),
@@ -108,7 +99,6 @@ class Generator(nn.Module):
                                                        stride=2,
                                                        padding=1,
                                                        bias=False),
-                                             nn.InstanceNorm2d(128, eps=1e-5),
                                              nn.LeakyReLU(0.2),
 
                                              nn.Conv2d(in_channels=128,
@@ -124,7 +114,7 @@ class Generator(nn.Module):
         init_weight_(self.paragraph_cnet2)
 
         self.resnet = nn.Sequential()
-        for i in range(9):
+        for i in range(12):
             self.resnet.add_module('resnet_block', ResnetBlock(dim=256,
                                                                padding_type='reflect',
                                                                use_dropout=False,
@@ -149,7 +139,6 @@ class Generator(nn.Module):
                                                                  padding=1,
                                                                  bias=False),
                                               nn.ZeroPad2d((1, 0, 1, 0)),
-                                              nn.InstanceNorm2d(64, eps=1e-5),
                                               nn.LeakyReLU(0.2)
                                               )
         init_weight_(self.paragraph_ctnet1)

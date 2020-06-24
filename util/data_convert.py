@@ -110,7 +110,8 @@ def save_midis(bars, path, instr_type):
             start_time = start_time[:-d]
         for idx in range(len(start_time)):
             if duration[idx] >= threshold:
-                note = pretty_midi.Note(velocity=127, pitch=note_num+note_range[0], start=start_time[idx], end=end_time[idx])
+                note = pretty_midi.Note(velocity=127, pitch=note_num+note_range[0], start=start_time[idx],
+                                        end=end_time[idx])
                 instrument.notes.append(note)
             else:
                 if start_time[idx] + threshold <= phrase_end_time:
