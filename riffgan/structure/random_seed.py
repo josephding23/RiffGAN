@@ -4,8 +4,19 @@ from music.custom_elements.riff.toolkit import *
 from util.npy_related import plot_data
 
 
-def generate_random_seed(length, instr='guitar', pattern='5'):
-    random_seed = np.zeros(shape=(length, 64, 84), dtype=np.float_)
+def generate_random_seed(length, instr, root_note='I', pattern='5'):
+
+    if instr == 'guitar':
+        note_range = (36, 96)
+        # standard tune: [E2, D6] -> [C2, C7)
+    else:
+        assert instr == 'bass'
+        note_range = (24, 72)
+        # standard tune: [E1, G4] -> [C1, C5)
+
+    seed = np.zeros(shape=(length, 64, note_range[1]-note_range[0]), dtype=np.float_)
+
+    root_dist = get_relative_distance(root_note)
 
     for i in range(length):
         root_prob = round(random.uniform(0.3, 0.6), 2)
@@ -18,41 +29,29 @@ def generate_random_seed(length, instr='guitar', pattern='5'):
         chord_pattern = get_chord_pattern(pattern)
 
         random_dict = {
-            'root': {
+            'I': {
                 'prob': root_prob,
             },
-            'third': {
+            'III': {
                 'prob': third_prob
             },
-            'fifth': {
+            'V': {
                 'prob': fifth_prob
             },
-            'second': {
+            'II': {
                 'prob': second_prob
             }
         }
 
-        if instr == 'guitar':
-            random_dict['root']['note'] = 'E2'
-            random_dict['third']['note'] = '+G2'
-            random_dict['fifth']['note'] = 'B2'
-            random_dict['second']['note'] = '+F2'
-        else:
-            assert instr == 'bass'
-            random_dict['root']['note'] = 'E1'
-            random_dict['third']['note'] = '+G1'
-            random_dict['fifth']['note'] = 'B1'
-            random_dict['second']['note'] = '+F1'
-
-        order_list = ['root', 'third', 'fifth', 'second']
+        order_list = ['I', 'III', 'V', 'II']
         random.shuffle(order_list)
 
         start_time = 0
         total_length = 64
         for order in order_list:
-            root_note = note_name_to_num(random_dict[order]['note'])
+            distance = get_relative_distance(order)
             prob = random_dict[order]['prob']
-            chord = [note + root_note for note in chord_pattern]
+            chord = [root_dist + distance + note for note in chord_pattern]
 
             start = start_time
             end = start + int(prob * total_length)
@@ -61,12 +60,12 @@ def generate_random_seed(length, instr='guitar', pattern='5'):
 
             for time in range(start, end):
                 for note in chord:
-                    random_seed[i][time][note] = 1.0
+                    seed[i][time][note] = 1.0
 
-    return random_seed
+    return seed
 
 
 if __name__ == '__main__':
-    random_seed = generate_random_seed(2)
-    plot_data(random_seed[0, :, :])
-    plot_data(random_seed[1, :, :])
+    random_seed = generate_random_seed(2, 'guitar')
+    plot_data(random_seed[0, :, :], (1, 64, 60))
+    plot_data(random_seed[1, :, :], (1, 64, 60))

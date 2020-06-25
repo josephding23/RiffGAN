@@ -186,22 +186,29 @@ class RiffGAN(object):
                 batch_size = data.size(0)
                 # print(batch_size)
 
-                real_label = torch.ones(size=[batch_size, 1, 16, int(self.opt.input_shape[2]/4)], device=self.device)
-                fake_label = torch.zeros(size=[batch_size, 1, 16, int(self.opt.input_shape[2]/4)], device=self.device)
+                real_label = torch.ones(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
+                fake_label = torch.zeros(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
 
-                ######################
-                # Generator
-                ######################
+                noise = torch.abs(torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]),
+                                     std=self.opt.gaussian_std).to(self.device, dtype=torch.float))
+                chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
+                                        , 1).to(device=self.device, dtype=torch.float)
 
-                noise = torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]),
-                                     std=self.opt.gaussian_std).to(self.device, dtype=torch.float)
+                seed = noise + chord
 
                 # noise = generate_random_seed(batch_size)
                 # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
 
-                fake_data = self.generator(noise)
+                fake_data = self.generator(seed)
                 D_fake = self.discriminator(fake_data)
+
+                real_data = torch.unsqueeze(data, 1).to(device=self.device, dtype=torch.float)
+                D_real = self.discriminator(real_data)
                 # print(D_fake.shape)
+
+                ######################
+                # Generator
+                ######################
 
                 self.G_optimizer.zero_grad()
                 loss_G = criterionGAN(D_fake, real_label)
@@ -214,31 +221,22 @@ class RiffGAN(object):
                 # Discriminator
                 ######################
 
-                # all-real batch
+                self.D_optimizer.zero_grad()
 
-                real_data = torch.unsqueeze(data, 1).to(device=self.device, dtype=torch.float)
-                D_real = self.discriminator(real_data)
                 loss_D_real = criterionGAN(D_real, real_label)
-
-                # all-fake batch
                 loss_D_fake = criterionGAN(D_fake, fake_label)
 
-                self.D_optimizer.zero_grad()
                 loss_D = loss_D_real + loss_D_fake
                 loss_D.backward()
 
                 self.D_optimizer.step()
                 DLoss_meter.add(loss_D.item())
 
-                if i % self.opt.plot_every == 0:
-                    losses['loss_G'] = float(GLoss_meter.value()[0])
-                    losses['loss_D'] = float(DLoss_meter.value()[0])
-
-                    self.logger.info(str(losses))
-                    self.logger.info('Epoch {} progress: {:.2%}\n'.format(epoch, i / iter_num))
-
             if epoch % self.opt.save_every == 0 or epoch == self.opt.max_epoch - 1:
                 self.save_model(epoch)
+
+            losses['loss_G'] = float(GLoss_meter.value()[0])
+            losses['loss_D'] = float(DLoss_meter.value()[0])
 
             self.G_scheduler.step(epoch)
             self.D_scheduler.step(epoch)
@@ -271,15 +269,17 @@ class RiffGAN(object):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
-            # noise = generate_random_seed(1)
-            noise = torch.normal(mean=torch.zeros(size=[1, 1, 64, self.opt.input_shape[2]]), std=self.opt.gaussian_std).to(
-                self.device,
-                dtype=torch.float)
+            noise = torch.normal(mean=torch.zeros(size=[2, 1, 64, self.opt.input_shape[2]]),
+                                 std=self.opt.gaussian_std).to(self.device, dtype=torch.float)
+            chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(2, self.opt.instr_type))
+                                    , 1).to(device=self.device, dtype=torch.float)
+
+            seed = noise + chord
 
             # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
 
-            fake_sample = self.generator(noise).cpu().detach().numpy()
+            fake_sample = self.generator(seed).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])

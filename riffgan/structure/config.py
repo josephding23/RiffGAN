@@ -43,7 +43,7 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.5  # Adam optimizer beta1 & 2
+        self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.lr = 0.00005
