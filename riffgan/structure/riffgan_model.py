@@ -1,7 +1,6 @@
 import time
 import torch
 import re
-import numpy as np
 from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler, Adam
 import os
@@ -12,17 +11,14 @@ import shutil
 from torchsummary import summary
 from torchnet.meter import MovingAverageValueMeter
 
-from riffgan.networks.discriminator import Discriminator
-from riffgan.networks.generator import Generator
+from riffgan.networks.steely_gan.discriminator import Discriminator
+from riffgan.networks.steely_gan.generator import Generator
 from riffgan.structure.config import Config
 from riffgan.structure.image_pool import ImagePool
-from riffgan.structure.loss import GANLoss
 from riffgan.structure.random_seed import *
 
 import logging
 import colorlog
-import json
-from riffgan.error import RiffganException
 
 from util.data_convert import *
 from util.npy_related import *
@@ -189,12 +185,9 @@ class RiffGAN(object):
                 real_label = torch.ones(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
                 fake_label = torch.zeros(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
 
-                noise = torch.abs(torch.normal(mean=torch.zeros(size=[batch_size, 1, 64, self.opt.input_shape[2]]),
-                                     std=self.opt.gaussian_std).to(self.device, dtype=torch.float))
-                chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
-                                        , 1).to(device=self.device, dtype=torch.float)
-
-                seed = noise + chord
+                seed = torch.randn(batch_size, self.opt.seed_size, device=self.device)
+                reference_chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
+                                                  , 1).to(device=self.device, dtype=torch.float)
 
                 # noise = generate_random_seed(batch_size)
                 # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
