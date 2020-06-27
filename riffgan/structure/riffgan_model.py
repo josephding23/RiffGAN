@@ -11,8 +11,12 @@ import shutil
 from torchsummary import summary
 from torchnet.meter import MovingAverageValueMeter
 
-from riffgan.networks.steely_gan.discriminator import Discriminator
-from riffgan.networks.steely_gan.generator import Generator
+# from riffgan.networks.riffnet.discriminator import Discriminator as SteelyD
+from riffgan.networks.riffnet.generator import Generator as RiffG
+from riffgan.networks.riffnet.discriminator import Discriminator as RiffD
+
+from riffgan.networks.midinet.discriminator import Discriminator as MidiNetD
+from riffgan.networks.midinet.generator import Generator as MidiNetG
 from riffgan.structure.config import Config
 from riffgan.structure.image_pool import ImagePool
 from riffgan.structure.random_seed import *
@@ -22,6 +26,7 @@ import colorlog
 
 from util.data_convert import *
 from util.npy_related import *
+from riffgan.networks.midinet.utility import *
 
 
 class RiffGAN(object):
@@ -60,15 +65,25 @@ class RiffGAN(object):
 
     def _build_model(self):
 
-        self.generator = Generator(self.opt.bat_unit_eta)
-        self.discriminator = Discriminator()
+        if self.opt.network_name == 'midinet':
+            self.generator = MidiNetG(self.opt.pitch_range)
+
+            self.discriminator = MidiNetD(self.opt.pitch_range)
+
+        else:
+            assert self.opt.network_name == 'riff_net'
+            self.generator = RiffG(self.opt.pitch_range)
+            self.discriminator = RiffD(self.opt.pitch_range)
+
+        init_weight_(self.generator)
+        init_weight_(self.discriminator)
 
         if self.opt.gpu:
             self.generator.to(self.device)
-            summary(self.generator, input_size=self.opt.input_shape)
+            # summary(self.generator, input_size=self.opt.input_shape)
 
             self.discriminator.to(self.device)
-            summary(self.discriminator, input_size=self.opt.input_shape)
+            # summary(self.discriminator, input_size=self.opt.input_shape)
 
         self.G_optimizer = Adam(params=self.generator.parameters(), lr=self.opt.lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
@@ -182,21 +197,18 @@ class RiffGAN(object):
                 batch_size = data.size(0)
                 # print(batch_size)
 
-                real_label = torch.ones(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
-                fake_label = torch.zeros(size=[batch_size, 1, 4, int(self.opt.input_shape[2]/12)], device=self.device)
+                real_label = torch.ones(size=[batch_size, 1], device=self.device)
+                fake_label = torch.zeros(size=[batch_size, 1], device=self.device)
 
-                seed = torch.randn(batch_size, self.opt.seed_size, device=self.device)
-                reference_chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
+                noise = torch.randn(batch_size, self.opt.seed_size, device=self.device)
+                seed = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
                                                   , 1).to(device=self.device, dtype=torch.float)
 
-                # noise = generate_random_seed(batch_size)
-                # noise = torch.unsqueeze(torch.from_numpy(noise), 1).to(device=self.device, dtype=torch.float)
-
-                fake_data = self.generator(seed)
-                D_fake = self.discriminator(fake_data)
+                fake_data = self.generator(noise, seed, batch_size)
+                D_fake = self.discriminator(fake_data, batch_size)
 
                 real_data = torch.unsqueeze(data, 1).to(device=self.device, dtype=torch.float)
-                D_real = self.discriminator(real_data)
+                D_real = self.discriminator(real_data, batch_size)
                 # print(D_fake.shape)
 
                 ######################
@@ -262,17 +274,16 @@ class RiffGAN(object):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
-            noise = torch.normal(mean=torch.zeros(size=[2, 1, 64, self.opt.input_shape[2]]),
-                                 std=self.opt.gaussian_std).to(self.device, dtype=torch.float)
-            chord = torch.unsqueeze(torch.from_numpy(generate_random_seed(2, self.opt.instr_type))
-                                    , 1).to(device=self.device, dtype=torch.float)
-
-            seed = noise + chord
+            random_riff = generate_random_seed(1, 'guitar')
+            # plot_data(random_riff[0, :, :], self.opt.input_shape)
+            noise = torch.randn(2, self.opt.seed_size, device=self.device)
+            seed = torch.unsqueeze(torch.from_numpy(data)
+                                   , 1).to(device=self.device, dtype=torch.float)
 
             # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
 
-            fake_sample = self.generator(seed).cpu().detach().numpy()
+            fake_sample = self.generator(noise, seed, 2).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])

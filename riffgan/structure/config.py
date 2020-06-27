@@ -10,13 +10,16 @@ class Config(object):
         self.dataset_name = 'grunge_library'
         self.instr_type = 'guitar'
 
+        self.network_name = 'riff_net'
+        # self.network_name = 'midinet'
+
         self.time_step = 64
         self.bar_length = 4
         self.note_valid_range = (24, 108)
         self.note_valid_length = 84
 
         self.phase = 'train'
-        self.continue_train = False
+        self.continue_train = True
 
         ###########################
 
@@ -47,7 +50,7 @@ class Config(object):
         self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
-        self.lr = 0.00005
+        self.lr = 0.0002
         self.milestones = [2, 5, 8, 11, 13, 15, 17, 19, 20]
         self.gamma = 0.5
 
@@ -65,6 +68,8 @@ class Config(object):
         else:
             assert self.instr_type == 'bass'
             self.input_shape = (1, 64, 48)
+
+        self.pitch_range = self.input_shape[2]
 
         self.plot_every = 100  # iterations
         self.save_every = 1  # epochs
