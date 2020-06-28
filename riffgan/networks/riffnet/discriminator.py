@@ -13,34 +13,33 @@ class Discriminator(nn.Module):
 
         self.cnet_1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
-                      out_channels=16,
-                      kernel_size=(3, pitch_range),
-                      stride=(2, 2)
+                      out_channels=64,
+                      kernel_size=(5, pitch_range),
+                      stride=(4, 2)
                       ),
             nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(16),
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Dropout(0.5)
         )
-        init_weight_(self.cnet_1)
 
         self.cnet_2 = nn.Sequential(
-            nn.Conv2d(in_channels=16,
-                      out_channels=32,
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
                       kernel_size=(3, 1),
-                      stride=(2, 2)
+                      stride=(2, 1)
                       ),
             nn.ZeroPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Dropout(0.5)
         )
 
         self.cnet_3 = nn.Sequential(
-            nn.Conv2d(in_channels=32,
+            nn.Conv2d(in_channels=64,
                       out_channels=64,
                       kernel_size=(3, 1),
-                      stride=(2, 2)
+                      stride=(2, 1)
                       ),
             nn.ZeroPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(64),
@@ -50,16 +49,16 @@ class Discriminator(nn.Module):
 
         self.cnet_4 = nn.Sequential(
             nn.Conv2d(in_channels=64,
-                      out_channels=64,
+                      out_channels=256,
                       kernel_size=(3, 1),
-                      stride=(2, 2)
+                      stride=(1, 1)
                       ),
-            nn.BatchNorm2d(64),
+            nn.BatchNorm2d(256),
             nn.LeakyReLU(0.2),
-            nn.Dropout(0.5)
+            # nn.Dropout(0.5)
         )
 
-        self.linear1 = nn.Linear(192,  1)
+        self.linear1 = nn.Linear(512, 1)
 
     def forward(self, x, batch_size):
         x = self.cnet_1(x)

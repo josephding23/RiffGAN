@@ -19,7 +19,7 @@ class Config(object):
         self.note_valid_length = 84
 
         self.phase = 'train'
-        self.continue_train = True
+        self.continue_train = False
 
         ###########################
 
@@ -40,7 +40,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 200
+        self.seed_size = 256
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0

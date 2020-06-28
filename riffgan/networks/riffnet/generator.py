@@ -13,98 +13,98 @@ class Generator(nn.Module):
         self.pitch_range = pitch_range
 
         self.ctnet4 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=self.pitch_range+16,
-                               out_channels=self.pitch_range,
-                               kernel_size=(3, 1),
-                               stride=(2, 2),
-                               padding=(1, 0)
+            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
+                               out_channels=self.n_channel,
+                               kernel_size=(5, 1),
+                               stride=(2, 1),
+                               padding=(0, 0)
                                ),
             nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(self.pitch_range),
+            nn.BatchNorm2d(self.n_channel),
             nn.LeakyReLU(0.2)
         )
 
         self.ctnet3 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=self.pitch_range+16,
-                               out_channels=self.pitch_range,
+            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
+                               out_channels=self.n_channel,
                                kernel_size=(3, 1),
-                               stride=(2, 2),
+                               stride=(2, 1),
                                padding=(1, 0)
                                ),
             nn.ZeroPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(self.pitch_range),
+            nn.BatchNorm2d(self.n_channel),
             nn.LeakyReLU(0.2)
         )
 
         self.ctnet2 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=self.pitch_range+16,
-                               out_channels=self.pitch_range,
+            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
+                               out_channels=self.n_channel,
                                kernel_size=(3, 1),
-                               stride=(2, 2),
+                               stride=(2, 1),
                                padding=(1, 0)
                                ),
             nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(self.pitch_range),
+            nn.BatchNorm2d(self.n_channel),
             nn.LeakyReLU(0.2)
         )
 
         self.ctnet1 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=self.pitch_range+16,
+            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
                                out_channels=1,
-                               kernel_size=(3, self.pitch_range),
-                               stride=(4, 2),
-                               padding=0
+                               kernel_size=(5, self.pitch_range),
+                               stride=(2, 1),
+                               padding=(2, 0)
                                ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(num_features=1),
-            nn.LeakyReLU(0.2)
+            # nn.LeakyReLU(0.2)
         )
 
         self.cnet1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
-                      out_channels=16,
-                      kernel_size=(3,  self.pitch_range),
-                      stride=(4, 2),
+                      out_channels=64,
+                      kernel_size=(5, self.pitch_range),
+                      stride=(2, 1),
                       ),
-            # nn.ReflectionPad2d((0, 1, 0, 0)),
-            nn.BatchNorm2d(num_features=16),
+            nn.ReflectionPad2d((0, 0, 1, 1)),
+            nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )
 
         self.cnet2 = nn.Sequential(
-            nn.Conv2d(in_channels=16,
-                      out_channels=16,
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
                       kernel_size=(3, 1),
-                      stride=(2, 2),
+                      stride=(2, 1),
                       ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(num_features=16),
+            nn.ReflectionPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )
 
         self.cnet3 = nn.Sequential(
-            nn.Conv2d(in_channels=16,
-                      out_channels=16,
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
                       kernel_size=(3, 1),
-                      stride=(2, 2),
+                      stride=(2, 1),
                       ),
-            nn.ZeroPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(num_features=16),
+            nn.ReflectionPad2d((0, 0, 0, 1)),
+            nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )
 
         self.cnet4 = nn.Sequential(
-            nn.Conv2d(in_channels=16,
-                      out_channels=16,
-                      kernel_size=(3, 1),
-                      stride=(2, 2),
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(5, 1),
+                      stride=(2, 1),
                       ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(num_features=16),
+            # nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )
 
-        self.linear1 = nn.Linear(200, 120)
+        self.linear1 = nn.Linear(256, self.n_channel * 2)
 
     def forward(self, noise, seed, batch_size):
         h4_prev = self.cnet1(seed)
@@ -114,7 +114,7 @@ class Generator(nn.Module):
 
         h1 = self.linear1(noise)
 
-        h1 = h1.view(batch_size, 60, 2, 1)
+        h1 = h1.view(batch_size, self.n_channel, 2, 1)
         h1 = conv_prev_concat(h1, h1_prev)
 
         h2 = self.ctnet4(h1)

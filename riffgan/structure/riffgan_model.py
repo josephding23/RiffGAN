@@ -231,7 +231,7 @@ class RiffGAN(object):
                 loss_D_real = criterionGAN(D_real, real_label)
                 loss_D_fake = criterionGAN(D_fake, fake_label)
 
-                loss_D = loss_D_real + loss_D_fake
+                loss_D = 0.5 * loss_D_real + 0.5 * loss_D_fake
                 loss_D.backward()
 
                 self.D_optimizer.step()
@@ -274,21 +274,22 @@ class RiffGAN(object):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
-            random_riff = generate_random_seed(1, 'guitar')
+            random_riff = generate_random_seed(2, 'guitar')
             # plot_data(random_riff[0, :, :], self.opt.input_shape)
             noise = torch.randn(2, self.opt.seed_size, device=self.device)
-            seed = torch.unsqueeze(torch.from_numpy(data)
+            seed = torch.unsqueeze(torch.from_numpy(random_riff)
                                    , 1).to(device=self.device, dtype=torch.float)
 
             # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
-
+            ori_sample = seed.cpu().detach().numpy()
             fake_sample = self.generator(noise, seed, 2).cpu().detach().numpy()
             print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])
 
-            save_midis(fake_sample, f'../../data/generated_music/test{str(i+1)}.mid', self.opt.instr_type)
+            save_midis(ori_sample, f'../../data/generated_music/ori{str(i + 1)}.mid', self.opt.instr_type)
+            save_midis(fake_sample, f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
 
 
 def reduce_mean(x):

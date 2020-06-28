@@ -34,7 +34,6 @@ class Discriminator(nn.Module):
         init_weight_(self.cnet_2)
 
         self.linear1 = nn.Linear(192, 1024)
-        init_weight_(self.linear1)
         self.linear2 = nn.Linear(1024, 1)
         init_weight_(self.linear2)
 
