@@ -277,6 +277,7 @@ class RiffGAN(object):
             random_riff = generate_random_seed(2, 'guitar')
             # plot_data(random_riff[0, :, :], self.opt.input_shape)
             noise = torch.randn(2, self.opt.seed_size, device=self.device)
+            print(noise)
             seed = torch.unsqueeze(torch.from_numpy(random_riff)
                                    , 1).to(device=self.device, dtype=torch.float)
 

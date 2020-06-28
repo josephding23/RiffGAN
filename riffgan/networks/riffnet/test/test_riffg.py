@@ -9,17 +9,26 @@ class Generator(nn.Module):
     def __init__(self, pitch_range):
         super(Generator, self).__init__()
         self.gf_dim = 64
-        self.n_channel = 256
+        self.n_channel = 128
         self.pitch_range = pitch_range
 
         self.ctnet4 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=self.n_channel + 64,
                                out_channels=self.n_channel,
-                               kernel_size=(5, 1),
-                               stride=(2, 1),
-                               padding=(0, 0)
+                               kernel_size=(3, 1),
+                               stride=(1, 1),
+                               padding=(1, 0)
                                ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(self.n_channel),
+            nn.LeakyReLU(0.2),
+
+            nn.ConvTranspose2d(in_channels=self.n_channel,
+                               out_channels=self.n_channel,
+                               kernel_size=(3, 1),
+                               stride=(2, 1),
+                               padding=(1, 0)
+                               ),
+            nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(self.n_channel),
             nn.LeakyReLU(0.2)
         )
@@ -28,16 +37,13 @@ class Generator(nn.Module):
             nn.ConvTranspose2d(in_channels=self.n_channel + 64,
                                out_channels=self.n_channel,
                                kernel_size=(3, 1),
-                               stride=(2, 1),
+                               stride=(1, 1),
                                padding=(1, 0)
                                ),
-            nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(self.n_channel),
-            nn.LeakyReLU(0.2)
-        )
+            nn.LeakyReLU(0.2),
 
-        self.ctnet2 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
+            nn.ConvTranspose2d(in_channels=self.n_channel,
                                out_channels=self.n_channel,
                                kernel_size=(3, 1),
                                stride=(2, 1),
@@ -48,25 +54,61 @@ class Generator(nn.Module):
             nn.LeakyReLU(0.2)
         )
 
-        self.ctnet1 = nn.Sequential(
+        self.ctnet2 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=self.n_channel + 64,
-                               out_channels=1,
-                               kernel_size=(5, self.pitch_range),
+                               out_channels=self.n_channel,
+                               kernel_size=(3, 1),
+                               stride=(1, 1),
+                               padding=(1, 0)
+                               ),
+            nn.BatchNorm2d(self.n_channel),
+            nn.LeakyReLU(0.2),
+
+            nn.ConvTranspose2d(in_channels=self.n_channel,
+                               out_channels=self.n_channel,
+                               kernel_size=(3, 1),
                                stride=(2, 1),
-                               padding=(2, 0)
+                               padding=(1, 0)
                                ),
             nn.ZeroPad2d((0, 0, 0, 1)),
-            # nn.BatchNorm2d(num_features=1),
-            # nn.LeakyReLU(0.2)
+            nn.BatchNorm2d(self.n_channel),
+            nn.LeakyReLU(0.2)
+        )
+
+        self.ctnet1 = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=self.n_channel + 64,
+                               out_channels=self.n_channel,
+                               kernel_size=(3, 1),
+                               stride=(4, 1),
+                               padding=(1, 0)
+                               ),
+            nn.ZeroPad2d((0, 0, 0, 1)),
+            nn.BatchNorm2d(self.n_channel),
+            nn.LeakyReLU(0.2),
+
+            nn.ConvTranspose2d(in_channels=self.n_channel,
+                               out_channels=1,
+                               kernel_size=(3, self.pitch_range),
+                               stride=(1, 1),
+                               padding=(0, 0)
+                               ),
         )
 
         self.cnet1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
                       out_channels=64,
-                      kernel_size=(5, self.pitch_range),
+                      kernel_size=(3, self.pitch_range),
                       stride=(2, 1),
                       ),
             nn.ReflectionPad2d((0, 0, 1, 1)),
+            nn.BatchNorm2d(num_features=64),
+            nn.ReLU(),
+
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      ),
             nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )
@@ -75,14 +117,32 @@ class Generator(nn.Module):
             nn.Conv2d(in_channels=64,
                       out_channels=64,
                       kernel_size=(3, 1),
-                      stride=(2, 1),
+                      stride=(1, 1),
                       ),
             nn.ReflectionPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(num_features=64),
-            nn.ReLU()
+            nn.ReLU(),
+
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      ),
+            nn.ReflectionPad2d((0, 0, 0, 1)),
+            nn.BatchNorm2d(num_features=64),
+            nn.ReLU(),
         )
 
         self.cnet3 = nn.Sequential(
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(3, 1),
+                      stride=(1, 1),
+                      ),
+            nn.ReflectionPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(num_features=64),
+            nn.ReLU(),
+
             nn.Conv2d(in_channels=64,
                       out_channels=64,
                       kernel_size=(3, 1),
@@ -96,10 +156,19 @@ class Generator(nn.Module):
         self.cnet4 = nn.Sequential(
             nn.Conv2d(in_channels=64,
                       out_channels=64,
-                      kernel_size=(5, 1),
+                      kernel_size=(3, 1),
+                      stride=(1, 1),
+                      ),
+            nn.ReflectionPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(num_features=64),
+            nn.ReLU(),
+
+            nn.Conv2d(in_channels=64,
+                      out_channels=64,
+                      kernel_size=(3, 1),
                       stride=(2, 1),
                       ),
-            # nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.ZeroPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(num_features=64),
             nn.ReLU()
         )

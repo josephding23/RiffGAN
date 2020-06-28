@@ -20,7 +20,7 @@ class Discriminator(nn.Module):
             nn.ZeroPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
-            nn.Dropout(0.5)
+            nn.Dropout(0.2)
         )
 
         self.cnet_2 = nn.Sequential(
@@ -32,7 +32,7 @@ class Discriminator(nn.Module):
             nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
-            nn.Dropout(0.5)
+            nn.Dropout(0.2)
         )
 
         self.cnet_3 = nn.Sequential(
@@ -44,21 +44,21 @@ class Discriminator(nn.Module):
             nn.ZeroPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
-            nn.Dropout(0.5)
+            nn.Dropout(0.2)
         )
 
         self.cnet_4 = nn.Sequential(
             nn.Conv2d(in_channels=64,
-                      out_channels=256,
+                      out_channels=64,
                       kernel_size=(3, 1),
                       stride=(1, 1)
                       ),
-            nn.BatchNorm2d(256),
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             # nn.Dropout(0.5)
         )
 
-        self.linear1 = nn.Linear(512, 1)
+        self.linear1 = nn.Linear(256, 1)
 
     def forward(self, x, batch_size):
         x = self.cnet_1(x)
@@ -67,7 +67,7 @@ class Discriminator(nn.Module):
 
         x = self.cnet_3(x)
 
-        x = self.cnet_4(x)
+        # x = self.cnet_4(x)
 
         x = x.view(batch_size, -1)
 
