@@ -40,7 +40,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 256
+        self.seed_size = 64
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0
@@ -50,7 +50,8 @@ class Config(object):
         self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
-        self.lr = 0.0002
+        self.g_lr = 0.0002
+        self.d_lr = 0.0002
         self.milestones = [2, 5, 8, 11, 13, 15, 17, 19, 20]
         self.gamma = 0.5
 
@@ -83,9 +84,8 @@ class Config(object):
 
         self.root_dir = 'd:/riff_gan'
 
-        self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_gn{}_lr{}_wd{}'.format(
-            self.name, self.model, self.image_pool_info,
-            self.gaussian_std, self.lr, self.weight_decay)
+        self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_{}'.format(
+            self.name, self.model, self.network_name, self.instr_type)
 
         self.model_path = self.save_path + '/models'
         self.checkpoint_path = self.save_path + '/checkpoints'

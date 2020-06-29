@@ -24,6 +24,18 @@ def reorganize_grunge_midi():
                 move_file(dir, dst_dir, new_name)
 
 
+def set_song_name():
+    song_table = get_songs_table()
+    for song in song_table.find():
+        new_name = song['Performer'] + ' - ' + song['Album'] + ' - ' + song['TrackNum'] + ' - ' + song['Name'] + '.mid'
+        song_table.update_one(
+            {'_id': song['_id']},
+            {'$set': {
+                'FileName': new_name
+            }}
+        )
+
+
 def move_file(src_path, dst_path, file):
     try:
         f_src = os.path.join(src_path, file)
@@ -36,4 +48,4 @@ def move_file(src_path, dst_path, file):
 
 
 if __name__ == '__main__':
-    reorganize_grunge_midi()
+    set_song_name()

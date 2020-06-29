@@ -72,7 +72,7 @@ class RiffGAN(object):
 
         else:
             assert self.opt.network_name == 'riff_net'
-            self.generator = RiffG(self.opt.pitch_range)
+            self.generator = RiffG(self.opt.pitch_range, self.opt.seed_size)
             self.discriminator = RiffD(self.opt.pitch_range)
 
         init_weight_(self.generator)
@@ -85,13 +85,13 @@ class RiffGAN(object):
             self.discriminator.to(self.device)
             # summary(self.discriminator, input_size=self.opt.input_shape)
 
-        self.G_optimizer = Adam(params=self.generator.parameters(), lr=self.opt.lr,
+        self.G_optimizer = Adam(params=self.generator.parameters(), lr=self.opt.g_lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
-        self.D_optimizer = Adam(params=self.discriminator.parameters(), lr=self.opt.lr,
+        self.D_optimizer = Adam(params=self.discriminator.parameters(), lr=self.opt.d_lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
 
-        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=1, T_mult=2, eta_min=4e-08)
-        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=1, T_mult=2, eta_min=4e-08)
+        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
+        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
 
     def find_latest_checkpoint(self):
         path = self.opt.D_save_path
@@ -277,15 +277,14 @@ class RiffGAN(object):
             random_riff = generate_random_seed(2, 'guitar')
             # plot_data(random_riff[0, :, :], self.opt.input_shape)
             noise = torch.randn(2, self.opt.seed_size, device=self.device)
-            print(noise)
-            seed = torch.unsqueeze(torch.from_numpy(random_riff)
+            seed = torch.unsqueeze(torch.from_numpy(data)
                                    , 1).to(device=self.device, dtype=torch.float)
 
             # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
             # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
             ori_sample = seed.cpu().detach().numpy()
             fake_sample = self.generator(noise, seed, 2).cpu().detach().numpy()
-            print(fake_sample[0, :, :])
+            # print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])
 
@@ -301,4 +300,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.test()
+    riff_gan.train()

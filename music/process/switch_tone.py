@@ -38,8 +38,8 @@ def add_hash():
 def move_to_new_folder():
     griff_table, briff_table = get_unit_guitar_riff_table(), get_unit_bass_riff_table()
 
-    griff_dir = 'E:/unit_riffs/original/guitar'
-    briff_dir = 'E:/unit_riffs/original/bass'
+    griff_dir = 'E:/grunge_library/unit_riffs/original/guitar'
+    briff_dir = 'E:/grunge_library/unit_riffs/original/bass'
 
     for griff in griff_table.find():
         idStr = griff['idStr']
@@ -97,4 +97,6 @@ def transpose_to_c():
 
 
 if __name__ == '__main__':
+    add_hash()
+    move_to_new_folder()
     transpose_to_c()

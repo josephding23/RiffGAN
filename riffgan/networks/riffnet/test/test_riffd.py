@@ -7,55 +7,82 @@ from riffgan.networks.midinet.utility import *
 class Discriminator(nn.Module):
     def __init__(self, pitch_range):
         super(Discriminator, self).__init__()
-        self.df_dim = 64
+        self.df_dim = 256
         self.dfc_dim = 1024
         self.pitch_range = pitch_range
 
         self.cnet_1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
-                      out_channels=16,
-                      kernel_size=(5, pitch_range),
+                      out_channels=self.df_dim,
+                      kernel_size=(3, pitch_range),
                       stride=(2, 1)
                       ),
+            nn.ZeroPad2d((0, 0, 0, 1)),
+            nn.BatchNorm2d(self.df_dim),
+            nn.LeakyReLU(0.2),
+
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(1, 1)
+                      ),
             nn.ZeroPad2d((0, 0, 1, 1)),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(0.2)
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU()
         )
 
         self.cnet_2 = nn.Sequential(
-            nn.Conv2d(in_channels=16,
-                      out_channels=32,
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1)
+                      ),
+            nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(self.df_dim),
+            nn.LeakyReLU(0.2),
+
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(1, 1)
+                      ),
+            nn.ZeroPad2d((0, 0, 1, 1)),
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU()
+        )
+
+        self.cnet_3 = nn.Sequential(
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1)
+                      ),
+            nn.ZeroPad2d((0, 0, 1, 0)),
+            nn.BatchNorm2d(self.df_dim),
+            nn.LeakyReLU(0.2),
+
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(1, 1)
+                      ),
+            nn.ZeroPad2d((0, 0, 1, 1)),
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU()
+        )
+
+        self.cnet_4 = nn.Sequential(
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
                       kernel_size=(3, 1),
                       stride=(2, 1)
                       ),
             nn.ZeroPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(32),
-            nn.LeakyReLU(0.2)
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU()
         )
 
-        self.cnet_3 = nn.Sequential(
-            nn.Conv2d(in_channels=32,
-                      out_channels=64,
-                      kernel_size=(3, 1),
-                      stride=(2, 1)
-                      ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(64),
-            nn.LeakyReLU(0.2)
-        )
-
-        self.cnet_4 = nn.Sequential(
-            nn.Conv2d(in_channels=64,
-                      out_channels=128,
-                      kernel_size=(3, 1),
-                      stride=(2, 1)
-                      ),
-            nn.ZeroPad2d((0, 0, 1, 0)),
-            nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.2)
-        )
-
-        self.linear1 = nn.Linear(512,  1)
+        self.linear1 = nn.Linear(self.df_dim * 4, 1)
 
     def forward(self, x, batch_size):
         print(x.shape)

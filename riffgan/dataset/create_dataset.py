@@ -90,4 +90,3 @@ def generate_from_nonzeros(instr):
 
 if __name__ == '__main__':
     generate_unit_riff_nonzeros()
-    create_nonzeros()

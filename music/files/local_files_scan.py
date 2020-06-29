@@ -6,7 +6,7 @@ from dataset.grunge_library import *
 
 
 def scan_local_files():
-    root_dir = 'E:/grunge_library'
+    root_dir = 'E:/grunge_library/raw'
 
     performers_table = get_performers_table()
     albums_table = get_albums_table()
@@ -43,23 +43,24 @@ def scan_local_files():
                 if os.path.exists(guitar_riff_dir):
                     song_griff_num = len(os.listdir(guitar_riff_dir))
                     for griff in os.listdir(guitar_riff_dir):
-                        griff_path = guitar_riff_dir + '/' + griff
+                        if '.mid' in griff:
+                            griff_path = guitar_riff_dir + '/' + griff
 
-                        try:
-                            guitar_riff = GuitarRiff(griff_path, 'null')
-                            riff_length = guitar_riff.length
+                            try:
+                                guitar_riff = GuitarRiff(griff_path)
+                                riff_length = guitar_riff.length
 
-                            griff_table.insert_one({
-                                'Performer': performer,
-                                'Album': album,
-                                'Song': song,
-                                'Path': griff_path,
-                                'Length': riff_length
-                            })
+                                griff_table.insert_one({
+                                    'Performer': performer,
+                                    'Album': album,
+                                    'Song': song,
+                                    'Path': griff_path,
+                                    'Length': riff_length
+                                })
 
-                        except:
-                            print(griff_path)
-                            print(traceback.format_exc())
+                            except:
+                                print(griff_path)
+                                print(traceback.format_exc())
 
                 else:
                     song_griff_num = 0
@@ -68,24 +69,25 @@ def scan_local_files():
                 if os.path.exists(bass_riff_dir):
                     song_briff_num = len(os.listdir(bass_riff_dir))
                     for briff in os.listdir(bass_riff_dir):
-                        briff_path = bass_riff_dir + '/' + briff
+                        if '.mid' in briff:
+                            briff_path = bass_riff_dir + '/' + briff
 
-                        try:
-                            bass_riff = BassRiff(briff_path, 'null')
-                            riff_length = bass_riff.length
+                            try:
+                                bass_riff = BassRiff(briff_path)
+                                riff_length = bass_riff.length
 
-                            briff_table.insert_one({
-                                'Performer': performer,
-                                'Album': album,
-                                'Song': song,
-                                'Path': briff_path,
-                                'Length': riff_length
-                            })
+                                briff_table.insert_one({
+                                    'Performer': performer,
+                                    'Album': album,
+                                    'Song': song,
+                                    'Path': briff_path,
+                                    'Length': riff_length
+                                })
 
 
-                        except:
-                            print(briff_path)
-                            print(traceback.format_exc())
+                            except:
+                                print(briff_path)
+                                print(traceback.format_exc())
                 else:
                     song_briff_num = 0
 
@@ -93,24 +95,25 @@ def scan_local_files():
                 if os.path.exists(guitar_solo_dir):
                     song_gsolo_num = len(os.listdir(guitar_solo_dir))
                     for gsolo in os.listdir(guitar_solo_dir):
-                        gsolo_path = guitar_solo_dir + '/' + gsolo
+                        if '.mid' in gsolo:
+                            gsolo_path = guitar_solo_dir + '/' + gsolo
 
-                        try:
-                            guitar_solo = GuitarSolo(gsolo_path, 'null')
-                            solo_length = guitar_solo.length
+                            try:
+                                guitar_solo = GuitarSolo(gsolo_path, 'null')
+                                solo_length = guitar_solo.length
 
-                            gsolo_table.insert_one({
-                                'Performer': performer,
-                                'Album': album,
-                                'Song': song,
-                                'Path': gsolo_path,
-                                'Length': solo_length
-                            })
+                                gsolo_table.insert_one({
+                                    'Performer': performer,
+                                    'Album': album,
+                                    'Song': song,
+                                    'Path': gsolo_path,
+                                    'Length': solo_length
+                                })
 
 
-                        except:
-                            print(gsolo_path)
-                            print(traceback.format_exc())
+                            except:
+                                print(gsolo_path)
+                                print(traceback.format_exc())
                 else:
                     song_gsolo_num = 0
 
