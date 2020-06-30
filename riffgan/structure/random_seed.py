@@ -19,12 +19,12 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
     root_dist = get_relative_distance(root_note)
 
     for i in range(length):
-        root_prob = round(random.uniform(0.3, 0.6), 2)
-        third_prob = round(random.uniform(0.2, 0.8 - root_prob), 2)
-        fifth_prob = round(random.uniform(0.2, 0.9 - root_prob - third_prob), 2)
-        second_prob = round(1 - (root_prob + third_prob + fifth_prob), 2)
+        root_prob = round(random.uniform(0.4, 0.7), 1)
+        third_prob = round(random.uniform(0.1, 0.8 - root_prob), 1)
+        fifth_prob = round(random.uniform(0.1, 0.8 - root_prob - third_prob), 1)
+        fourth_prob = round(1 - (root_prob + third_prob + fifth_prob), 1)
 
-        assert root_prob >= 0 and third_prob >= 0 and fifth_prob >= 0 and second_prob >= 0
+        assert root_prob >= 0 and third_prob >= 0 and fifth_prob >= 0 and fourth_prob >= 0
 
         chord_pattern = get_chord_pattern(pattern)
 
@@ -38,13 +38,13 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
             'V': {
                 'prob': fifth_prob
             },
-            'II': {
-                'prob': second_prob
+            'IV': {
+                'prob': fourth_prob
             }
         }
 
-        order_list = ['I', 'III', 'V', 'II']
-        random.shuffle(order_list)
+        order_list = ['I', 'III', 'V', 'IV']
+        random.shuffle(order_list[1:])
 
         start_time = 0
         total_length = 64

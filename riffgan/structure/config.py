@@ -8,7 +8,9 @@ class Config(object):
         # self.name = 'SMGT'
 
         self.dataset_name = 'grunge_library'
+
         self.instr_type = 'guitar'
+        self.chord_type = '5'
 
         self.network_name = 'riff_net'
         # self.network_name = 'midinet'
@@ -40,7 +42,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 64
+        self.seed_size = 16
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0

@@ -200,9 +200,9 @@ class RiffGAN(object):
                 real_label = torch.ones(size=[batch_size, 1], device=self.device)
                 fake_label = torch.zeros(size=[batch_size, 1], device=self.device)
 
+                seed = generate_random_seed(batch_size, self.opt.instr_type, pattern=self.opt.chord_type)
                 noise = torch.randn(batch_size, self.opt.seed_size, device=self.device)
-                seed = torch.unsqueeze(torch.from_numpy(generate_random_seed(batch_size, self.opt.instr_type))
-                                                  , 1).to(device=self.device, dtype=torch.float)
+                seed = torch.unsqueeze(torch.from_numpy(seed), 1).to(device=self.device, dtype=torch.float)
 
                 fake_data = self.generator(noise, seed, batch_size)
                 D_fake = self.discriminator(fake_data, batch_size)
@@ -220,6 +220,13 @@ class RiffGAN(object):
                 loss_G.backward(retain_graph=True)
 
                 self.G_optimizer.step()
+
+                self.G_optimizer.zero_grad()
+                loss_G = criterionGAN(D_fake, real_label)
+                loss_G.backward(retain_graph=True)
+
+                self.G_optimizer.step()
+
                 GLoss_meter.add(loss_G.item())
 
                 ######################
@@ -274,10 +281,10 @@ class RiffGAN(object):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
-            random_riff = generate_random_seed(2, 'guitar')
+            random_riff = generate_random_seed(2, self.opt.instr_type, pattern='5')
             # plot_data(random_riff[0, :, :], self.opt.input_shape)
             noise = torch.randn(2, self.opt.seed_size, device=self.device)
-            seed = torch.unsqueeze(torch.from_numpy(data)
+            seed = torch.unsqueeze(torch.from_numpy(random_riff)
                                    , 1).to(device=self.device, dtype=torch.float)
 
             # noise = torch.unsqueeze(torch.from_numpy(data), 1).to(device=self.device, dtype=torch.float)
@@ -300,4 +307,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.train()
+    riff_gan.test()

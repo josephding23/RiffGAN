@@ -8,7 +8,7 @@ from riffgan.networks.midinet.utility import *
 class Generator(nn.Module):
     def __init__(self, pitch_range, seed_size):
         super(Generator, self).__init__()
-        self.gf_dim = 192
+        self.gf_dim = 256
         self.n_channel = 64
         self.pitch_range = pitch_range
 
@@ -23,7 +23,7 @@ class Generator(nn.Module):
                                ),
             nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(self.n_channel),
-            nn.LeakyReLU(0.2),
+            nn.ReLU()
         )
 
         self.ctnet3 = nn.Sequential(
@@ -35,7 +35,7 @@ class Generator(nn.Module):
                                ),
             nn.ZeroPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(self.n_channel),
-            nn.LeakyReLU(0.2),
+            nn.ReLU()
         )
 
         self.ctnet2 = nn.Sequential(
@@ -47,7 +47,7 @@ class Generator(nn.Module):
                                ),
             nn.ZeroPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(self.n_channel),
-            nn.LeakyReLU(0.2),
+            nn.ReLU()
 
         )
 

@@ -89,4 +89,5 @@ def generate_from_nonzeros(instr):
 
 
 if __name__ == '__main__':
-    generate_unit_riff_nonzeros()
+    dataset = generate_from_nonzeros('guitar')
+    plot_data(dataset[0, :, :], (1, 64, 60))

@@ -1,6 +1,6 @@
 import pretty_midi
 import numpy as np
-
+from music.custom_elements.riff.toolkit import *
 
 def generate_midi_segment_from_tensor(data, path, bpm=120):
     pm = pretty_midi.PrettyMIDI()
@@ -75,7 +75,7 @@ def save_midis(bars, path, instr_type):
     beat_resolution = 16
 
     tpp = 60.0 / tempo / float(beat_resolution)
-    threshold = 60.0 / tempo / 16
+    threshold = 60.0 / tempo / 4
     phrase_end_time = 60.0 / tempo * 4 * pianoroll.shape[0]
 
     for note_num in range(0, note_range[1]-note_range[0]):
@@ -125,3 +125,14 @@ def save_midis(bars, path, instr_type):
 
     pm.instruments.append(instrument)
     pm.write(path)
+
+
+def get_nearest_in_tone_note(note, tonality=('C', 'major')):
+    tonic, mode = tonality
+    if mode == 'major':
+        note_arrange = [0, 2, 4, 5, 7, 9, 11]
+    else:
+        assert mode == 'minor'
+        note_arrange = [0, 2, 3, 5, 7, 8, 10]
+
+    root_dist =
