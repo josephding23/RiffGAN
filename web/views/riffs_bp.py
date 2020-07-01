@@ -1,13 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from web.database.song import *
 from web.database.riff import *
-from music.custom_elements.riff.toolkit import *
-from music.pieces.phrase.toolkit import *
+from music.custom_elements.rhythm_riff.toolkit import *
 from music.pieces.song.toolkit import *
 from music.pieces.track.toolkit import *
-from music.custom_elements.riff.drum_riff import examine_drum_patterns
+from music.custom_elements.drum_riff.drum_riff import examine_drum_patterns
 import pygame
-import time
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
 

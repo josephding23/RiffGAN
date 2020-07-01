@@ -1,5 +1,5 @@
-from music.custom_elements.riff.riff import Riff
-from music.custom_elements.riff.guitar_riff import GuitarRiff
+from music.custom_elements.rhythm_riff.riff import Riff
+from music.custom_elements.rhythm_riff.guitar_riff import GuitarRiff
 from dataset.web_db import get_briff_table
 import json
 

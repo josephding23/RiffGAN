@@ -1,6 +1,6 @@
 import pretty_midi
 import numpy as np
-from music.custom_elements.riff.toolkit import *
+from music.custom_elements.rhythm_riff.toolkit import *
 
 def generate_midi_segment_from_tensor(data, path, bpm=120):
     pm = pretty_midi.PrettyMIDI()

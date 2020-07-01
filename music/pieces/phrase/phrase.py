@@ -1,4 +1,4 @@
-from music.custom_elements.riff.drum_riff import *
+from music.custom_elements.drum_riff.drum_riff import *
 from music.process.audio_related import *
 
 

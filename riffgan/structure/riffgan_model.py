@@ -259,7 +259,7 @@ class RiffGAN(object):
             self.logger.info(str(losses) + '\n\n')
 
     def test(self):
-        from music.custom_elements.riff.guitar_riff import GuitarRiff
+        from music.custom_elements.rhythm_riff.guitar_riff import GuitarRiff
         griff = GuitarRiff(measure_length=2,
                            degrees_and_types=[('I', '5'), ('I', '5'), ('II', '5'), ('V', '5'), ('III', '5'), ('I', '5'),
                                               ('III', '5'), ('VI', '5'), ('V', '5'), ('III', '5'), ('I', '5')],
@@ -295,7 +295,7 @@ class RiffGAN(object):
 
             # plot_data(fake_sample[0, 0, :, :])
 
-            save_midis(ori_sample, f'../../data/generated_music/ori{str(i + 1)}.mid', self.opt.instr_type)
+            save_midis(ori_sample, f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
             save_midis(fake_sample, f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
 
 
@@ -307,4 +307,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.train()
+    riff_gan.test()

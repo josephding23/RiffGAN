@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from web.database.song import *
-from music.custom_elements.riff.toolkit import *
+from music.custom_elements.rhythm_riff.toolkit import *
 from music.pieces.phrase.toolkit import *
 from music.pieces.track.toolkit import *
 from music.pieces.song.toolkit import *

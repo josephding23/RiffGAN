@@ -1,6 +1,6 @@
 from music.pieces.phrase.phrase import *
 from music.pieces.phrase.toolkit import *
-from music.custom_elements.riff.drum_riff import *
+from music.custom_elements.drum_riff.drum_riff import *
 
 
 class DrumPhrase(Phrase):

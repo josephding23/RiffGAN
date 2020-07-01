@@ -1,7 +1,7 @@
-from music.custom_elements.riff.guitar_riff import parse_griff_json
-from music.custom_elements.riff.bass_riff import parse_briff_json
-from music.custom_elements.riff.drum_riff import parse_driff_json, get_relative_distance
-from music.custom_elements.riff.toolkit import get_riff_of_no
+from music.custom_elements.rhythm_riff.guitar_riff import parse_griff_json
+from music.custom_elements.rhythm_riff.bass_riff import parse_briff_json
+from music.custom_elements.drum_riff.drum_riff import parse_driff_json, get_relative_distance
+from music.custom_elements.rhythm_riff.toolkit import get_riff_of_no
 
 
 def get_measure_length(bpm):

@@ -1,4 +1,4 @@
-from music.custom_elements.riff.toolkit import *
+from music.custom_elements.rhythm_riff.toolkit import *
 import pretty_midi
 from music.process.audio_related import play_music, play_music_without_init
 import os
@@ -30,7 +30,7 @@ class DrumRiff:
         }
 
         self.pm = None
-        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
+        self.save_dir = '../../../data/custom_element/drum_riff/'
         self.midi_path = ''
 
     def save_to_db(self, name):
@@ -59,6 +59,10 @@ class DrumRiff:
 
     def add_specific_pattern_to_pm(self, part, bpm):
         self.pm = pretty_midi.PrettyMIDI()
+        drum = self.get_specific_pm_instr(part, bpm)
+        self.pm.instruments.append(drum)
+
+    def get_specific_pm_instr(self, part, bpm):
         pattern = self.patterns[part]
         assert isinstance(pattern, str)
 
@@ -76,11 +80,9 @@ class DrumRiff:
                 note = pretty_midi.Note(velocity=100, pitch=translate_symbol(part, symbol),
                                         start=start_time, end=end_time)
                 drum.notes.append(note)
+        return drum
 
-        self.pm.instruments.append(drum)
-
-    def add_all_patterns_to_pm(self, bpm):
-        self.pm = pretty_midi.PrettyMIDI()
+    def get_whole_pm_instr(self, bpm):
         drum = pretty_midi.Instrument(program=0, is_drum=True)
 
         for part, pattern in self.patterns.items():
@@ -102,6 +104,11 @@ class DrumRiff:
                         note = pretty_midi.Note(velocity=100, pitch=translate_symbol(part, symbol),
                                                 start=start_time, end=end_time)
                         drum.notes.append(note)
+        return drum
+
+    def add_all_patterns_to_pm(self, bpm):
+        self.pm = pretty_midi.PrettyMIDI()
+        drum = self.get_whole_pm_instr(bpm)
 
         self.pm.instruments.append(drum)
 

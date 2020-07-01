@@ -1,4 +1,4 @@
-from music.custom_elements.riff.riff import Riff
+from music.custom_elements.rhythm_riff.riff import Riff
 from dataset.web_db import get_griff_table
 import json
 

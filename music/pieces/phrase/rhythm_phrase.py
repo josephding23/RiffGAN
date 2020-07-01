@@ -1,7 +1,7 @@
 from music.pieces.phrase.phrase import *
 from music.pieces.phrase.toolkit import *
-from music.custom_elements.riff.guitar_riff import *
-from music.custom_elements.riff.bass_riff import *
+from music.custom_elements.rhythm_riff.guitar_riff import *
+from music.custom_elements.rhythm_riff.bass_riff import *
 
 
 class RhythmPhrase(Phrase):
