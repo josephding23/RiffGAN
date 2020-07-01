@@ -307,4 +307,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.test()
+    riff_gan.train()
