@@ -2,6 +2,7 @@ import pretty_midi
 import numpy as np
 from music.custom_elements.rhythm_riff.toolkit import *
 
+
 def generate_midi_segment_from_tensor(data, path, bpm=120):
     pm = pretty_midi.PrettyMIDI()
     instr_track = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')
@@ -43,18 +44,14 @@ def save_midis(bars, path, instr_type):
 
     if instr_type == 'guitar':
         note_range = (36, 96)
+        instr_num = 29
         # standard tune: [E2, D6] -> [C2, C7)
     else:
         assert instr_type == 'bass'
         note_range = (24, 72)
+        instr_num = 33
         # standard tune: [E1, G4] -> [C1, C5)
 
-    '''
-    padded_bars = np.concatenate((np.zeros((bars.shape[0], bars.shape[1], bars.shape[2], 24)),
-                                  bars,
-                                  np.zeros((bars.shape[0], bars.shape[1], bars.shape[2], 20))),
-                                 axis=3)
-    '''
     padded_bars = bars
     padded_bars = padded_bars.reshape((-1, padded_bars.shape[1], padded_bars.shape[2], padded_bars.shape[3]))
     padded_bars_list = []
@@ -69,7 +66,7 @@ def save_midis(bars, path, instr_type):
                                      np.zeros((1, note_range[1]-note_range[0]), dtype=int)))
     pianoroll_search = np.diff(pianoroll_diff.astype(int), axis=0)
 
-    instrument = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')
+    instrument = pretty_midi.Instrument(program=instr_num, is_drum=False, name='Instr')
 
     tempo = 120
     beat_resolution = 16
@@ -84,8 +81,6 @@ def save_midis(bars, path, instr_type):
 
         end_idx = (pianoroll_search[:, note_num] < 0).nonzero()
         end_time = list(tpp * (end_idx[0].astype(float)))
-
-        duration = [pair[1] - pair[0] for pair in zip(start_time, end_time)]
 
         temp_start_time = [i for i in start_time]
         temp_end_time = [i for i in end_time]

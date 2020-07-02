@@ -3,13 +3,18 @@ import math
 from music.custom_elements.drum_riff.drum_riff import *
 
 
-def get_note_arrange_list(pm, bpm=120):
-    assert isinstance(pm, pretty_midi.PrettyMIDI)
+def get_measure_num(pm, bpm):
     total_length = pm.get_end_time()
-    sixty_fourth_length = 60 / bpm / 16
     measure_length = 60 / bpm * 4
-
     measure_num = math.ceil(total_length / measure_length)
+    return measure_num
+
+
+def get_note_arrange_list(pm, bpm):
+    assert isinstance(pm, pretty_midi.PrettyMIDI)
+    sixty_fourth_length = 60 / bpm / 16
+
+    measure_num = get_measure_num(pm, bpm)
     note_list = [0 for _ in range(64 * measure_num)]
     for instr in pm.instruments:
         if not instr.is_drum:
@@ -22,9 +27,12 @@ def get_note_arrange_list(pm, bpm=120):
     return note_list
 
 
-def get_accent(pm, is_raw=False):
+def get_accent(pm, is_raw=False, bpm=120):
     accent_list = []
-    note_arrange_list = get_note_arrange_list(pm)
+    note_arrange_list = get_note_arrange_list(pm, bpm)
+
+    measure_num = get_measure_num(pm, bpm)
+    segment_length = measure_num * 64
 
     for i, note in enumerate(note_arrange_list):
         if i == 0 or i == len(note_arrange_list) - 1:
@@ -36,10 +44,9 @@ def get_accent(pm, is_raw=False):
         return accent_list
     else:
         for i, time in enumerate(accent_list):
-            if time % 4 <= 2:
-                accent_list[i] = time - time % 4
-            else:
-                accent_list[i] = time + 1
+            time = int(round(time / 4)) * 4
+            if time < segment_length:
+                accent_list[i] = time
         return accent_list
 
 

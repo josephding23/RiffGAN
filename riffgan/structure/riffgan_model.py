@@ -26,7 +26,10 @@ import colorlog
 
 from util.data_convert import *
 from util.npy_related import *
+from util.fix_generated_song import *
 from riffgan.networks.midinet.utility import *
+
+from music.custom_elements.drum_riff.auto_generate_drum import *
 
 
 class RiffGAN(object):
@@ -281,7 +284,7 @@ class RiffGAN(object):
 
             # noise = torch.unsqueeze(torch.from_numpy(database), 1).to(device=self.device, dtype=torch.float)
 
-            random_riff = generate_random_seed(2, self.opt.instr_type, pattern='5')
+            random_riff = generate_random_seed(2, self.opt.instr_type, pattern=self.opt.chord_type)
             # plot_data(random_riff[0, :, :], self.opt.input_shape)
             noise = torch.randn(2, self.opt.seed_size, device=self.device)
             seed = torch.unsqueeze(torch.from_numpy(random_riff)
@@ -296,7 +299,10 @@ class RiffGAN(object):
             # plot_data(fake_sample[0, 0, :, :])
 
             save_midis(ori_sample, f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
+            # merge_short_notes(f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
+
             save_midis(fake_sample, f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
+            merge_short_notes(f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
 
 
 def reduce_mean(x):
