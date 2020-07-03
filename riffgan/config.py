@@ -12,7 +12,8 @@ class Config(object):
         self.instr_type = 'guitar'
         self.chord_type = '5'
 
-        self.network_name = 'riff_net'
+        self.network_name = 'riff_net_v2'
+        # self.network_name = 'riff_net_v1'
         # self.network_name = 'midinet'
 
         self.time_step = 64
@@ -42,7 +43,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 16
+        self.seed_size = 128
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0
@@ -62,7 +63,7 @@ class Config(object):
         self.no_flip = True
         self.num_threads = 0
         self.batch_size = 16
-        self.max_epoch = 50
+        self.max_epoch = 30
         self.epoch_step = 5
 
         # self.data_shape = (self.batch_size, 1, 64, 84)

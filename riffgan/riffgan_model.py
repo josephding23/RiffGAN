@@ -1,23 +1,24 @@
 import time
-import torch
 import re
 from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler, Adam
-import os
-from riffgan.dataset.grunge_library import UnitRiffDataset
+from riffgan.data.grunge_library import UnitRiffDataset
 import torch.nn as nn
 import shutil
 
-from torchsummary import summary
 from torchnet.meter import MovingAverageValueMeter
 
-# from riffgan.networks.riffnet.discriminator import Discriminator as SteelyD
-from riffgan.networks.riffnet.generator import Generator as RiffG
-from riffgan.networks.riffnet.discriminator import Discriminator as RiffD
+from riffgan.networks.riffnet_v2.discriminator_v2 import Discriminator as RiffD_v2
+from riffgan.networks.riffnet_v2.generator_v2 import Generator as RiffG_v2
+
+from riffgan.networks.riffnet_v1.discriminator_v1 import Discriminator as RiffD_v1
+from riffgan.networks.riffnet_v1.generator_v1 import Generator as RiffG_v1
 
 from riffgan.networks.midinet.discriminator import Discriminator as MidiNetD
 from riffgan.networks.midinet.generator import Generator as MidiNetG
-from riffgan.structure.config import Config
+
+
+from riffgan.config import Config
 from riffgan.structure.image_pool import ImagePool
 from riffgan.structure.random_seed import *
 
@@ -68,15 +69,18 @@ class RiffGAN(object):
 
     def _build_model(self):
 
-        if self.opt.network_name == 'midinet':
-            self.generator = MidiNetG(self.opt.pitch_range)
+        if self.opt.network_name == 'riff_net_v1':
+            self.generator = RiffG_v1(self.opt.pitch_range, self.opt.seed_size)
+            self.discriminator = RiffD_v1(self.opt.pitch_range)
 
-            self.discriminator = MidiNetD(self.opt.pitch_range)
+        elif self.opt.network_name == 'riff_net_v2':
+            self.generator = RiffG_v2(self.opt.pitch_range, self.opt.seed_size)
+            self.discriminator = RiffD_v2(self.opt.pitch_range)
 
         else:
-            assert self.opt.network_name == 'riff_net'
-            self.generator = RiffG(self.opt.pitch_range, self.opt.seed_size)
-            self.discriminator = RiffD(self.opt.pitch_range)
+            assert self.opt.network_name == 'midi_net'
+            self.generator = MidiNetG(self.opt.pitch_range)
+            self.discriminator = MidiNetD(self.opt.pitch_range)
 
         init_weight_(self.generator)
         init_weight_(self.discriminator)
@@ -298,11 +302,11 @@ class RiffGAN(object):
 
             # plot_data(fake_sample[0, 0, :, :])
 
-            save_midis(ori_sample, f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
+            save_midis(ori_sample, f'../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
             # merge_short_notes(f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
 
-            save_midis(fake_sample, f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
-            merge_short_notes(f'../../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
+            save_midis(fake_sample, f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
+            merge_short_notes(f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
 
 
 def reduce_mean(x):
@@ -313,4 +317,4 @@ def reduce_mean(x):
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.test()
+    riff_gan.train()

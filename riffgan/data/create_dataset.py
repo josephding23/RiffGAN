@@ -31,8 +31,8 @@ def create_nonzeros():
     unit_guitar_nonzeros_dir = 'E:/grunge_library/unit_riffs/nonzeros/guitar/'
     unit_bass_nonzeros_dir = 'E:/grunge_library/unit_riffs/nonzeros/bass/'
 
-    guitar_nonzeros_path = 'E:/grunge_library/dataset/guitar_unit_riff.npz'
-    bass_nonzeros_path = 'E:/grunge_library/dataset/bass_unit_riff.npz'
+    guitar_nonzeros_path = 'E:/grunge_library/data/guitar_unit_riff.npz'
+    bass_nonzeros_path = 'E:/grunge_library/data/bass_unit_riff.npz'
 
     unit_guitar_table = get_unit_guitar_riff_table()
     unit_bass_table = get_unit_bass_riff_table()
@@ -69,8 +69,8 @@ def generate_from_nonzeros(instr):
     assert instr in ['guitar', 'bass']
 
     dataset_dict = {
-        'guitar': 'E:/grunge_library/dataset/guitar_unit_riff.npz',
-        'bass': 'E:/grunge_library/dataset/bass_unit_riff.npz'
+        'guitar': 'E:/grunge_library/data/guitar_unit_riff.npz',
+        'bass': 'E:/grunge_library/data/bass_unit_riff.npz'
     }
     path = dataset_dict[instr]
 
