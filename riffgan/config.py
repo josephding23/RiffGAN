@@ -43,7 +43,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 128
+        self.seed_size = 16
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0
@@ -63,7 +63,7 @@ class Config(object):
         self.no_flip = True
         self.num_threads = 0
         self.batch_size = 16
-        self.max_epoch = 30
+        self.max_epoch = 50
         self.epoch_step = 5
 
         # self.data_shape = (self.batch_size, 1, 64, 84)

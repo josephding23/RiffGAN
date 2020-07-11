@@ -19,9 +19,9 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
     root_dist = get_relative_distance(root_note)
 
     for i in range(length):
-        root_prob = round(random.uniform(0.6, 0.8), 1)
-        third_prob = round(random.uniform(0.05, 0.9 - root_prob), 1)
-        fifth_prob = round(random.uniform(0.05, 0.9 - root_prob - third_prob), 1)
+        root_prob = round(random.uniform(0.4, 0.6), 1)
+        third_prob = round(random.uniform(0.2, 0.8 - root_prob), 1)
+        fifth_prob = round(random.uniform(0.2, 0.8 - root_prob - third_prob), 1)
         fourth_prob = round(1 - (root_prob + third_prob + fifth_prob), 1)
 
         assert root_prob >= 0 and third_prob >= 0 and fifth_prob >= 0 and fourth_prob >= 0
