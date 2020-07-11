@@ -11,43 +11,33 @@ class Discriminator(nn.Module):
         self.dfc_dim = 1024
         self.pitch_range = pitch_range
 
-        self.cnet_11 = nn.Sequential(
+        self.cnet_1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
                       out_channels=self.df_dim,
                       kernel_size=(3, self.pitch_range),
-                      stride=(2, 1)
-                      ),
-            nn.ZeroPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(self.df_dim),
-            nn.SELU()
-        )
-
-        self.cnet_12 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim,
-                      kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
+            # nn.ZeroPad2d((0, 0, 1, 1)),
             nn.BatchNorm2d(self.df_dim),
             nn.SELU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_2 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim,
+                      out_channels=self.df_dim * 2,
                       kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim),
+            nn.BatchNorm2d(self.df_dim * 2),
             nn.SELU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_3 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim,
+            nn.Conv2d(in_channels=self.df_dim * 2,
                       out_channels=self.df_dim,
                       kernel_size=(3, 1),
                       stride=(2, 1),
@@ -55,7 +45,7 @@ class Discriminator(nn.Module):
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.SELU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_4 = nn.Sequential(
@@ -66,18 +56,15 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.SELU()
+            nn.SELU(),
         )
 
-        self.linear1 = nn.Linear(self.df_dim * 2, 1)
+        self.linear1 = nn.Linear(self.df_dim * 4, 1)
 
     def forward(self, x, batch_size):
         print(x.shape)
         # (-1, 1, 64, 60)
-        x = self.cnet_11(x)
-        print(x.shape)
-
-        x = self.cnet_12(x)
+        x = self.cnet_1(x)
         print(x.shape)
 
         x = self.cnet_2(x)

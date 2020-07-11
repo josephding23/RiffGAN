@@ -43,7 +43,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 16
+        self.seed_size = 8
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0
