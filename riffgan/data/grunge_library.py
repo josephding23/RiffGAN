@@ -6,7 +6,7 @@ from riffgan.data.create_dataset import *
 
 
 class UnitRiffDataset(data.Dataset):
-    def __init__(self, instr):
+    def __init__(self, source, instr):
 
         assert instr in ['guitar', 'bass']
         self.instr = instr
@@ -17,7 +17,7 @@ class UnitRiffDataset(data.Dataset):
         }
         self.dataset_path = dataset_dict[self.instr]
 
-        self.data = generate_from_nonzeros(self.instr)
+        self.data = generate_from_nonzeros(source, self.instr)
 
     def __getitem__(self, item):
         return self.data[item, :, :]

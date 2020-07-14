@@ -7,10 +7,11 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        self.dataset_name = 'grunge_library'
+        # self.dataset_name = 'grunge_library'
+        self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
-        self.chord_type = '5'
+        self.chord_type = 'M'
 
         self.network_name = 'riff_net_v2'
         # self.network_name = 'riff_net_v1'
@@ -29,7 +30,7 @@ class Config(object):
         ###########################
         # Structure
 
-        self.model = 'base'  # three different models, base, partial, full
+        # self.model = 'base'  # three different models, base, partial, full
 
         self.use_image_pool = True
         self.image_pool_info = 'pooled' if self.use_image_pool else 'not_pooled'
@@ -43,14 +44,14 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 8
+        self.seed_size = 32
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0
 
         self.gpu = True
 
-        self.beta1 = 0.9  # Adam optimizer beta1 & 2
+        self.beta1 = 0.5  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.g_lr = 0.0002
@@ -88,7 +89,7 @@ class Config(object):
         self.root_dir = 'd:/riff_gan'
 
         self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_{}'.format(
-            self.name, self.model, self.network_name, self.instr_type)
+            self.name, self.dataset_name, self.network_name, self.instr_type, )
 
         self.model_path = self.save_path + '/models'
         self.checkpoint_path = self.save_path + '/checkpoints'

@@ -27,9 +27,9 @@ class Discriminator(nn.Module):
         self.cnet_2 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
                       out_channels=self.df_dim * 2,
-                      kernel_size=(3, 1),
+                      kernel_size=(5, 1),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             nn.BatchNorm2d(self.df_dim * 2),
             nn.SELU(),
@@ -39,9 +39,9 @@ class Discriminator(nn.Module):
         self.cnet_3 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim * 2,
                       out_channels=self.df_dim,
-                      kernel_size=(3, 1),
+                      kernel_size=(5, 1),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.SELU(),
@@ -51,9 +51,9 @@ class Discriminator(nn.Module):
         self.cnet_4 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
                       out_channels=self.df_dim,
-                      kernel_size=(3, 1),
+                      kernel_size=(5, 1),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.SELU(),

@@ -3,47 +3,47 @@ from pymongo import MongoClient
 
 def get_performers_table():
     client = MongoClient()
-    return client.riff_db.performers
+    return client.grunge_db.performers
 
 
 def get_albums_table():
     client = MongoClient()
-    return client.riff_db.albums
+    return client.grunge_db.albums
 
 
 def get_songs_table():
     client = MongoClient()
-    return client.riff_db.songs
+    return client.grunge_db.songs
 
 
 def get_guitar_riff_table():
     client = MongoClient()
-    return client.riff_db.guitar_riff
+    return client.grunge_db.guitar_riff
 
 
 def get_bass_riff_table():
     client = MongoClient()
-    return client.riff_db.bass_riff
+    return client.grunge_db.bass_riff
 
 
 def get_unit_guitar_riff_table():
     client = MongoClient()
-    return client.riff_db.unit_guitar_riff
+    return client.grunge_db.unit_guitar_riff
 
 
 def get_unit_bass_riff_table():
     client = MongoClient()
-    return client.riff_db.unit_bass_riff
+    return client.grunge_db.unit_bass_riff
 
 
 def get_guitar_solo_table():
     client = MongoClient()
-    return client.riff_db.guitar_solo
+    return client.grunge_db.guitar_solo
 
 
 def get_bass_solo_table():
     client = MongoClient()
-    return client.riff_db.bass_solo
+    return client.grunge_db.bass_solo
 
 
 def find_empty():

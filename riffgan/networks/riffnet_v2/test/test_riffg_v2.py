@@ -41,9 +41,9 @@ class Generator(nn.Module):
         self.ctnet2 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=self.n_channel + self.gf_dim,
                                out_channels=self.n_channel,
-                               kernel_size=(3, 1),
+                               kernel_size=(5, 1),
                                stride=(2, 1),
-                               padding=(1, 0)
+                               padding=(2, 0)
                                ),
             nn.ReflectionPad2d((0, 0, 1, 0)),
             nn.BatchNorm2d(self.n_channel),
@@ -53,9 +53,9 @@ class Generator(nn.Module):
         self.ctnet1 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=self.n_channel + self.gf_dim,
                                out_channels=1,
-                               kernel_size=(3, self.pitch_range),
+                               kernel_size=(5, self.pitch_range),
                                stride=(2, 1),
-                               padding=(1, 0)
+                               padding=(2, 0)
                                ),
             nn.ReflectionPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(1),
@@ -64,9 +64,9 @@ class Generator(nn.Module):
         self.cnet1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
                       out_channels=self.gf_dim,
-                      kernel_size=(3, self.pitch_range),
+                      kernel_size=(5, self.pitch_range),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             # nn.ReflectionPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(num_features=self.gf_dim),
@@ -76,9 +76,9 @@ class Generator(nn.Module):
         self.cnet2 = nn.Sequential(
             nn.Conv2d(in_channels=self.gf_dim,
                       out_channels=self.gf_dim,
-                      kernel_size=(3, 1),
+                      kernel_size=(5, 1),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             # nn.ReflectionPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(num_features=self.gf_dim),

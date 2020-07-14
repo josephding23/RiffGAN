@@ -173,11 +173,11 @@ class RiffGAN(object):
         else:
             self.reset_save()
 
-        dataset = UnitRiffDataset(self.opt.instr_type)
+        dataset = UnitRiffDataset(self.opt.dataset_name, self.opt.instr_type)
         dataset_size = len(dataset)
         iter_num = int(dataset_size / self.opt.batch_size)
 
-        self.logger.info(f'Dataset loaded, size {dataset_size}')
+        self.logger.info(f'Dataset {self.opt.dataset_name} loaded, size {dataset_size}')
 
         ######################
         # Initiate
