@@ -7,7 +7,7 @@ from riffgan.networks.midinet.utility import *
 class Discriminator(nn.Module):
     def __init__(self, pitch_range):
         super(Discriminator, self).__init__()
-        self.df_dim = 288
+        self.df_dim = 512
         self.dfc_dim = 1024
         self.pitch_range = pitch_range
 
@@ -26,37 +26,38 @@ class Discriminator(nn.Module):
 
         self.cnet_2 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim * 2,
+                      out_channels=self.df_dim,
                       kernel_size=(5, 1),
                       stride=(2, 1),
                       padding=(2, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim * 2),
+            nn.BatchNorm2d(self.df_dim),
             nn.ReLU(),
             nn.Dropout(0.2)
         )
 
         self.cnet_3 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim * 2,
-                      out_channels=self.df_dim * 2,
-                      kernel_size=(3, 1),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(self.df_dim * 2),
-            nn.ReLU(),
-             nn.Dropout(0.2)
-        )
-
-        self.cnet_4 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim * 2,
+            nn.Conv2d(in_channels=self.df_dim,
                       out_channels=self.df_dim,
                       kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim)
-            # nn.SELU(),
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2)
+        )
+
+        self.cnet_4 = nn.Sequential(
+            nn.Conv2d(in_channels=self.df_dim,
+                      out_channels=self.df_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(self.df_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2)
         )
 
         self.linear1 = nn.Linear(self.df_dim * 4, 1)

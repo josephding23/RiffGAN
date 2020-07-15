@@ -11,7 +11,7 @@ class Config(object):
         self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
-        self.chord_type = 'M'
+        self.chord_type = '5'
 
         self.network_name = 'riff_net_v2'
         # self.network_name = 'riff_net_v1'
@@ -45,6 +45,7 @@ class Config(object):
 
         self.gaussian_std = 1
         self.seed_size = 32
+        self.unit_length = 1
 
         self.sigma_c = 1.0
         self.sigma_d = 1.0

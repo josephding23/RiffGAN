@@ -207,9 +207,11 @@ class RiffGAN(object):
                 real_label = torch.ones(size=[batch_size, 1], device=self.device)
                 fake_label = torch.zeros(size=[batch_size, 1], device=self.device)
 
-                seed = generate_random_seed(batch_size, self.opt.instr_type, pattern=self.opt.chord_type)
+                seed = np.array([generate_random_seed(1, self.opt.instr_type, pattern=self.opt.chord_type)
+                                for _ in range(batch_size)])
+                # print(seed.shape)
                 noise = torch.randn(batch_size, self.opt.seed_size, device=self.device)
-                seed = torch.unsqueeze(torch.from_numpy(seed), 1).to(device=self.device, dtype=torch.float)
+                seed = torch.from_numpy(seed).to(device=self.device, dtype=torch.float)
 
                 fake_data = self.generator(noise, seed, batch_size)
                 D_fake = self.discriminator(fake_data, batch_size)
