@@ -108,16 +108,22 @@ def save_midis(bars, path, instr_type):
             start_time = start_time[:-d]
         for idx in range(len(start_time)):
             if duration[idx] >= threshold:
-                note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]), start=start_time[idx],
-                                        end=end_time[idx])
+                start, end = get_quantization_time(start_time[idx], end_time[idx])
+                note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
+                                        start=start,
+                                        end=end)
                 instrument.notes.append(note)
             else:
                 if start_time[idx] + threshold <= phrase_end_time:
-                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]), start=start_time[idx],
-                                            end=start_time[idx] + threshold)
+                    start, end = get_quantization_time(start_time[idx], end_time[idx] + threshold)
+                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
+                                            start=start,
+                                            end=end)
                 else:
-                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]), start=start_time[idx],
-                                            end=phrase_end_time)
+                    start, end = get_quantization_time(start_time[idx], phrase_end_time)
+                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
+                                            start=start,
+                                            end=end)
                 instrument.notes.append(note)
     instrument.notes.sort(key=lambda note: note.start)
 
@@ -143,6 +149,13 @@ def get_nearest_in_tone_note(note, tonality=('C', 'major')):
             min_gap = n - relative_dist
 
     return note + min_gap
+
+
+def get_quantization_time(start, end, bpm=120, shortest_note=1/64):
+    shortest_note_length = 60 / bpm * (shortest_note / (1 / 4))
+    start_q = shortest_note_length * int(round(start / shortest_note_length))
+    end_q = shortest_note_length * int(round(end / shortest_note_length))
+    return start_q, end_q
 
 
 if __name__ == '__main__':

@@ -7,8 +7,8 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        # self.dataset_name = 'grunge_library'
-        self.dataset_name = 'jimi_library'
+        self.dataset_name = 'grunge_library'
+        # self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
         self.chord_type = '5'

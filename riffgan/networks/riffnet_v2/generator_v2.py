@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from riffgan.networks.midinet.utility import *
+from riffgan.networks.resnet import ResnetBlock
 
 
 class Generator(nn.Module):
@@ -60,6 +61,14 @@ class Generator(nn.Module):
             nn.ReflectionPad2d((0, 0, 0, 1)),
             nn.BatchNorm2d(1)
         )
+
+        self.resnet = nn.Sequential()
+        for i in range(12):
+            self.resnet.add_module('resnet_block', ResnetBlock(dim=self.n_channel + self.gf_dim,
+                                                               padding_type='reflect',
+                                                               use_dropout=False,
+                                                               use_bias=False,
+                                                               norm_layer=nn.BatchNorm2d))
 
         self.cnet1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
@@ -119,6 +128,8 @@ class Generator(nn.Module):
 
         h1 = h1.view(batch_size, self.n_channel, 4, 1)
         h1 = conv_prev_concat(h1, h1_prev)
+
+        h1 = self.resnet(h1)
 
         h2 = self.ctnet4(h1)
         h2 = conv_prev_concat(h2, h2_prev)
