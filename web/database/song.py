@@ -6,6 +6,20 @@ from dataset.web_db import get_song_table
 json_path = 'D:/PycharmProjects/RiffGAN/data/pieces/songs/json/test_song.json'
 
 
+def get_all_existed_songs():
+    existed_songs = []
+    for song in get_song_table().find():
+        existed_songs.append(song)
+    return existed_songs
+
+
+def delete_song_from_db(song_name):
+    try:
+        get_song_table().delete_one({'name': song_name})
+    except:
+        raise Exception(f'Couldn not delete {song_name}')
+
+
 def load_song_and_duplicate_as_temp(name):
     song_info = load_song_from_db(name)
 
@@ -43,17 +57,27 @@ def get_temp_song():
 
 
 def save_temp_riffs(riffs):
-    print(get_temp_riffs())
     get_song_table().update_one(
         {'name': 'temp'},
         {'$set': {'riffs': riffs}}
     )
-    print(get_temp_riffs())
+
+
+def save_temp_modified_riffs(modified_riffs):
+    get_song_table().update_one(
+        {'name': 'temp'},
+        {'$set': {'modified_riffs': modified_riffs}}
+    )
 
 
 def get_temp_riffs():
     song = get_song_table().find_one({'name': 'temp'})
     return song['riffs']
+
+
+def get_temp_modified_riffs():
+    song = get_song_table().find_one({'name': 'temp'})
+    return song['modified_riffs']
 
 
 def save_temp_phrases(phrases):

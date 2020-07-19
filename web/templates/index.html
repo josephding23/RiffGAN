@@ -23,12 +23,12 @@
                      <p class="lead">Using this website to create your very own rock'n'roll music!</p>
 
                     <div class="row" style="margin-top: 100px">
-                        <div class="col-md-offset-3 col-md-3">
+                        <div class="col-md-offset-2 col-md-4">
                             <form method="post" action="{{ url_for('song.new_song') }}">
                                 <input type="submit" id="delete" class="btn-lg btn-default" value="New" style="">
                              </form>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                               <div class="btn-group btn-group-justified" role="group" style="padding-left: 10px; padding-right: 20px;">
                                   <button class="btn-lg btn-primary" data-toggle="modal" data-target="#open_song_modal" role="button">Open</button>
                               </div>
@@ -48,25 +48,36 @@
                         <h3 class="modal-title" id="myModalLabel">Open Song</h3>
                     </div>
 
-                <form method="post" action="{{ url_for('song.open_song')}}">
                     <div class="modal-body">
 
-                        <div class="row">
-                            <div class="col-md-10 col-md-offset-1">
-                                <div class="form-group">
-                                    <h4><label for="open_name_input" style="font-weight: normal">Name</label></h4>
-                                    <input type="text" class="form-control" placeholder="Name"
-                                           id="open_name_input" name="open_name_input">
-                                </div>
-                            </div>
-                        </div>
+                        <ul class="list-group">
+                            {% for song in existed_songs %}
+                              <li class="list-group-item">
+                                  <div class="row">
+                                      <div class="col-md-8">
+                                          <h4>{{ song.name }}</h4>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="btn-group btn-group-justified" role="group">
+                                              <div class="btn-group btn-group-justified" role="group" style="padding-right: 10px; padding-left:  10px">
+                                                  <form method="post" action="{{ url_for('open_song', song_name=song.name) }}">
+                                                      <input type="submit" id="load" class="btn btn-primary" value="Load" style="margin-bottom: 5px">
+                                                  </form>
+                                              </div>
+                                              <div class="btn-group btn-group-justified" role="group" style="margin-right: 10px; margin-left:  10px">
+                                                  <form method="post" action="{{ url_for('delete_song', song_name=song.name) }}">
+                                                      <input type="submit" id="delete" class="btn btn-danger" value="Delete" style="margin-bottom: 5px">
+                                                  </form>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
+                            {% endfor %}
+                        </ul>
 
                         <div class="modal-footer">
                             <div class="btn-group btn-group-justified" role="group" style="margin-top: 20px">
-                            <div class="btn-group btn-group-justified" role="group"
-                                style="padding-left: 25px; padding-right: 15px">
-                               <input class="btn btn-primary" type="submit" value="Save">
-                            </div>
                             <div class="btn-group btn-group-justified" role="group"
                                 style="padding-left: 15px; padding-right: 25px">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -74,7 +85,6 @@
                         </div>
                     </div>
                 </div>
-                </form>
 
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->

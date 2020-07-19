@@ -1,0 +1,71 @@
+from music.custom_elements.rhythm_riff.riff import Riff
+from music.custom_elements.rhythm_riff.guitar_riff import GuitarRiff
+from music.custom_elements.rhythm_riff.bass_riff import BassRiff
+from music.process.audio_related import play_music, play_music_without_init
+from music.custom_elements.rhythm_riff.guitar_riff import parse_griff_json
+from music.custom_elements.rhythm_riff.bass_riff import parse_briff_json
+
+import os
+
+
+class ModifiedRiff:
+    def __init__(self, original_riff, option):
+        assert isinstance(original_riff, Riff)
+        self.original_riff = original_riff
+        self.option = option
+        self.midi_path = ''
+        self.save_dir = ''
+
+    def set_midi_path(self, name):
+        assert self.save_dir is not '' and os.path.exists(self.save_dir)
+        self.midi_path = self.save_dir + 'midi/' + name + '.mid'
+
+    def play_it(self):
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music(self.midi_path)
+
+    def play_with_no_init(self):
+        print(self.midi_path)
+        assert self.midi_path is not '' and os.path.exists(self.midi_path)
+        play_music_without_init(self.midi_path)
+
+    def export_json_dict(self):
+        info_dict = {
+            "original_riff": self.original_riff.export_json_dict(),
+            "midi_path": self.midi_path,
+            "option": self.option
+        }
+        return info_dict
+
+
+class ModifiedGuitarRiff(ModifiedRiff):
+    def __init__(self, original_riff, option):
+        ModifiedRiff.__init__(self, original_riff, option)
+        assert isinstance(original_riff, GuitarRiff)
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/modified_riffs/griff/'
+
+
+def parse_modified_griff_json(modified_riff_info):
+    modified_riff = ModifiedGuitarRiff(
+        original_riff=parse_griff_json(modified_riff_info['original_riff']),
+        option=modified_riff_info['option']
+    )
+    modified_riff.midi_path = modified_riff_info['midi_path']
+    return modified_riff
+
+
+class ModifiedBassRiff(ModifiedRiff):
+    def __init__(self, original_riff, option):
+        ModifiedRiff.__init__(self, original_riff, option)
+        assert isinstance(original_riff, BassRiff)
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/modified_riffs/briff/'
+
+
+def parse_modified_briff_json(modified_riff_info):
+    modified_riff = ModifiedBassRiff(
+        original_riff=parse_griff_json(modified_riff_info['original_riff']),
+        option=modified_riff_info['option']
+    )
+    modified_riff.midi_path = modified_riff_info['midi_path']
+    return modified_riff
+

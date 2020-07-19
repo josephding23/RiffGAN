@@ -7,8 +7,8 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        self.dataset_name = 'grunge_library'
-        # self.dataset_name = 'jimi_library'
+        # self.dataset_name = 'grunge_library'
+        self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
         self.chord_type = '5'
@@ -90,7 +90,7 @@ class Config(object):
         self.root_dir = 'd:/riff_gan'
 
         self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_{}'.format(
-            self.name, self.dataset_name, self.network_name, self.instr_type, )
+            self.name, self.dataset_name, self.network_name, self.instr_type)
 
         self.model_path = self.save_path + '/models'
         self.checkpoint_path = self.save_path + '/checkpoints'

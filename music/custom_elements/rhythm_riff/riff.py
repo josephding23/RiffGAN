@@ -58,7 +58,7 @@ class Riff:
         return info_str[:-1]
 
     def save_midi(self, name):
-        self.midi_path = self.save_dir + name + '.mid'
+        self.midi_path = self.save_dir + 'midi/' + name + '.mid'
         self.pm.write(self.midi_path)
 
     def play_it(self):

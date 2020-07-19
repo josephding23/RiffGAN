@@ -25,14 +25,6 @@ def new_song():
         return redirect(url_for('song.get_song'))
 
 
-@song_bp.route('/open_song', methods=['POST'])
-def open_song():
-    if request.method == 'POST':
-        name = request.form['open_name_input']
-        load_song_and_duplicate_as_temp(name)
-
-        return redirect(url_for('song.get_song'))
-
 
 @song_bp.route('/save_song', methods=['POST'])
 def save_song():

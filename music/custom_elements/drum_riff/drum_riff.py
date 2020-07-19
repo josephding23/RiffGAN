@@ -30,7 +30,7 @@ class DrumRiff:
         }
 
         self.pm = None
-        self.save_dir = '../../../data/custom_element/drum_riff/'
+        self.save_dir = 'D:/PycharmProjects/RiffGAN/data/custom_element/drum_riff/'
         self.midi_path = ''
 
     def save_to_db(self, name):

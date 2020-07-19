@@ -18,7 +18,24 @@ Bootstrap(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    existed_songs = get_all_existed_songs()
+    return render_template('index.html', existed_songs=existed_songs)
+
+
+@app.route('/open_song/<song_name>', methods=['POST'])
+def open_song(song_name):
+    if request.method == 'POST':
+        load_song_and_duplicate_as_temp(song_name)
+
+        return redirect(url_for('song.get_song'))
+
+
+@app.route('/delete_song/<song_name>', methods=['POST'])
+def delete_song(song_name):
+    if request.method == 'POST':
+        delete_song_from_db(song_name)
+
+        return redirect(url_for('index'))
 
 
 @app.route('/favicon.ico')

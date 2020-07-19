@@ -123,7 +123,7 @@ class RiffGAN(object):
         self.generator.load_state_dict(torch.load(G_path))
         self.discriminator.load_state_dict(torch.load(D_path))
 
-        print(f'Loaded model from epoch {self.opt.start_epoch-1}')
+        print(f'Loaded model from epoch {self.opt.start_epoch-1}, dataset {self.opt.dataset_name}, network {self.opt.network_name}, instrument {self.opt.instr_type}')
 
     def save_model(self, epoch):
         G_filename = f'{self.opt.name}_G_{epoch}.pth'
