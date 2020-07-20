@@ -300,7 +300,6 @@ class RiffGAN(object):
             # plot_data(noise[0, 0, :, :], shape=self.opt.input_shape)
             ori_sample = seed.cpu().detach().numpy()
             fake_sample = self.generator(noise, seed, 2).cpu().detach().numpy()
-            # print(fake_sample[0, :, :])
 
             # plot_data(fake_sample[0, 0, :, :])
 

@@ -23,8 +23,7 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
     root_prob1 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
     root_prob2 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
     root_prob3 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
-    root_prob4 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
-    root_prob = root_prob1 + root_prob2 + root_prob3 + root_prob4
+    root_prob = root_prob1 + root_prob2 + root_prob3
     third_prob = int(round(random.uniform(0, 1 - root_prob) * 16)) / 16
     fifth_prob = int(round(random.uniform(0, 1 - root_prob - third_prob) * 16)) / 16
     fourth_prob = 1 - root_prob - third_prob - fifth_prob
@@ -43,9 +42,6 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
         'I3': {
             'prob': root_prob3,
         },
-        'I4': {
-            'prob': root_prob4,
-        },
         'III': {
             'prob': third_prob
         },
@@ -59,7 +55,7 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
 
     order_list = ['III', 'V', 'IV']
     random.shuffle(order_list)
-    whole_order_list = ['I1', order_list[0], 'I2', order_list[1], 'I3', order_list[2], 'I4']
+    whole_order_list = ['I1', order_list[0], 'I2', order_list[1], 'I3', order_list[2]]
 
     start_time = 0
     for order in whole_order_list:

@@ -14,9 +14,9 @@ class Discriminator(nn.Module):
         self.cnet_1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
                       out_channels=self.df_dim,
-                      kernel_size=(3, self.pitch_range),
+                      kernel_size=(5, self.pitch_range),
                       stride=(2, 1),
-                      padding=(1, 0)
+                      padding=(2, 0)
                       ),
             # nn.ZeroPad2d((0, 0, 1, 1)),
             nn.BatchNorm2d(self.df_dim),

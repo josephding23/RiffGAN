@@ -7,8 +7,8 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        # self.dataset_name = 'grunge_library'
-        self.dataset_name = 'jimi_library'
+        self.dataset_name = 'grunge_library'
+        # self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
         self.chord_type = '5'
@@ -44,7 +44,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 32
+        self.seed_size = 16
         self.unit_length = 1
 
         self.sigma_c = 1.0
@@ -52,19 +52,19 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.5  # Adam optimizer beta1 & 2
+        self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
-        self.g_lr = 0.0002
-        self.d_lr = 0.0002
-        self.milestones = [2, 5, 8, 11, 13, 15, 17, 19, 20]
+        self.batch_size = 16
+
+        self.g_lr = 0.0001
+        self.d_lr = 0.0001
         self.gamma = 0.5
 
         self.weight_decay = 0.0
 
         self.no_flip = True
         self.num_threads = 0
-        self.batch_size = 16
         self.max_epoch = 50
         self.epoch_step = 5
 

@@ -14,26 +14,26 @@ class Discriminator(nn.Module):
         self.cnet_1 = nn.Sequential(
             nn.Conv2d(in_channels=1,
                       out_channels=self.df_dim,
-                      kernel_size=(5, self.pitch_range),
+                      kernel_size=(3, self.pitch_range),
                       stride=(2, 1),
-                      padding=(2, 0)
+                      padding=(1, 0)
                       ),
             # nn.ZeroPad2d((0, 0, 1, 1)),
             nn.BatchNorm2d(self.df_dim),
             nn.ReLU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_2 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
                       out_channels=self.df_dim,
-                      kernel_size=(5, 1),
-                      stride=(2, 1),
-                      padding=(2, 0)
+                      kernel_size=(3, 1),
+                      stride=(1, 1),
+                      padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.ReLU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_3 = nn.Sequential(
@@ -45,22 +45,21 @@ class Discriminator(nn.Module):
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.ReLU(),
-            nn.Dropout(0.2)
+            nn.Dropout(0.5)
         )
 
         self.cnet_4 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
                       out_channels=self.df_dim,
                       kernel_size=(3, 1),
-                      stride=(2, 1),
+                      stride=(1, 1),
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
             nn.ReLU(),
-            nn.Dropout(0.2)
         )
 
-        self.linear1 = nn.Linear(self.df_dim * 4, 1)
+        self.linear1 = nn.Linear(self.df_dim * 16, 1)
 
     def forward(self, x, batch_size):
 
