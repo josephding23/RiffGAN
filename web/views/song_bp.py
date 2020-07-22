@@ -25,7 +25,6 @@ def new_song():
         return redirect(url_for('song.get_song'))
 
 
-
 @song_bp.route('/save_song', methods=['POST'])
 def save_song():
     if request.method == 'POST':

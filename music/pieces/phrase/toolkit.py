@@ -46,7 +46,10 @@ def set_used_riff_num_info(phrases_dict, riffs_dict):
 def get_used_riffs_from_raw(raw_used_riffs):
     used_riffs = []
     for used_riff in raw_used_riffs.split(' '):
-        used_riffs.append(int(used_riff))
+        if used_riff[0] == 'R':
+            used_riffs.append({'modified_riffs': False, 'no': int(used_riff[1:]), 'display': 'R'})
+        if used_riff[0] == 'M':
+            used_riffs.append({'modified_riffs': True, 'no': int(used_riff[1:]), 'display': 'M'})
     return used_riffs
 
 
@@ -54,12 +57,12 @@ def get_rhythm_arrangements_from_raw(raw_arrangements):
     arrangements = []
 
     for arrangement in raw_arrangements.split('; '):
-        start_time = int(arrangement.split(' ')[0])
+        riff_index = int(arrangement.split(' ')[0])
         degree = arrangement.split(' ')[1]
         if get_relative_distance(degree) is None:
             raise Exception()
         else:
-            arrangements.append([start_time, degree])
+            arrangements.append([riff_index, degree])
     return arrangements
 
 
@@ -77,28 +80,52 @@ def get_available_riff_no(riff_dict, riff_type):
     return available_no_list
 
 
-def refresh_riff_info(phrase_info, phrase_type, riff_dict):
+def refresh_rhythm_riff_info(phrase_info, phrase_type, riff_dict, modified_riff_dict):
 
     according_riff_dict = {
         'rhythm_guitar_phrase': 'griff',
         'rhythm_bass_phrase': 'briff',
-        'drum_phrase': 'driff'
     }
 
     riff_list = []
 
     for riff_no in phrase_info['riffs_no']:
+        if riff_no['modified_riffs'] is False:
+            riff = get_riff_of_no(riff_dict, according_riff_dict[phrase_type], riff_no['no'])
+            riff['modified_riffs'] = False
+            riff_list.append(riff)
+
+        else:
+            assert riff_no['modified_riffs'] == True
+            riff = get_riff_of_no(modified_riff_dict, according_riff_dict[phrase_type], riff_no['no'])
+            riff['modified_riffs'] = True
+            riff_list.append(riff)
+
+    phrase_info['riffs'] = riff_list
+
+
+def refresh_drum_riff_info(phrase_info, phrase_type, riff_dict):
+    according_riff_dict = {
+        'drum_phrase': 'driff'
+    }
+    riff_list = []
+    for riff_no in phrase_info['riffs_no']:
         riff = get_riff_of_no(riff_dict, according_riff_dict[phrase_type], riff_no)
+        riff['modified_riffs'] = False
         riff_list.append(riff)
 
     phrase_info['riffs'] = riff_list
 
 
-def refresh_all_phrases(phrases, riffs):
-    for phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase', 'drum_phrase']:
+def refresh_all_phrases(phrases, riffs, modified_riffs):
+    for phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase']:
         phrases_list = phrases[phrase_type]
         for phrase in phrases_list:
-            refresh_riff_info(phrase, phrase_type, riffs)
+            refresh_rhythm_riff_info(phrase, phrase_type, riffs, modified_riffs)
+    for phrase_type in ['drum_phrase']:
+        phrases_list = phrases[phrase_type]
+        for phrase in phrases_list:
+            refresh_drum_riff_info(phrase, phrase_type, riffs)
 
 
 def get_phrase_of_no(phrase_dict, phrase_type, no):

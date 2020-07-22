@@ -1,6 +1,7 @@
 import pretty_midi
 import math
 import numpy as np
+import os
 import torch
 
 from music.custom_elements.rhythm_riff.riff import Riff
@@ -9,7 +10,9 @@ from music.custom_elements.rhythm_riff.guitar_riff import GuitarRiff
 from music.custom_elements.modified_riff.modified_riff import ModifiedRiff, ModifiedBassRiff, ModifiedGuitarRiff
 
 from riffgan.riffgan_model import RiffGAN
+from util.data_plotting import *
 from util.music_generate import *
+from util.npy_related import *
 
 
 def get_measure_length(bpm):
@@ -61,7 +64,7 @@ def generate_data_from_midi(path, measure_num, instr_type, bpm=120):
     return data
 
 
-def modify_riff(riff, riff_type, no, option):
+def modify_riff(riff, riff_type, option):
     if riff_type == 'griff':
         instr_type = 'guitar'
         modified_riff = ModifiedGuitarRiff(riff, option)
@@ -95,10 +98,16 @@ def modify_riff(riff, riff_type, no, option):
     seed = torch.unsqueeze(torch.from_numpy(ori_riff_data)
                            , 1).to(device=riffgan.device, dtype=torch.float)
 
-    modified_riff.set_midi_path(f'temp_{riff_type}_{no}_{option}')
+    # modified_riff.set_midi_path(f'temp_{riff_type}_{no}_{option}')
+
+    temp_path = './temp.mid'
 
     fake_sample = riffgan.generator(noise, seed, riff.measure_length).cpu().detach().numpy()
 
-    save_midis(fake_sample, modified_riff.midi_path, instr_type)
+    save_midis(fake_sample, temp_path, instr_type)
+    nonzeros, shape = generate_nonzeros_from_pm(pretty_midi.PrettyMIDI(temp_path), 120, riff.measure_length, instr_type)
+    os.remove(temp_path)
 
-    return modified_riff.export_json_dict()
+    modified_riff.set_nonzeros_and_shape(nonzeros.tolist(), shape)
+
+    return modified_riff

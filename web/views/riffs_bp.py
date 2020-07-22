@@ -8,6 +8,7 @@ from music.pieces.track.toolkit import *
 from music.custom_elements.drum_riff.drum_riff import examine_drum_patterns
 from util.riff_modification import modify_riff
 import pygame
+import time
 
 riffs_bp = Blueprint('riffs', __name__, template_folder='templates', static_folder='static', url_prefix='/riffs')
 
@@ -27,7 +28,8 @@ def get_riffs(riff_type):
     return render_template('riffs/' + riff_type + '.html',
                            riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
                            riff_type=riff_type,
-                           existed_riffs=existed_riffs)
+                           existed_riffs=existed_riffs,
+                           t=time.time())
 
 
 @riffs_bp.route('/delete/<riff_type>/<index>', methods=['POST'])
@@ -102,13 +104,13 @@ def play_riff(riff_type, index):
 
         if riff_type == 'griff':
             riff = parse_griff_json(riff_info)
-            riff.add_notes_to_pm('E2', 120, 27)
+            riff.add_notes_to_pm('E2', 120, 29)
             riff.save_midi(f'temp_{riff_type}_{index}')
             riff.play_with_no_init()
 
         elif riff_type == 'briff':
             riff = parse_briff_json(riff_info)
-            riff.add_notes_to_pm('E1', 120, 27)
+            riff.add_notes_to_pm('E1', 120, 33)
             riff.save_midi(f'temp_{riff_type}_{index}')
             riff.play_with_no_init()
 
@@ -130,13 +132,17 @@ def play_modified_riff(riff_type, index):
         modified_riff_info = modified_riffs[riff_type][int(index)-1]
 
         if riff_type == 'griff':
-            riff = parse_modified_griff_json(modified_riff_info)
-            riff.play_with_no_init()
+            modified_riff = parse_modified_griff_json(modified_riff_info)
+            modified_riff.add_notes_to_pm(29)
+            modified_riff.save_midi(f'temp_{riff_type}_{index}_{modified_riff.option}')
+            modified_riff.play_with_no_init()
 
         else:
             assert riff_type == 'briff'
-            riff = parse_modified_briff_json(modified_riff_info)
-            riff.play_with_no_init()
+            modified_riff = parse_modified_briff_json(modified_riff_info)
+            modified_riff.add_notes_to_pm(33)
+            modified_riff.save_midi(f'temp_{riff_type}_{index}_{modified_riff.option}')
+            modified_riff.play_with_no_init()
 
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
@@ -406,7 +412,11 @@ def alter_riff(riff_type, option, index):
         modified_riffs = get_temp_modified_riffs()
         current_no = get_largest_num_of_json(modified_riffs[riff_type]) + 1
 
-        modified_riff_info = modify_riff(riff, riff_type, current_no, option)
+        modified_riff = modify_riff(riff, riff_type, option)
+        modified_riff.add_notes_to_pm(instr=0)
+        modified_riff.save_fig(f'fig_{riff_type}_{current_no}', riff_type)
+
+        modified_riff_info = modified_riff.export_json_dict()
         modified_riff_info['original_no'] = riff_info['no']
         modified_riff_info['no'] = current_no
 

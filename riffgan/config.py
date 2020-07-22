@@ -7,8 +7,8 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        self.dataset_name = 'grunge_library'
-        # self.dataset_name = 'jimi_library'
+        # self.dataset_name = 'grunge_library'
+        self.dataset_name = 'jimi_library'
 
         self.instr_type = 'guitar'
         self.chord_type = '5'
@@ -57,15 +57,15 @@ class Config(object):
 
         self.batch_size = 16
 
-        self.g_lr = 0.0001
-        self.d_lr = 0.0001
+        self.g_lr = 0.0002
+        self.d_lr = 0.0002
         self.gamma = 0.5
 
         self.weight_decay = 0.0
 
         self.no_flip = True
         self.num_threads = 0
-        self.max_epoch = 50
+        self.max_epoch = 64
         self.epoch_step = 5
 
         # self.data_shape = (self.batch_size, 1, 64, 84)

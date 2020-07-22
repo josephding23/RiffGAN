@@ -7,8 +7,11 @@ from web.views.phrases_bp import phrases_bp
 from web.views.tracks_bp import tracks_bp
 from web.views.song_bp import song_bp
 from web.database.song import *
+from datetime import timedelta
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=0.01)
+
 app.register_blueprint(riffs_bp, url_prefix='/riffs')
 app.register_blueprint(phrases_bp, url_prefix='/phrases')
 app.register_blueprint(tracks_bp, url_prefix='/tracks')

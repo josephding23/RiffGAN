@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from music.custom_elements.rhythm_riff.toolkit import *
-from util.npy_related import plot_data
+from util.data_plotting import plot_data
 
 
 def generate_random_seed(length, instr, root_note='I', pattern='5'):
@@ -20,9 +20,9 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
 
     total_length = 64 * length
 
-    root_prob1 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
-    root_prob2 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
-    root_prob3 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
+    root_prob1 = int(round(random.uniform(0.125, 0.1875) * 16)) / 16
+    root_prob2 = int(round(random.uniform(0.1875, 0.25) * 16)) / 16
+    root_prob3 = int(round(random.uniform(0, 0.25) * 16)) / 16
     root_prob = root_prob1 + root_prob2 + root_prob3
     third_prob = int(round(random.uniform(0, 1 - root_prob) * 16)) / 16
     fifth_prob = int(round(random.uniform(0, 1 - root_prob - third_prob) * 16)) / 16

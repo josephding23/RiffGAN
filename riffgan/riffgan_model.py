@@ -29,6 +29,7 @@ from util.music_generate import *
 from util.npy_related import *
 from util.fix_generated_song import *
 from riffgan.networks.midinet.utility import *
+from util.data_plotting import *
 
 from music.custom_elements.drum_riff.auto_generate_drum import *
 
@@ -97,8 +98,8 @@ class RiffGAN(object):
         self.D_optimizer = Adam(params=self.discriminator.parameters(), lr=self.opt.d_lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
 
-        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
-        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
+        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
+        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
 
     def find_latest_checkpoint(self):
         path = self.opt.D_save_path
@@ -301,15 +302,19 @@ class RiffGAN(object):
             ori_sample = seed.cpu().detach().numpy()
             fake_sample = self.generator(noise, seed, 2).cpu().detach().numpy()
 
-            # plot_data(fake_sample[0, 0, :, :])
+            # plot_data(fake_sample[:, 0, :, :])
 
             save_midis(ori_sample, f'../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
             # merge_short_notes(f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
 
             save_midis(fake_sample, f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
             merge_short_notes(f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
+            '''
+            plot_midi_file(f'../data/generated_music/gen{str(i+1)}.mid', 2, self.opt.instr_type,
+                           save_image=False, save_path='./test.png')
+            '''
 
 
 if __name__ == '__main__':
     riff_gan = RiffGAN()
-    riff_gan.test()
+    riff_gan.train()

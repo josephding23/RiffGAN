@@ -95,6 +95,7 @@ def edit_phrase(phrase_type, index):
     if request.method == 'POST':
 
         riffs = get_temp_riffs()
+        modified_riffs = get_temp_modified_riffs()
         phrases = get_temp_phrases()
         tracks = get_temp_tracks()
         song = get_temp_song()
@@ -143,12 +144,14 @@ def edit_phrase(phrase_type, index):
             try:
                 used_riffs = get_used_riffs_from_raw(raw_used_riffs)
                 available_riffs = get_available_riff_no(riffs, according_riffs_dict[phrase_type])
-                for riff_no in used_riffs:
-                    if riff_no not in available_riffs:
-                        error = f'Riff No.{riff_no} is not available.'
+                available_modified_riffs = get_available_riff_no(modified_riffs, according_riffs_dict[phrase_type])
+
+                for used_riff in used_riffs:
+                    if used_riff['modified_riffs'] is False and used_riff['no'] not in available_riffs or \
+                            used_riff['modified_riffs'] is True and used_riff['no'] not in available_modified_riffs:
+                        error = f"Riff No.{used_riff['no']} of {used_riff['type']} is not available."
                         return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                                phrase_type=phrase_type, error=error)
-                print(get_available_riff_no(riffs, 'griff'))
             except Exception:
                 error = 'Invalid used riffs format'
                 return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
@@ -156,6 +159,15 @@ def edit_phrase(phrase_type, index):
 
             try:
                 arrangements = get_rhythm_arrangements_from_raw(raw_arrangements)
+
+                existed_riffs_num = len(used_riffs)
+                for arrangement in arrangements:
+                    print(arrangement)
+                    riff_index = arrangement[0]
+                    if riff_index >= existed_riffs_num:
+                        error = f"Riff {riff_index} is not added."
+                        return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
+                                               phrase_type=phrase_type, error=error)
             except Exception:
                 error = 'Invalid arrangements format'
                 return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
@@ -175,7 +187,7 @@ def edit_phrase(phrase_type, index):
                 'raw_arrangements': raw_arrangements
             }
 
-            refresh_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs)
+            refresh_rhythm_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs, modified_riffs)
             refresh_all_tracks(tracks, phrases)
             refresh_all_tracks_in_song(song, tracks)
 
@@ -236,7 +248,7 @@ def edit_phrase(phrase_type, index):
                 'raw_arrangements': raw_arrangements
             }
 
-            refresh_riff_info(phrases[phrase_type][int(index) - 1], phrase_type, riffs)
+            refresh_drum_riff_info(phrases[phrase_type][int(index) - 1], phrase_type, riffs)
             refresh_all_tracks(tracks, phrases)
             refresh_all_tracks_in_song(song, tracks)
 
@@ -250,12 +262,14 @@ def edit_phrase(phrase_type, index):
 def new_phrase(phrase_type):
     phrases = get_temp_phrases()
     riffs = get_temp_riffs()
+    modified_riffs = get_temp_modified_riffs()
 
     according_riffs_dict = {
         'rhythm_guitar_phrase': 'griff',
         'rhythm_bass_phrase': 'briff',
         'drum_phrase': 'driff'
     }
+
     if request.method == 'POST':
         if phrase_type in ['rhythm_guitar_phrase', 'rhythm_bass_phrase']:
             raw_length = request.form['new_length_input']
@@ -301,13 +315,15 @@ def new_phrase(phrase_type):
             try:
                 used_riffs = get_used_riffs_from_raw(raw_used_riffs)
                 available_riffs = get_available_riff_no(riffs, according_riffs_dict[phrase_type])
-                for riff_no in used_riffs:
-                    if riff_no not in available_riffs:
-                        error = f'Riff No.{riff_no} is not available.'
+                available_modified_riffs = get_available_riff_no(modified_riffs, according_riffs_dict[phrase_type])
+
+                for used_riff in used_riffs:
+                    if used_riff['modified_riffs'] is False and used_riff['no'] not in available_riffs or \
+                            used_riff['modified_riffs'] is True and used_riff['no'] not in available_modified_riffs:
+                        error = f"Riff No.{used_riff['no']} of {used_riff['type']} is not available."
                         return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                                phrase_type=phrase_type, error=error)
 
-                print(get_available_riff_no(riffs, 'griff'))
             except Exception:
                 error = 'Invalid used riffs format'
                 return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
@@ -334,7 +350,7 @@ def new_phrase(phrase_type):
                 'raw_arrangements': raw_arrangements
             }
 
-            refresh_riff_info(phrase_info, phrase_type, riffs)
+            refresh_rhythm_riff_info(phrase_info, phrase_type, riffs)
 
             phrases[phrase_type].append(phrase_info)
             save_temp_phrases(phrases)
@@ -391,7 +407,7 @@ def new_phrase(phrase_type):
                 'raw_arrangements': raw_arrangements
             }
 
-            refresh_riff_info(phrase_info, phrase_type, riffs)
+            refresh_drum_riff_info(phrase_info, phrase_type, riffs)
 
             phrases[phrase_type].append(phrase_info)
             save_temp_phrases(phrases)

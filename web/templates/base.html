@@ -4,7 +4,7 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" >
+    <link rel="icon" href="{{ url_for('static', filename='falvicon.ico') }}" >
 
     {% block head %}
         {{ super() }}

@@ -2,6 +2,8 @@ from music.pieces.phrase.phrase import *
 from music.pieces.phrase.toolkit import *
 from music.custom_elements.rhythm_riff.guitar_riff import *
 from music.custom_elements.rhythm_riff.bass_riff import *
+from music.custom_elements.modified_riff.modified_riff import *
+from util.music_generate import *
 
 
 class RhythmPhrase(Phrase):
@@ -47,24 +49,30 @@ class RhythmPhrase(Phrase):
             riff, riff_root_name = self.riffs[arrange[0]], arrange[1]
             riff_root_dist = get_relative_distance(riff_root_name)
 
-            real_time_stamps = time_stamps_convert(riff.time_stamps, self.bpm)
-            for i in range(len(real_time_stamps)):
-                start_time, end_time = real_time_stamps[i]
-                start_time += riff_start
-                end_time += riff_start
-                if type(riff.velocity) == int:
-                    velocity = riff.velocity
-                else:
-                    assert type(riff.velocity) == list
-                    velocity = riff.velocity[i]
-                chord = riff.chords[i]
+            if isinstance(riff, GuitarRiff) or isinstance(riff, BassRiff):
+                real_time_stamps = time_stamps_convert(riff.time_stamps, self.bpm)
+                for i in range(len(real_time_stamps)):
+                    start_time, end_time = real_time_stamps[i]
+                    start_time += riff_start
+                    end_time += riff_start
+                    if type(riff.velocity) == int:
+                        velocity = riff.velocity
+                    else:
+                        assert type(riff.velocity) == list
+                        velocity = riff.velocity[i]
+                    chord = riff.chords[i]
 
-                for note_dist in chord:
-                    note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note + riff_root_dist,
-                                            start=start_time, end=end_time)
-                    instr.notes.append(note)
+                    for note_dist in chord:
+                        note = pretty_midi.Note(velocity=velocity, pitch=note_dist + self.root_note + riff_root_dist,
+                                                start=start_time, end=end_time)
+                        instr.notes.append(note)
+                riff_start += length_per_measure * riff.measure_length
+            else:
+                assert isinstance(riff, ModifiedGuitarRiff) or isinstance(riff, ModifiedBassRiff)
+                add_notes_from_nonzeros_to_instr(riff.nonzeros, riff.shape, instr, self.bpm, riff_start)
 
-            riff_start += length_per_measure * riff.measure_length
+                riff_start += length_per_measure * riff.original_riff.measure_length
+
             # print(riff_start)
 
         self.pm.instruments.append(instr)
@@ -102,10 +110,28 @@ def create_rhythm_phrase_from_json(path):
 def parse_rhythm_phrase_json(phrase_info):
     instr_type = phrase_info['instr_type']
     if instr_type == 'guitar':
-        riffs = [parse_griff_json(riff_info) for riff_info in phrase_info['riffs']]
+        riffs = []
+        for riff_info in phrase_info['riffs']:
+            '''
+            if not riff_info['modified']:
+                riff = parse_griff_json(riff_info)
+            else:
+                riff = parse_modified_griff_json(riff_info)
+            '''
+            riff = parse_griff_json(riff_info)
+            riffs.append(riff)
     else:
         assert instr_type == 'bass'
-        riffs = [parse_briff_json(riff_info) for riff_info in phrase_info['riffs']]
+        riffs = []
+        for riff_info in phrase_info['riffs']:
+            '''
+            if not riff_info['modified']:
+                riff = parse_briff_json(riff_info)
+            else:
+                riff = parse_modified_briff_json(riff_info)
+            '''
+            riff = parse_briff_json(riff_info)
+            riffs.append(riff)
 
     rhythm_phrase = RhythmPhrase(
         length=phrase_info['length'],

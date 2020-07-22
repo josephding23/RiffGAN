@@ -1,45 +1,60 @@
 import pretty_midi
 import numpy as np
 from music.custom_elements.rhythm_riff.toolkit import *
+from util.npy_related import *
 
 
-def generate_midi_segment_from_tensor(data, path, bpm=120):
-    pm = pretty_midi.PrettyMIDI()
-    instr_track = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')
+def add_notes_from_nonzeros_to_instr(nonzeros, shape, instr_track, bpm=120, start_time=0):
+    # pm = pretty_midi.PrettyMIDI()
+    data = np.zeros(shape, np.float_)
+    for nonzero in nonzeros:
+        # print(nonzero)
+        data[(int(nonzero[0]), int(nonzero[1]), int(nonzero[2]))] = 1.0
+
+    # plot_data(data[0, :, :], shape)
+
+    if shape[2] == 60:
+        note_range = (36, 96)
+        # standard tune: [E2, D6] -> [C2, C7)
+    else:
+        assert shape[2] == 48
+        note_range = (24, 72)
+        # standard tune: [E1, G4] -> [C1, C5)
+
+    # instr_track = pretty_midi.Instrument(program=0, is_drum=False, name='Instr')
     sixty_fourth_length = 60 / bpm / 16
-    note_range = 84
-    time_step = 64
 
-    for note in range(note_range):
+    for note in range(shape[2]):
         during_note = False
         note_begin = 0
-        for time in range(time_step):
-            has_note = data[time, note] >= 0.5
+        for i in range(shape[0]):
+            for time in range(shape[1]):
+                has_note = data[i, time, note] >= 0.5
 
-            if has_note:
-                if not during_note:
-                    during_note = True
-                    note_begin = time * sixty_fourth_length
+                whole_time = i * shape[1] + time
+
+                if has_note:
+                    if not during_note:
+                        during_note = True
+                        note_begin = start_time + whole_time * sixty_fourth_length
+                    else:
+                        if not ((i == shape[0] - 1) and (time == shape[1] - 1)):
+                            continue
+                        else:
+                            note_end = start_time + whole_time * sixty_fourth_length
+                            instr_track.notes.append(pretty_midi.Note(127, note + note_range[0], note_begin, note_end))
+                            during_note = False
                 else:
-                    if time != time_step - 1:
+                    if not during_note:
                         continue
                     else:
-                        note_end = time * sixty_fourth_length
-                        instr_track.notes.append(pretty_midi.Note(127, note + 24, note_begin, note_end))
+                        note_end = start_time + whole_time * sixty_fourth_length
+                        instr_track.notes.append(pretty_midi.Note(127, note + note_range[0], note_begin, note_end))
                         during_note = False
-            else:
-                if not during_note:
-                    continue
-                else:
-                    note_end = time * sixty_fourth_length
-                    instr_track.notes.append(pretty_midi.Note(127, note + 24, note_begin, note_end))
-                    during_note = False
-    pm.instruments.append(instr_track)
-    pm.write(path)
 
 
 def save_midis(bars, path, instr_type):
-    from util.npy_related import plot_data
+    from util.data_plotting import plot_data
     pm = pretty_midi.PrettyMIDI()
 
     if instr_type == 'guitar':
@@ -158,5 +173,11 @@ def get_quantization_time(start, end, bpm=120, shortest_note=1/64):
     return start_q, end_q
 
 
+def test_nonzeros_generation():
+    path = 'E:/jimi_library/unit_riffs/nonzeros/guitar/5f0d0da143063ce12a8f0e6a.npz'
+    pm = generate_pm_from_nonzeros(path)
+    pm.write('./test_pm.mid')
+
+
 if __name__ == '__main__':
-    print(get_nearest_in_tone_note(15))
+    test_nonzeros_generation()

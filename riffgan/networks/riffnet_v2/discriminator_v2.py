@@ -8,7 +8,6 @@ class Discriminator(nn.Module):
     def __init__(self, pitch_range):
         super(Discriminator, self).__init__()
         self.df_dim = 512
-        self.dfc_dim = 1024
         self.pitch_range = pitch_range
 
         self.cnet_1 = nn.Sequential(
@@ -18,48 +17,59 @@ class Discriminator(nn.Module):
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
-            # nn.ZeroPad2d((0, 0, 1, 1)),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
+            nn.SELU(),
             nn.Dropout(0.5)
         )
 
         self.cnet_2 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim,
+                      out_channels=self.df_dim * 2,
                       kernel_size=(3, 1),
-                      stride=(1, 1),
+                      stride=(2, 1),
                       padding=(1, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
+            nn.BatchNorm2d(self.df_dim * 2),
+            nn.SELU(),
             nn.Dropout(0.5)
         )
 
         self.cnet_3 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim,
+            nn.Conv2d(in_channels=self.df_dim * 2,
+                      out_channels=self.df_dim * 4,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(self.df_dim * 4),
+            nn.SELU(),
+            nn.Dropout(0.5)
+        )
+
+        self.cnet_4 = nn.Sequential(
+            nn.Conv2d(in_channels=self.df_dim * 4,
+                      out_channels=self.df_dim * 2,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(self.df_dim * 2),
+            nn.SELU(),
+            nn.Dropout(0.5)
+        )
+
+        self.cnet_5 = nn.Sequential(
+            nn.Conv2d(in_channels=self.df_dim * 2,
                       out_channels=self.df_dim,
                       kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
-            nn.Dropout(0.5)
+            nn.SELU()
         )
 
-        self.cnet_4 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim,
-                      kernel_size=(3, 1),
-                      stride=(1, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
-        )
-
-        self.linear1 = nn.Linear(self.df_dim * 16, 1)
+        self.linear1 = nn.Linear(self.df_dim * 2, 1)
 
     def forward(self, x, batch_size):
 
@@ -70,6 +80,8 @@ class Discriminator(nn.Module):
         x = self.cnet_3(x)
 
         x = self.cnet_4(x)
+
+        x = self.cnet_5(x)
 
         x = x.view(batch_size, -1)
 

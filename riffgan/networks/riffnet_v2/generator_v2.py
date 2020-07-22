@@ -9,11 +9,63 @@ from riffgan.networks.resnet import ResnetBlock
 class Generator(nn.Module):
     def __init__(self, pitch_range, seed_size):
         super(Generator, self).__init__()
-        self.gf_dim = 256
-        self.n_channel = 16
+        self.gf_dim = 128
+        self.n_channel = 32
         self.pitch_range = pitch_range
 
         self.linear1 = nn.Linear(seed_size, self.n_channel * 4)
+
+        self.cnet1 = nn.Sequential(
+            nn.Conv2d(in_channels=1,
+                      out_channels=self.gf_dim,
+                      kernel_size=(3, self.pitch_range),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(num_features=self.gf_dim),
+            nn.SELU()
+        )
+
+        self.cnet2 = nn.Sequential(
+            nn.Conv2d(in_channels=self.gf_dim,
+                      out_channels=self.gf_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(num_features=self.gf_dim),
+            nn.SELU()
+        )
+
+        self.cnet3 = nn.Sequential(
+            nn.Conv2d(in_channels=self.gf_dim,
+                      out_channels=self.gf_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(num_features=self.gf_dim),
+            nn.SELU()
+        )
+
+        self.cnet4 = nn.Sequential(
+            nn.Conv2d(in_channels=self.gf_dim,
+                      out_channels=self.gf_dim,
+                      kernel_size=(3, 1),
+                      stride=(2, 1),
+                      padding=(1, 0)
+                      ),
+            nn.BatchNorm2d(num_features=self.gf_dim),
+            nn.SELU()
+        )
+
+        self.resnet = nn.Sequential()
+        for i in range(12):
+            self.resnet.add_module('resnet_block', ResnetBlock(dim=self.n_channel + self.gf_dim,
+                                                               padding_type='reflect',
+                                                               use_dropout=False,
+                                                               use_bias=False,
+                                                               norm_layer=nn.BatchNorm2d))
 
         self.ctnet4 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=self.n_channel + self.gf_dim,
@@ -62,58 +114,6 @@ class Generator(nn.Module):
             nn.BatchNorm2d(1)
         )
 
-        self.resnet = nn.Sequential()
-        for i in range(10):
-            self.resnet.add_module('resnet_block', ResnetBlock(dim=self.n_channel + self.gf_dim,
-                                                               padding_type='reflect',
-                                                               use_dropout=False,
-                                                               use_bias=False,
-                                                               norm_layer=nn.BatchNorm2d))
-
-        self.cnet1 = nn.Sequential(
-            nn.Conv2d(in_channels=1,
-                      out_channels=self.gf_dim,
-                      kernel_size=(3, self.pitch_range),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(num_features=self.gf_dim),
-            nn.SELU()
-        )
-
-        self.cnet2 = nn.Sequential(
-            nn.Conv2d(in_channels=self.gf_dim,
-                      out_channels=self.gf_dim,
-                      kernel_size=(3, 1),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(num_features=self.gf_dim),
-            nn.SELU()
-        )
-
-        self.cnet3 = nn.Sequential(
-            nn.Conv2d(in_channels=self.gf_dim,
-                      out_channels=self.gf_dim,
-                      kernel_size=(3, 1),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(num_features=self.gf_dim),
-            nn.SELU()
-        )
-
-        self.cnet4 = nn.Sequential(
-            nn.Conv2d(in_channels=self.gf_dim,
-                      out_channels=self.gf_dim,
-                      kernel_size=(3, 1),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(num_features=self.gf_dim),
-            nn.SELU()
-        )
-
     def forward(self, noise, seed, batch_size):
         h4_prev = self.cnet1(seed)
         h3_prev = self.cnet2(h4_prev)
@@ -122,7 +122,7 @@ class Generator(nn.Module):
 
         h1 = self.linear1(noise)
 
-        h1 = h1.view(batch_size, self.n_channel, 4, 1)
+        h1 = h1.view(batch_size, self.n_channel, -1, 1)
         h1 = conv_prev_concat(h1, h1_prev)
 
         h1 = self.resnet(h1)

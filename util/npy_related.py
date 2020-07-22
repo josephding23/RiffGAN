@@ -41,18 +41,3 @@ def generate_sparse_matrix_from_nonzeros(nonzeros, shape):
     for nonzero in nonzeros:
         data[nonzero[0], nonzero[1], nonzero[2]] = 1.0
     return data
-
-
-def plot_data(data, shape):
-    import matplotlib.pyplot as plt
-    sample_data = data
-    dataX = []
-    dataY = []
-    for time in range(shape[1]):
-        for pitch in range(shape[2]):
-            if sample_data[time][pitch] > 0.1:
-                dataX.append(time)
-                dataY.append(pitch)
-    plt.scatter(x=dataX, y=dataY)
-    plt.show()
-
