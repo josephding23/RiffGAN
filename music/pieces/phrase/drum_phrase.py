@@ -8,6 +8,7 @@ class DrumPhrase(Phrase):
         Phrase.__init__(self, length, bpm)
 
         self.riffs = []
+        self.riffs_no = []
         self.arrangement = []
 
     def __eq__(self, other):
@@ -69,6 +70,7 @@ class DrumPhrase(Phrase):
             "length": self.length,
             "bpm": self.bpm,
             "riffs": [riff.export_json_dict() for riff in self.riffs],
+            'riffs_no': self.riffs_no,
             "arrangements": self.arrangement
         }
         return info_dict
@@ -87,6 +89,7 @@ def parse_drum_phrase_json(phrase_info):
     )
 
     drum_phrase.set_riffs([parse_driff_json(riff_info) for riff_info in phrase_info['riffs']])
+    drum_phrase.riffs_no = phrase_info['riffs_no']
     drum_phrase.set_arrangement(phrase_info['arrangements'])
 
     return drum_phrase

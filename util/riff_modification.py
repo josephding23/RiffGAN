@@ -7,12 +7,14 @@ import torch
 from music.custom_elements.rhythm_riff.riff import Riff
 from music.custom_elements.rhythm_riff.bass_riff import BassRiff
 from music.custom_elements.rhythm_riff.guitar_riff import GuitarRiff
-from music.custom_elements.modified_riff.modified_riff import ModifiedRiff, ModifiedBassRiff, ModifiedGuitarRiff
+from music.custom_elements.modified_riff.modified_riff import ModifiedRiff, ModifiedBassRiff, ModifiedGuitarRiff, \
+    parse_modified_griff_json, parse_modified_briff_json
 
 from riffgan.riffgan_model import RiffGAN
 from util.data_plotting import *
 from util.music_generate import *
 from util.npy_related import *
+from util.fix_generated_song import *
 
 
 def get_measure_length(bpm):
@@ -73,7 +75,6 @@ def modify_riff(riff, riff_type, option):
         instr_type = 'bass'
         modified_riff = ModifiedBassRiff(riff, option)
 
-    assert isinstance(riff, Riff)
     riffgan = RiffGAN()
     if riff_type == 'griff':
         assert isinstance(riff, GuitarRiff)
@@ -105,9 +106,22 @@ def modify_riff(riff, riff_type, option):
     fake_sample = riffgan.generator(noise, seed, riff.measure_length).cpu().detach().numpy()
 
     save_midis(fake_sample, temp_path, instr_type)
+    merge_short_notes(temp_path, instr_type)
+
     nonzeros, shape = generate_nonzeros_from_pm(pretty_midi.PrettyMIDI(temp_path), 120, riff.measure_length, instr_type)
     os.remove(temp_path)
 
     modified_riff.set_nonzeros_and_shape(nonzeros.tolist(), shape)
 
     return modified_riff
+
+
+def save_modified_figures(modified_riffs, riff_type):
+    for index, modified_riff_info in enumerate(modified_riffs[riff_type]):
+        if riff_type == 'griff':
+            modified_riff = parse_modified_griff_json(modified_riff_info)
+        else:
+            assert riff_type == 'briff'
+            modified_riff = parse_modified_briff_json(modified_riff_info)
+        modified_riff.add_notes_to_pm(instr=0)
+        modified_riff.save_fig(f'fig_{riff_type}_{index+1}', riff_type)

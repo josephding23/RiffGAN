@@ -73,7 +73,8 @@ class Riff:
         info_dict = {
             "length": self.measure_length,
             "degrees_and_types": self.degrees_and_types,
-            "time_stamps": self.time_stamps
+            "time_stamps": self.time_stamps,
+            'modified': False
         }
         return info_dict
 

@@ -27,6 +27,10 @@ class ModifiedRiff:
 
         self.pm = pretty_midi.PrettyMIDI()
 
+    def __eq__(self, other):
+        return self.original_riff == other.original_riff and self.option == other.option and \
+               self.nonzeros == other.nonzeros and self.shape == other.shape
+
     def save_midi(self, name):
         # assert self.save_dir is not '' and os.path.exists(self.save_dir)
         self.midi_path = self.save_dir + 'midi/' + name + '.mid'
@@ -68,7 +72,8 @@ class ModifiedRiff:
             "original_riff": self.original_riff.export_json_dict(),
             'nonzeros': self.nonzeros,
             'shape': self.shape,
-            "option": self.option
+            "option": self.option,
+            'modified': True
         }
         return info_dict
 

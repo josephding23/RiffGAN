@@ -6,7 +6,7 @@ from music.custom_elements.modified_riff.modified_riff import *
 from music.pieces.song.toolkit import *
 from music.pieces.track.toolkit import *
 from music.custom_elements.drum_riff.drum_riff import examine_drum_patterns
-from util.riff_modification import modify_riff
+from util.riff_modification import modify_riff, save_modified_figures
 import pygame
 import time
 
@@ -24,6 +24,9 @@ pygame.mixer.music.set_volume(1)
 def get_riffs(riff_type):
     riffs = get_temp_riffs()
     modified_riffs = get_temp_modified_riffs()
+
+    save_modified_figures(modified_riffs, riff_type)
+
     existed_riffs = get_all_existed_riffs(riff_type)
     return render_template('riffs/' + riff_type + '.html',
                            riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
@@ -71,23 +74,29 @@ def delete_modified_riff(riff_type, index):
 
     if request.method == 'POST':
 
+        riffs = get_temp_riffs()
         modified_riffs = get_temp_modified_riffs()
 
-        # phrases = get_temp_phrases()
+        phrases = get_temp_phrases()
+
+        according_riffs_dict = {
+            'griff': 'rhythm_guitar_phrase',
+            'briff': 'rhythm_bass_phrase',
+            'driff': 'drum_phrase'
+        }
 
         modified_riff_no_to_delete = modified_riffs[riff_type][int(index)-1]['no']
 
-        '''
-        riff_no_in_use = get_all_used_riffs(phrases, according_riffs_dict[riff_type])
+        modified_riff_no_in_use = get_all_used_modified_riffs(phrases, according_riffs_dict[riff_type])
 
-        if riff_no_to_delete in riff_no_in_use:
-            error = 'Riff you tend to delete is in use.'
+        if modified_riff_no_to_delete in modified_riff_no_in_use:
+            error = 'Modified Riff you tend to delete is in use.'
             existed_riffs = get_all_existed_riffs(riff_type)
             return render_template('riffs/' + riff_type + '.html',
                                    riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
                                    riff_type=riff_type,
                                    error=error, existed_riffs=existed_riffs)
-        '''
+
         modified_riffs[riff_type].pop(int(index)-1)
 
         save_temp_modified_riffs(modified_riffs)
@@ -121,6 +130,7 @@ def play_riff(riff_type, index):
             riff.save_midi(f'temp_{riff_type}_{index}')
             riff.play_with_no_init()
 
+        os.remove(riff.midi_path)
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
@@ -144,6 +154,7 @@ def play_modified_riff(riff_type, index):
             modified_riff.save_midi(f'temp_{riff_type}_{index}_{modified_riff.option}')
             modified_riff.play_with_no_init()
 
+        os.remove(modified_riff.midi_path)
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 
 
@@ -405,14 +416,19 @@ def alter_riff(riff_type, option, index):
         riffs = get_temp_riffs()
         riff_info = riffs[riff_type][int(index) - 1]
 
-        riff = parse_griff_json(riff_info)
-        riff.add_notes_to_pm('E2', 120, 27)
+        if riff_type == 'griff':
+            riff = parse_griff_json(riff_info)
+            riff.add_notes_to_pm('E2', 120, 29)
+        else:
+            riff = parse_briff_json(riff_info)
+            riff.add_notes_to_pm('E1', 120, 33)
         riff.save_midi(f'temp_{riff_type}_{index}')
 
         modified_riffs = get_temp_modified_riffs()
         current_no = get_largest_num_of_json(modified_riffs[riff_type]) + 1
 
         modified_riff = modify_riff(riff, riff_type, option)
+
         modified_riff.add_notes_to_pm(instr=0)
         modified_riff.save_fig(f'fig_{riff_type}_{current_no}', riff_type)
 
@@ -423,6 +439,8 @@ def alter_riff(riff_type, option, index):
         modified_riffs[riff_type].append(modified_riff_info)
 
         save_temp_modified_riffs(modified_riffs)
+
+        os.remove(riff.midi_path)
 
         return redirect(url_for('riffs.get_riffs', riff_type=riff_type))
 

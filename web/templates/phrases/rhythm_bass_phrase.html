@@ -63,11 +63,11 @@
                               <h4 class="list-group-item-heading">
                                   Used Riffs:
                               </h4>
-                              {% for riff_no in phrase.riffs_no %}
+                              {% for riff in phrase.riffs_no %}
                                   <button class="btn" type="button"
                                           style="
                                           height: 30px; width: 50px; border-radius: 13px; padding: 2px; margin: 2px">
-                                      {{ riff_no }}
+                                      {{ riff.display }}{{ riff.no }}
                                   </button>
                               {% endfor %}
                           </li>

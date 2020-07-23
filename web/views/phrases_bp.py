@@ -5,6 +5,7 @@ from music.pieces.phrase.toolkit import *
 from music.pieces.track.toolkit import *
 from music.pieces.song.toolkit import *
 import pygame
+import json
 
 
 phrases_bp = Blueprint('phrases', __name__, template_folder='templates', static_folder='static', url_prefix='/phrases')
@@ -147,8 +148,8 @@ def edit_phrase(phrase_type, index):
                 available_modified_riffs = get_available_riff_no(modified_riffs, according_riffs_dict[phrase_type])
 
                 for used_riff in used_riffs:
-                    if used_riff['modified_riffs'] is False and used_riff['no'] not in available_riffs or \
-                            used_riff['modified_riffs'] is True and used_riff['no'] not in available_modified_riffs:
+                    if used_riff['modified'] is False and used_riff['no'] not in available_riffs or \
+                            used_riff['modified'] is True and used_riff['no'] not in available_modified_riffs:
                         error = f"Riff No.{used_riff['no']} of {used_riff['type']} is not available."
                         return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                                phrase_type=phrase_type, error=error)
@@ -187,12 +188,17 @@ def edit_phrase(phrase_type, index):
                 'raw_arrangements': raw_arrangements
             }
 
+            print(used_riffs)
+
             refresh_rhythm_riff_info(phrases[phrase_type][int(index)-1], phrase_type, riffs, modified_riffs)
+
             refresh_all_tracks(tracks, phrases)
             refresh_all_tracks_in_song(song, tracks)
 
             save_temp_phrases(phrases)
             save_temp_tracks(tracks)
+
+            print(json.dumps(tracks, indent=2))
 
             return redirect(url_for('phrases.get_phrases', phrase_type=phrase_type))
 
@@ -318,8 +324,8 @@ def new_phrase(phrase_type):
                 available_modified_riffs = get_available_riff_no(modified_riffs, according_riffs_dict[phrase_type])
 
                 for used_riff in used_riffs:
-                    if used_riff['modified_riffs'] is False and used_riff['no'] not in available_riffs or \
-                            used_riff['modified_riffs'] is True and used_riff['no'] not in available_modified_riffs:
+                    if used_riff['modified'] is False and used_riff['no'] not in available_riffs or \
+                            used_riff['modified'] is True and used_riff['no'] not in available_modified_riffs:
                         error = f"Riff No.{used_riff['no']} of {used_riff['type']} is not available."
                         return render_template('phrases/' + phrase_type + '.html', phrases=phrases[phrase_type],
                                                phrase_type=phrase_type, error=error)

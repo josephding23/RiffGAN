@@ -9,7 +9,7 @@ from riffgan.networks.resnet import ResnetBlock
 class Generator(nn.Module):
     def __init__(self, pitch_range, seed_size):
         super(Generator, self).__init__()
-        self.gf_dim = 128
+        self.gf_dim = 256
         self.n_channel = 32
         self.pitch_range = pitch_range
 
@@ -60,7 +60,7 @@ class Generator(nn.Module):
         )
 
         self.resnet = nn.Sequential()
-        for i in range(12):
+        for i in range(10):
             self.resnet.add_module('resnet_block', ResnetBlock(dim=self.n_channel + self.gf_dim,
                                                                padding_type='reflect',
                                                                use_dropout=False,

@@ -20,9 +20,9 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
 
     total_length = 64 * length
 
-    root_prob1 = int(round(random.uniform(0.125, 0.1875) * 16)) / 16
-    root_prob2 = int(round(random.uniform(0.1875, 0.25) * 16)) / 16
-    root_prob3 = int(round(random.uniform(0, 0.25) * 16)) / 16
+    root_prob1 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
+    root_prob2 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
+    root_prob3 = int(round(random.uniform(0.125, 0.25) * 16)) / 16
     root_prob = root_prob1 + root_prob2 + root_prob3
     third_prob = int(round(random.uniform(0, 1 - root_prob) * 16)) / 16
     fifth_prob = int(round(random.uniform(0, 1 - root_prob - third_prob) * 16)) / 16
@@ -84,5 +84,4 @@ def generate_random_seed(length, instr, root_note='I', pattern='5'):
 if __name__ == '__main__':
     random_seed = np.array([generate_random_seed(1, 'guitar') for _ in range(5)])[:, 0, :, :]
     print(random_seed.shape)
-    plot_data(random_seed[0, :, :], (1, 64, 60))
-    plot_data(random_seed[3, :, :], (1, 64, 60))
+    plot_data(random_seed)

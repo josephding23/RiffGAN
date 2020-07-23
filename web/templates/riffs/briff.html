@@ -36,8 +36,31 @@
 
                       <div class="panel-heading">
                           <div class="row">
-                              <div class="col-md-10">
+                              <div class="col-md-7">
                                   <h3>Bass Riff {{ riff.no }}</h3>
+                              </div>
+                              <div class="col-md-3">
+                                  <div class="row">
+                                      <div class="btn-group" style="margin-top: 20px">
+                                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Modify <span class="caret"></span>
+                                          </button>
+                                          <ul class="dropdown-menu" style="width: 150px">
+                                            <li>
+                                                <form method="post" action="{{ url_for('riffs.alter_riff', riff_type=riff_type, option='Jimify', index=loop.index) }}">
+                                                   <input type="submit" id="Jimify" class="btn btn-default"
+                                                          value="Jimify" style="width: 150px; margin: 0; border-width: 0">
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" action="{{ url_for('riffs.alter_riff', riff_type=riff_type, option='Grungefy', index=loop.index) }}">
+                                                   <input type="submit" id="Jimify" class="btn btn-default"
+                                                          value="Grungefy" style="width: 150px; margin: 0; border-width: 0">
+                                                </form>
+                                            </li>
+                                          </ul>
+                                      </div>
+                                  </div>
                               </div>
                               <div class="col-md-2" style=''>
                                   <div class="row">
@@ -209,6 +232,59 @@
               </div>
 
             {% endfor %}
+
+        {% for modified_riff in modified_riffs %}
+            <div class="col-md-3">
+                    <div class="panel panel-default" style="max-height: 520px; min-height: 520px; overflow: scroll;">
+
+                      <div class="panel-heading">
+                          <div class="row">
+                              <div class="col-md-10">
+                                  <h3>Modified Bass Riff {{ modified_riff.no }}</h3>
+                              </div>
+                              <div class="col-md-2" style=''>
+                                  <div class="row">
+                                      <form method="post" action="{{ url_for('riffs.play_modified_riff', riff_type=riff_type, index=loop.index) }}">
+                                          <input type="submit" id="play" class="btn btn-default" value="Play" style="margin-bottom: 5px">
+                                      </form>
+                                  </div>
+                                  <div class="row">
+                                      <form method="post" action="{{ url_for('riffs.stop_modified_riff', riff_type=riff_type) }}">
+                                          <input type="submit" id="stop" class="btn btn-default" value="Stop">
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                        <ul class="list-group">
+                          <li class="list-group-item">
+                              <h4>Length: {{ modified_riff.original_riff.length }}</h4>
+                          </li>
+                          <li class="list-group-item">
+                              <h4>Original Bass Riff: {{ modified_riff.original_no }}</h4>
+                          </li>
+                           <li class="list-group-item">
+                              <h4>Modify Option: {{ modified_riff.option }}</h4>
+                          </li>
+                            <li class="list-group-item" style="padding-top: 15px; padding-bottom: 20px">
+                                <img src="{{ url_for('static', filename='img/modified_riffs/fig_briff_{}.png'.format(modified_riff.no),_t=t)}}"
+                                class="img-rounded" style="width: 100%; height: 100%">
+                            </li>
+                        </ul>
+
+                        <div class="panel-footer" style="margin-top: 0">
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group btn-group-justified" role="group"
+                                     style="padding-left: 60px; padding-right: 60px;">
+                                    <form method="post" action="{{ url_for('riffs.delete_modified_riff', riff_type=riff_type, index=loop.index) }}">
+                                        <input type="submit" id="delete" class="btn btn-danger" value="Delete">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
 
                 <div class="col-md-3">
                     <div class="panel panel-default" style="min-height:520px; max-height: 520px; overflow: scroll;">

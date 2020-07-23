@@ -98,8 +98,8 @@ class RiffGAN(object):
         self.D_optimizer = Adam(params=self.discriminator.parameters(), lr=self.opt.d_lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
 
-        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
-        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=2, T_mult=2, eta_min=4e-08)
+        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
+        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
 
     def find_latest_checkpoint(self):
         path = self.opt.D_save_path
@@ -176,7 +176,6 @@ class RiffGAN(object):
 
         dataset = UnitRiffDataset(self.opt.dataset_name, self.opt.instr_type)
         dataset_size = len(dataset)
-        iter_num = int(dataset_size / self.opt.batch_size)
 
         self.logger.info(f'Dataset {self.opt.dataset_name} loaded, size {dataset_size}')
 
@@ -195,7 +194,7 @@ class RiffGAN(object):
         # Start Training
         ######################
 
-        for epoch in range(self.opt.max_epoch):
+        for epoch in range(self.opt.start_epoch, self.opt.max_epoch):
             loader = DataLoader(dataset, batch_size=self.opt.batch_size, shuffle=True,
                                 num_workers=self.opt.num_threads, drop_last=False)
             epoch_start_time = time.time()
@@ -309,10 +308,9 @@ class RiffGAN(object):
 
             save_midis(fake_sample, f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
             merge_short_notes(f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
-            '''
+
             plot_midi_file(f'../data/generated_music/gen{str(i+1)}.mid', 2, self.opt.instr_type,
                            save_image=False, save_path='./test.png')
-            '''
 
 
 if __name__ == '__main__':

@@ -44,7 +44,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 16
+        self.seed_size = 64
         self.unit_length = 1
 
         self.sigma_c = 1.0
@@ -52,7 +52,7 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.9  # Adam optimizer beta1 & 2
+        self.beta1 = 0.5  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.batch_size = 16
@@ -65,7 +65,7 @@ class Config(object):
 
         self.no_flip = True
         self.num_threads = 0
-        self.max_epoch = 64
+        self.max_epoch = 50
         self.epoch_step = 5
 
         # self.data_shape = (self.batch_size, 1, 64, 84)

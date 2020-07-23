@@ -150,15 +150,16 @@ class Song:
         song_table = get_song_table()
         song_info = self.export_json_dict()
 
-        riffs = self.get_all_riffs()
+        riffs, modified_riffs = self.get_all_riffs()
         phrases = self.get_all_phrases()
         tracks = self.get_all_tracks()
 
-        set_used_riff_num_info(phrases, riffs)
+        set_used_riff_num_info(phrases, riffs, modified_riffs)
         set_used_phrase_num_info(tracks, phrases)
 
         song_info['riffs'] = riffs
-        song_info['modified_riffs'] = {'griff': [], 'briff': []}
+        # song_info['modified_riffs'] = {'griff': [], 'briff': []}
+        song_info['modified_riffs'] = modified_riffs
         song_info['phrases'] = phrases
         song_info['tracks'] = tracks
 
@@ -188,6 +189,11 @@ class Song:
             'driff': []
         }
 
+        modified_riffs_dict = {
+            'griff': [],
+            'briff': []
+        }
+
         for track in self.tracks:
             for phrase in track.phrases:
                 if track.is_drum:
@@ -199,24 +205,54 @@ class Song:
                             riffs_dict['driff'].append(driff_info)
                 else:
                     assert isinstance(phrase, RhythmPhrase)
+
                     if phrase.instr_type == 'guitar':
                         for riff in phrase.riffs:
-                            if riff not in [parse_griff_json(info) for info in riffs_dict['griff']]:
-                                griff_info = riff.export_json_dict()
-                                griff_info['no'] = len(riffs_dict['griff']) + 1
-                                griff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
-                                griff_info['raw_timestamps'] = riff.get_timestamps_str()
-                                riffs_dict['griff'].append(griff_info)
+                            if isinstance(riff, GuitarRiff):
+                                if riff not in [parse_griff_json(info) for info in riffs_dict['griff']]:
+                                    griff_info = riff.export_json_dict()
+                                    griff_info['no'] = len(riffs_dict['griff']) + 1
+                                    griff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
+                                    griff_info['raw_timestamps'] = riff.get_timestamps_str()
+                                    riffs_dict['griff'].append(griff_info)
+
+                        for riff in phrase.riffs:
+                            if isinstance(riff, ModifiedGuitarRiff):
+                                if riff not in [parse_modified_griff_json(info) for info in
+                                                modified_riffs_dict['griff']]:
+                                    modified_griff_info = riff.export_json_dict()
+                                    for griff_info in riffs_dict['griff']:
+                                        if parse_griff_json(modified_griff_info['original_riff']) == parse_griff_json(griff_info):
+                                            modified_griff_info['original_no'] = griff_info['no']
+                                            break
+                                    modified_griff_info['no'] = len(modified_riffs_dict['griff']) + 1
+                                    modified_riffs_dict['griff'].append(modified_griff_info)
+
                     else:
                         assert phrase.instr_type == 'bass'
                         for riff in phrase.riffs:
-                            if riff not in [parse_briff_json(info) for info in riffs_dict['briff']]:
-                                briff_info = riff.export_json_dict()
-                                briff_info['no'] = len(riffs_dict['briff']) + 1
-                                briff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
-                                briff_info['raw_timestamps'] = riff.get_timestamps_str()
-                                riffs_dict['briff'].append(briff_info)
-        return riffs_dict
+                            if isinstance(riff, BassRiff):
+                                assert isinstance(riff, BassRiff)
+                                if riff not in [parse_briff_json(info) for info in riffs_dict['briff']]:
+                                    briff_info = riff.export_json_dict()
+                                    briff_info['no'] = len(riffs_dict['briff']) + 1
+                                    briff_info['raw_degrees_and_types'] = riff.get_degrees_and_types_str()
+                                    briff_info['raw_timestamps'] = riff.get_timestamps_str()
+                                    riffs_dict['briff'].append(briff_info)
+
+                        for riff in phrase.riffs:
+                            if isinstance(riff, ModifiedBassRiff):
+                                if riff not in [parse_modified_briff_json(info) for info in
+                                                modified_riffs_dict['briff']]:
+                                    modified_briff_info = riff.export_json_dict()
+                                    for briff_info in riffs_dict['briff']:
+                                        if parse_griff_json(modified_briff_info['original_riff']) == parse_briff_json(briff_info):
+                                            modified_briff_info['original_no'] = briff_info['no']
+                                            break
+                                    modified_briff_info['no'] = len(modified_riffs_dict['briff']) + 1
+                                    modified_riffs_dict['briff'].append(modified_briff_info)
+
+        return riffs_dict, modified_riffs_dict
 
     def get_all_phrases(self):
         phrases_dict = {
@@ -320,6 +356,7 @@ def get_empty_song():
 
 def parse_song_json(song_info):
     song = Song(song_info['name'])
+
     song.set_title(song_info['title'])
     song.set_writer(song_info['songwriter'])
     song.set_genre(song_info['genre'])

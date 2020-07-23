@@ -112,25 +112,25 @@ def parse_rhythm_phrase_json(phrase_info):
     if instr_type == 'guitar':
         riffs = []
         for riff_info in phrase_info['riffs']:
-            '''
+
             if not riff_info['modified']:
                 riff = parse_griff_json(riff_info)
             else:
                 riff = parse_modified_griff_json(riff_info)
-            '''
-            riff = parse_griff_json(riff_info)
+
+            # riff = parse_griff_json(riff_info)
             riffs.append(riff)
     else:
         assert instr_type == 'bass'
         riffs = []
         for riff_info in phrase_info['riffs']:
-            '''
+            print(riff_info)
             if not riff_info['modified']:
                 riff = parse_briff_json(riff_info)
             else:
                 riff = parse_modified_briff_json(riff_info)
-            '''
-            riff = parse_briff_json(riff_info)
+
+            # riff = parse_briff_json(riff_info)
             riffs.append(riff)
 
     rhythm_phrase = RhythmPhrase(

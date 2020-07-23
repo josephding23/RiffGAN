@@ -287,9 +287,19 @@ def get_all_used_riffs(phrase_dict, phrase_type):
     used_riffs_no = []
     for phrase_info in phrase_dict[phrase_type]:
         used_riffs = phrase_info['riffs_no']
-        for riff_no in used_riffs:
-            if riff_no not in used_riffs_no:
-                used_riffs_no.append(riff_no)
+        for riff_no_info in used_riffs:
+            if not riff_no_info['modified'] and riff_no_info['no'] not in used_riffs_no:
+                used_riffs_no.append(riff_no_info['no'])
+    return used_riffs_no
+
+
+def get_all_used_modified_riffs(phrase_dict, phrase_type):
+    used_riffs_no = []
+    for phrase_info in phrase_dict[phrase_type]:
+        used_riffs = phrase_info['riffs_no']
+        for riff_no_info in used_riffs:
+            if riff_no_info['modified'] and riff_no_info['no'] not in used_riffs_no:
+                used_riffs_no.append(riff_no_info['no'])
     return used_riffs_no
 
 

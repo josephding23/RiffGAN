@@ -38,39 +38,27 @@ class Discriminator(nn.Module):
 
         self.cnet_3 = nn.Sequential(
             nn.Conv2d(in_channels=self.df_dim * 2,
-                      out_channels=self.df_dim * 2,
+                      out_channels=self.df_dim * 4,
                       kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim * 2),
+            nn.BatchNorm2d(self.df_dim * 4),
             nn.SELU(),
             nn.Dropout(0.5)
         )
 
         self.cnet_4 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim * 2,
-                      out_channels=self.df_dim,
+            nn.Conv2d(in_channels=self.df_dim * 4,
+                      out_channels=1,
                       kernel_size=(3, 1),
                       stride=(2, 1),
                       padding=(1, 0)
                       ),
-            nn.BatchNorm2d(self.df_dim),
             nn.SELU(),
         )
 
-        self.cnet_5 = nn.Sequential(
-            nn.Conv2d(in_channels=self.df_dim,
-                      out_channels=self.df_dim,
-                      kernel_size=(3, 1),
-                      stride=(2, 1),
-                      padding=(1, 0)
-                      ),
-            nn.BatchNorm2d(self.df_dim),
-            nn.SELU(),
-        )
-
-        self.linear1 = nn.Linear(self.df_dim * 2, 1)
+        self.linear1 = nn.Linear(4, 1)
 
     def forward(self, x, batch_size):
         print(x.shape)
@@ -85,9 +73,6 @@ class Discriminator(nn.Module):
         print(x.shape)
 
         x = self.cnet_4(x)
-        print(x.shape)
-
-        x = self.cnet_5(x)
         print(x.shape)
 
         x = x.view(batch_size, -1)

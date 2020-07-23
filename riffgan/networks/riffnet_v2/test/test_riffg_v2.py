@@ -125,6 +125,7 @@ class Generator(nn.Module):
         print(h1_prev.shape)
 
         h1 = self.linear1(noise)
+        print(h1.shape, noise.shape)
 
         h1 = h1.view(batch_size, self.n_channel, -1, 1)
         h1 = conv_prev_concat(h1, h1_prev)
