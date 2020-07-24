@@ -8,6 +8,9 @@ import shutil
 
 from torchnet.meter import MovingAverageValueMeter
 
+from riffgan.networks.riffnet_v3.discriminator_v3 import Discriminator as RiffD_v3
+from riffgan.networks.riffnet_v3.generator_v3 import Generator as RiffG_v3
+
 from riffgan.networks.riffnet_v2.discriminator_v2 import Discriminator as RiffD_v2
 from riffgan.networks.riffnet_v2.generator_v2 import Generator as RiffG_v2
 
@@ -35,9 +38,9 @@ from music.custom_elements.drum_riff.auto_generate_drum import *
 
 
 class RiffGAN(object):
-    def __init__(self):
+    def __init__(self, opt):
         torch.autograd.set_detect_anomaly(True)
-        self.opt = Config()
+        self.opt = opt
 
         self.device = torch.device('cuda') if self.opt.gpu else torch.device('cpu')
         self.pool = ImagePool(self.opt.image_pool_max_size)
@@ -78,6 +81,10 @@ class RiffGAN(object):
             self.generator = RiffG_v2(self.opt.pitch_range, self.opt.seed_size)
             self.discriminator = RiffD_v2(self.opt.pitch_range)
 
+        elif self.opt.network_name == 'riff_net_v3':
+            self.generator = RiffG_v3(self.opt.pitch_range, self.opt.seed_size)
+            self.discriminator = RiffD_v3(self.opt.pitch_range)
+
         else:
             assert self.opt.network_name == 'midi_net'
             self.generator = MidiNetG(self.opt.pitch_range)
@@ -98,8 +105,8 @@ class RiffGAN(object):
         self.D_optimizer = Adam(params=self.discriminator.parameters(), lr=self.opt.d_lr,
                                 betas=(self.opt.beta1, self.opt.beta2))
 
-        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
-        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=5, T_mult=2, eta_min=4e-08)
+        self.G_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.G_optimizer, T_0=1, T_mult=2, eta_min=4e-08)
+        self.D_scheduler = lr_scheduler.CosineAnnealingWarmRestarts(self.D_optimizer, T_0=1, T_mult=2, eta_min=4e-08)
 
     def find_latest_checkpoint(self):
         path = self.opt.D_save_path
@@ -314,5 +321,6 @@ class RiffGAN(object):
 
 
 if __name__ == '__main__':
-    riff_gan = RiffGAN()
-    riff_gan.train()
+    opt = Config('riff_net_v3', 'jimi_library', 'guitar')
+    riff_gan = RiffGAN(opt)
+    riff_gan.test()

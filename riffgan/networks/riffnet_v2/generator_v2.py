@@ -60,7 +60,7 @@ class Generator(nn.Module):
         )
 
         self.resnet = nn.Sequential()
-        for i in range(10):
+        for i in range(12):
             self.resnet.add_module('resnet_block', ResnetBlock(dim=self.n_channel + self.gf_dim,
                                                                padding_type='reflect',
                                                                use_dropout=False,
@@ -110,11 +110,12 @@ class Generator(nn.Module):
                                stride=(2, 1),
                                padding=(1, 0)
                                ),
-            nn.ReflectionPad2d((0, 0, 0, 1)),
-            nn.BatchNorm2d(1)
+            nn.ReflectionPad2d((0, 0, 0, 1))
+            # nn.BatchNorm2d(1)
         )
 
     def forward(self, noise, seed, batch_size):
+
         h4_prev = self.cnet1(seed)
         h3_prev = self.cnet2(h4_prev)
         h2_prev = self.cnet3(h3_prev)

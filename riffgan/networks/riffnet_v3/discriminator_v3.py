@@ -18,7 +18,7 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
+            nn.ReLU()
             # nn.Dropout(0.2)
         )
 
@@ -30,7 +30,7 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
+            nn.ReLU()
             # nn.Dropout(0.2)
         )
 

@@ -37,7 +37,6 @@ def delete_phrase(phrase_type, index):
     phrase_no_to_delete = phrases[phrase_type][int(index) - 1]['no']
 
     phrase_no_in_use = get_all_used_phrases(tracks, according_phrases_dict[phrase_type])
-    print(phrase_no_in_use)
 
     if phrase_no_to_delete in phrase_no_in_use:
         error = 'Phrase you tend to delete is in use.'

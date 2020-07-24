@@ -1,5 +1,13 @@
 class Config(object):
-    def __init__(self):
+    def __init__(self, network, dataset, instr_type):
+
+        assert network in ['midinet', 'riff_net_v1', 'riff_net_v2', 'riff_net_v3']
+        assert dataset in ['grunge_library', 'jimi_library']
+        assert instr_type in ['guitar', 'bass']
+
+        self.network_name = network
+        self.dataset_name = dataset
+        self.instr_type = instr_type
 
         ##########################
         # Info
@@ -7,15 +15,15 @@ class Config(object):
         self.name = 'riff_gan'
         # self.name = 'SMGT'
 
-        # self.dataset_name = 'grunge_library'
-        self.dataset_name = 'jimi_library'
+        if self.instr_type == 'guitar':
+            self.input_shape = (1, 64, 60)
+            self.chord_type = '5'
+        else:
+            assert self.instr_type == 'bass'
+            self.input_shape = (1, 64, 48)
+            self.chord_type = ''
 
-        self.instr_type = 'guitar'
-        self.chord_type = '5'
-
-        self.network_name = 'riff_net_v2'
-        # self.network_name = 'riff_net_v1'
-        # self.network_name = 'midinet'
+        self.pitch_range = self.input_shape[2]
 
         self.time_step = 64
         self.bar_length = 4
@@ -44,7 +52,7 @@ class Config(object):
         # Train
 
         self.gaussian_std = 1
-        self.seed_size = 64
+        self.seed_size = 100
         self.unit_length = 1
 
         self.sigma_c = 1.0
@@ -52,13 +60,13 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.5  # Adam optimizer beta1 & 2
+        self.beta1 = 0.9  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
         self.batch_size = 16
 
         self.g_lr = 0.0002
-        self.d_lr = 0.0002
+        self.d_lr = 0.0001
         self.gamma = 0.5
 
         self.weight_decay = 0.0
@@ -67,15 +75,6 @@ class Config(object):
         self.num_threads = 0
         self.max_epoch = 50
         self.epoch_step = 5
-
-        # self.data_shape = (self.batch_size, 1, 64, 84)
-        if self.instr_type == 'guitar':
-            self.input_shape = (1, 64, 60)
-        else:
-            assert self.instr_type == 'bass'
-            self.input_shape = (1, 64, 48)
-
-        self.pitch_range = self.input_shape[2]
 
         self.plot_every = 100  # iterations
         self.save_every = 1  # epochs

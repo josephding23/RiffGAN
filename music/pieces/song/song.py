@@ -158,7 +158,6 @@ class Song:
         set_used_phrase_num_info(tracks, phrases)
 
         song_info['riffs'] = riffs
-        # song_info['modified_riffs'] = {'griff': [], 'briff': []}
         song_info['modified_riffs'] = modified_riffs
         song_info['phrases'] = phrases
         song_info['tracks'] = tracks

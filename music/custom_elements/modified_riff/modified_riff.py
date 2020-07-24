@@ -103,7 +103,7 @@ class ModifiedBassRiff(ModifiedRiff):
 
 def parse_modified_briff_json(modified_riff_info):
     modified_riff = ModifiedBassRiff(
-        original_riff=parse_griff_json(modified_riff_info['original_riff']),
+        original_riff=parse_briff_json(modified_riff_info['original_riff']),
         option=modified_riff_info['option']
     )
     modified_riff.set_nonzeros_and_shape(modified_riff_info['nonzeros'], modified_riff_info['shape'])

@@ -11,6 +11,7 @@ from music.custom_elements.modified_riff.modified_riff import ModifiedRiff, Modi
     parse_modified_griff_json, parse_modified_briff_json
 
 from riffgan.riffgan_model import RiffGAN
+from riffgan.riffgan_model import Config
 from util.data_plotting import *
 from util.music_generate import *
 from util.npy_related import *
@@ -75,25 +76,26 @@ def modify_riff(riff, riff_type, option):
         instr_type = 'bass'
         modified_riff = ModifiedBassRiff(riff, option)
 
-    riffgan = RiffGAN()
     if riff_type == 'griff':
         assert isinstance(riff, GuitarRiff)
     else:
         assert riff_type == 'briff'
         assert isinstance(riff, BassRiff)
 
-    riffgan.opt.instr_type = instr_type
-
     if option == 'Jimify':
-        riffgan.opt.dataset_name = 'jimi_library'
+        config = Config('riff_net_v2', 'jimi_library', instr_type)
     else:
         assert option == 'Grungefy'
-        riffgan.opt.dataset_name = 'grunge_library'
+        config = Config('riff_net_v2', 'grunge_library', instr_type)
+
+    riffgan = RiffGAN(config)
 
     riffgan.continue_from_latest_checkpoint()
 
     ori_midi_path = riff.midi_path
     ori_riff_data = generate_data_from_midi(ori_midi_path, riff.measure_length, instr_type)
+
+    print(ori_riff_data.shape)
 
     noise = torch.randn(2, riffgan.opt.seed_size, device=riffgan.device)
     seed = torch.unsqueeze(torch.from_numpy(ori_riff_data)

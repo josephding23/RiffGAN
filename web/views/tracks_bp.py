@@ -40,7 +40,6 @@ def play_track(index):
     if request.method == 'POST':
 
         track_info = get_temp_tracks()[int(index)-1]
-        print(track_info)
         # phrases = get_temp_phrases()
 
         # refresh_phrase_info(track_info, phrases)
