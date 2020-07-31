@@ -313,14 +313,30 @@ class RiffGAN(object):
             save_midis(ori_sample, f'../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
             # merge_short_notes(f'../../data/generated_music/ori{str(i+1)}.mid', self.opt.instr_type)
 
-            save_midis(fake_sample, f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
-            merge_short_notes(f'../data/generated_music/gen{str(i+1)}.mid', self.opt.instr_type)
+            save_midis(fake_sample, f'../data/generated_music/gen{str(i+1)}_raw.mid', self.opt.instr_type,
+                       quantize=False, pitch_correct=False)
+            save_midis(fake_sample, f'../data/generated_music/gen{str(i + 1)}_quantized.mid', self.opt.instr_type,
+                       quantize=True, pitch_correct=False)
+            save_midis(fake_sample, f'../data/generated_music/gen{str(i + 1)}_pitch_corrected.mid', self.opt.instr_type,
+                       quantize=False, pitch_correct=True)
+            '''
+            merge_short_notes(f'../data/generated_music/gen{str(i+1)}_raw.mid',
+                              f'../data/generated_music/gen{str(i+1)}_s_to_l.mid', self.opt.instr_type)
+            '''
+            plot_midi_file(f'../data/generated_music/gen{str(i+1)}_raw.mid', 2, self.opt.instr_type,
+                           save_image=False)
 
-            plot_midi_file(f'../data/generated_music/gen{str(i+1)}.mid', 2, self.opt.instr_type,
-                           save_image=False, save_path='./test.png')
+
+def dirty_work():
+    merge_short_notes(f'../data/generated_music/gen3_raw.mid',
+                      f'../data/generated_music/gen3_s_to_l.mid', 'guitar')
 
 
-if __name__ == '__main__':
+def ignite():
     opt = Config('riff_net_v3', 'jimi_library', 'guitar')
     riff_gan = RiffGAN(opt)
     riff_gan.test()
+
+
+if __name__ == '__main__':
+    dirty_work()

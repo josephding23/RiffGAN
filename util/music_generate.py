@@ -53,7 +53,7 @@ def add_notes_from_nonzeros_to_instr(nonzeros, shape, instr_track, bpm=120, star
                         during_note = False
 
 
-def save_midis(bars, path, instr_type):
+def save_midis(bars, path, instr_type, pitch_correct=True, quantize=True):
     from util.data_plotting import plot_data
     pm = pretty_midi.PrettyMIDI()
 
@@ -123,27 +123,77 @@ def save_midis(bars, path, instr_type):
             start_time = start_time[:-d]
         for idx in range(len(start_time)):
             if duration[idx] >= threshold:
-                start, end = get_quantization_time(start_time[idx], end_time[idx])
-                note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
-                                        start=start,
-                                        end=end)
+                if quantize:
+                    start, end = get_quantization_time(start_time[idx], end_time[idx])
+                else:
+                    start, end = start_time[idx], end_time[idx]
+
+                if pitch_correct:
+                    pitch = get_nearest_in_tone_note(note_num + note_range[0])
+                else:
+                    pitch = note_num + note_range[0]
+
+                note = pretty_midi.Note(velocity=127, pitch=pitch, start=start, end=end)
                 instrument.notes.append(note)
             else:
                 if start_time[idx] + threshold <= phrase_end_time:
-                    start, end = get_quantization_time(start_time[idx], end_time[idx] + threshold)
-                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
-                                            start=start,
-                                            end=end)
+                    if quantize:
+                        start, end = get_quantization_time(start_time[idx], end_time[idx] + threshold)
+                    else:
+                        start, end = start_time[idx], end_time[idx] + threshold
+
+                    if pitch_correct:
+                        pitch = get_nearest_in_tone_note(note_num+note_range[0])
+                    else:
+                        pitch = note_num + note_range[0]
+
+                    note = pretty_midi.Note(velocity=127, pitch=pitch, start=start, end=end)
+
                 else:
-                    start, end = get_quantization_time(start_time[idx], phrase_end_time)
-                    note = pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note_num+note_range[0]),
-                                            start=start,
-                                            end=end)
+                    if quantize:
+                        start, end = get_quantization_time(start_time[idx], phrase_end_time)
+                    else:
+                        start, end = start_time[idx], phrase_end_time
+
+                    if pitch_correct:
+                        pitch = get_nearest_in_tone_note(note_num+note_range[0])
+                    else:
+                        pitch = note_num + note_range[0]
+
+                    note = pretty_midi.Note(velocity=127, pitch=pitch, start=start, end=end)
+
                 instrument.notes.append(note)
     instrument.notes.sort(key=lambda note: note.start)
 
     pm.instruments.append(instrument)
     pm.write(path)
+
+
+def auto_pitch_correct_midi(ori_path, new_path):
+    ori_pm = pretty_midi.PrettyMIDI(ori_path)
+    new_pm = pretty_midi.PrettyMIDI()
+
+    for instr in ori_pm.instruments:
+        new_instr = pretty_midi.Instrument(instr.program)
+        for note in instr.notes:
+            new_instr.notes.append(pretty_midi.Note(velocity=127, pitch=get_nearest_in_tone_note(note.pitch),
+                                                    start=note.start, end=note.end))
+        new_pm.instruments.append(new_instr)
+    new_pm.write(new_path)
+
+
+def quantize_midi(ori_path, new_path):
+    ori_pm = pretty_midi.PrettyMIDI(ori_path)
+    new_pm = pretty_midi.PrettyMIDI()
+
+    for instr in ori_pm.instruments:
+        new_instr = pretty_midi.Instrument(instr.program)
+        for note in instr.notes:
+            ori_start, ori_end = note.start, note.end
+            start, end = get_quantization_time(ori_start, ori_end)
+            new_instr.notes.append(pretty_midi.Note(velocity=127, pitch=note.pitch, start=start, end=end))
+        new_pm.instruments.append(new_instr)
+    new_pm.write(new_path)
 
 
 def get_nearest_in_tone_note(note, tonality=('C', 'major')):
@@ -166,10 +216,11 @@ def get_nearest_in_tone_note(note, tonality=('C', 'major')):
     return note + min_gap
 
 
-def get_quantization_time(start, end, bpm=120, shortest_note=1/64):
-    shortest_note_length = 60 / bpm * (shortest_note / (1 / 4))
-    start_q = shortest_note_length * int(round(start / shortest_note_length))
-    end_q = shortest_note_length * int(round(end / shortest_note_length))
+def get_quantization_time(start, end, bpm=120, shortest_note=(1/16, 1/64)):
+    shortest_note_length = (60 / bpm * (shortest_note[0] / (1 / 4)), 60 / bpm * (shortest_note[1] / (1 / 4)))
+    start_q = shortest_note_length[0] * int(start / shortest_note_length[0])
+    end_q = shortest_note_length[1] * int(math.ceil(end / shortest_note_length[1]))
+
     return start_q, end_q
 
 

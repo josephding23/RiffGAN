@@ -1,7 +1,8 @@
 import pretty_midi
+from operator import itemgetter
 
 
-def merge_short_notes(path, instr_type, bpm=120):
+def merge_short_notes(ori_path, new_path, instr_type, bpm=120):
     sixty_fourth_length = 60 / bpm / 16 * 1.1
 
     sixteenth_length = 60 / bpm / 4
@@ -18,7 +19,7 @@ def merge_short_notes(path, instr_type, bpm=120):
 
     pitch_list = [[] for _ in range(note_range[1] - note_range[0])]
 
-    pm = pretty_midi.PrettyMIDI(path)
+    pm = pretty_midi.PrettyMIDI(ori_path)
     for instr in pm.instruments:
         if instr.is_drum:
             break
@@ -29,6 +30,8 @@ def merge_short_notes(path, instr_type, bpm=120):
 
             _pitch = pitch-note_range[0]
             pitch_list[_pitch].append({'start': start, 'end': end, 'ignore_first': False})
+
+    pitch_list = [sorted(pitch_list[_pitch], key=itemgetter('start')) for _pitch in range(note_range[1] - note_range[0])]
 
     new_pitch_list = [[] for _ in range(note_range[1] - note_range[0])]
 
@@ -67,7 +70,7 @@ def merge_short_notes(path, instr_type, bpm=120):
     pm.instruments.append(instr)
 
     # new_path = path[:-4] + '_merged_.mid'
-    pm.write(path)
+    pm.write(new_path)
 
 
 def test_merge():
