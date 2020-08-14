@@ -49,7 +49,7 @@ def parse_briff_json(riff_info):
     )
 
 
-def generate_briff_from_griff(guitar_riff):
+def generate_from_griff(guitar_riff):
     assert isinstance(guitar_riff, GuitarRiff)
     new_degrees_and_types = [(degree_and_type[0], '') for degree_and_type in guitar_riff.degrees_and_types]
     return BassRiff(guitar_riff.measure_length, new_degrees_and_types, guitar_riff.time_stamps, guitar_riff.velocity)
