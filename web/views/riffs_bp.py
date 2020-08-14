@@ -25,14 +25,21 @@ def get_riffs(riff_type):
     riffs = get_temp_riffs()
     modified_riffs = get_temp_modified_riffs()
 
-    save_modified_figures(modified_riffs, riff_type)
+    # save_modified_figures(modified_riffs, riff_type)
 
     existed_riffs = get_all_existed_riffs(riff_type)
-    return render_template('riffs/' + riff_type + '.html',
-                           riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
-                           riff_type=riff_type,
-                           existed_riffs=existed_riffs,
-                           t=time.time())
+    if riff_type == 'driff':
+        return render_template('riffs/' + riff_type + '.html',
+                               riffs=riffs[riff_type], modified_riffs=None,
+                               riff_type=riff_type,
+                               existed_riffs=existed_riffs,
+                               t=time.time())
+    else:
+        return render_template('riffs/' + riff_type + '.html',
+                               riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
+                               riff_type=riff_type,
+                               existed_riffs=existed_riffs,
+                               t=time.time())
 
 
 @riffs_bp.route('/delete/<riff_type>/<index>', methods=['POST'])
@@ -185,6 +192,7 @@ def edit_riff(riff_type, index):
     if request.method == 'POST':
 
         riffs = get_temp_riffs()
+        modified_riffs = get_temp_modified_riffs()
         phrases = get_temp_phrases()
         tracks = get_temp_tracks()
         song = get_temp_song()
@@ -227,7 +235,7 @@ def edit_riff(riff_type, index):
                     'raw_timestamps': raw_timestamps
                 }
 
-            refresh_all_phrases(phrases, riffs)
+            refresh_all_phrases(phrases, riffs, modified_riffs)
             refresh_all_tracks(tracks, phrases)
             refresh_all_tracks_in_song(song, tracks)
 
@@ -275,7 +283,7 @@ def edit_riff(riff_type, index):
                 "patterns": patterns_dict
             }
 
-            refresh_all_phrases(phrases, riffs)
+            refresh_all_phrases(phrases, riffs, modified_riffs)
             refresh_all_tracks(tracks, phrases)
             refresh_all_tracks_in_song(song, tracks)
 
@@ -360,20 +368,36 @@ def new_riff(riff_type):
             except Exception:
                 error = 'Length must be integer'
                 existed_riffs = get_all_existed_riffs(riff_type)
-                return render_template('riffs/' + riff_type + '.html',
-                                       riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
-                                       riff_type=riff_type,
-                                       error=error, existed_riffs=existed_riffs)
+                if riff_type == 'driff':
+                    return render_template('riffs/' + riff_type + '.html',
+                                           riffs=riffs[riff_type], modified_riffs=None,
+                                           riff_type=riff_type,
+                                           existed_riffs=existed_riffs,
+                                           t=time.time())
+                else:
+                    return render_template('riffs/' + riff_type + '.html',
+                                           riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
+                                           riff_type=riff_type,
+                                           existed_riffs=existed_riffs,
+                                           t=time.time())
 
             try:
                 examine_drum_patterns(patterns_dict)
             except Exception:
                 error = 'Invalid Drum Pattern'
                 existed_riffs = get_all_existed_riffs(riff_type)
-                return render_template('riffs/' + riff_type + '.html',
-                                       riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
-                                       riff_type=riff_type,
-                                       error=error, existed_riffs=existed_riffs)
+                if riff_type == 'driff':
+                    return render_template('riffs/' + riff_type + '.html',
+                                           riffs=riffs[riff_type], modified_riffs=None,
+                                           riff_type=riff_type,
+                                           existed_riffs=existed_riffs,
+                                           t=time.time())
+                else:
+                    return render_template('riffs/' + riff_type + '.html',
+                                           riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
+                                           riff_type=riff_type,
+                                           existed_riffs=existed_riffs,
+                                           t=time.time())
 
             riffs[riff_type].append({
                 'no': get_largest_num_of_json(riffs[riff_type]) + 1,
@@ -396,10 +420,18 @@ def save_riff(riff_type, index):
         if exists_riff(name, riff_type):
             error = f'Riff {name} already exists! Please choose another'
             existed_riffs = get_all_existed_riffs(riff_type)
-            return render_template('riffs/' + riff_type + '.html',
-                                   riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
-                                   riff_type=riff_type,
-                                   error=error, existed_riffs=existed_riffs)
+            if riff_type == 'driff':
+                return render_template('riffs/' + riff_type + '.html',
+                                       riffs=riffs[riff_type], modified_riffs=None,
+                                       riff_type=riff_type,
+                                       existed_riffs=existed_riffs,
+                                       t=time.time())
+            else:
+                return render_template('riffs/' + riff_type + '.html',
+                                       riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
+                                       riff_type=riff_type,
+                                       existed_riffs=existed_riffs,
+                                       t=time.time())
 
         else:
             riff_info = riffs[riff_type][int(index)-1]
@@ -485,9 +517,17 @@ def delete_stored_riff(riff_type, index):
         delete_stored_riff_in_db(riff_name_to_delete, riff_type)
 
         info = f'Delete {riff_type} in database'
+        existed_riffs = get_all_existed_riffs(riff_type)
 
-        return render_template('riffs/' + riff_type + '.html',
-                               riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
-                               riff_type=riff_type,
-                               info=info, existed_riffs=get_all_existed_riffs(riff_type))
-
+        if riff_type == 'driff':
+            return render_template('riffs/' + riff_type + '.html',
+                                   riffs=riffs[riff_type], modified_riffs=None,
+                                   riff_type=riff_type,
+                                   existed_riffs=existed_riffs,
+                                   t=time.time())
+        else:
+            return render_template('riffs/' + riff_type + '.html',
+                                   riffs=riffs[riff_type], modified_riffs=modified_riffs[riff_type],
+                                   riff_type=riff_type,
+                                   existed_riffs=existed_riffs,
+                                   t=time.time())

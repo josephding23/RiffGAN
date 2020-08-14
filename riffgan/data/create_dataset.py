@@ -8,14 +8,14 @@ def generate_from_nonzeros(source, instr):
 
     if source is 'grunge_library':
         dataset_dict = {
-            'guitar': 'E:/grunge_library/data/guitar_unit_riff.npz',
-            'bass': 'E:/grunge_library/data/bass_unit_riff.npz'
+            'guitar': 'E:/riff_data/grunge_library/data/guitar_unit_riff.npz',
+            'bass': 'E:/riff_data/grunge_library/data/bass_unit_riff.npz'
         }
     else:
         assert source is 'jimi_library'
         dataset_dict = {
-            'guitar': 'E:/jimi_library/data/guitar_unit_riff.npz',
-            'bass': 'E:/jimi_library/data/bass_unit_riff.npz'
+            'guitar': 'E:/riff_data/jimi_library/data/guitar_unit_riff.npz',
+            'bass': 'E:/riff_data/jimi_library/data/bass_unit_riff.npz'
         }
 
     path = dataset_dict[instr]

@@ -108,7 +108,7 @@ def modify_riff(riff, riff_type, option):
     fake_sample = riffgan.generator(noise, seed, riff.measure_length).cpu().detach().numpy()
 
     save_midis(fake_sample, temp_path, instr_type)
-    merge_short_notes(temp_path, instr_type)
+    merge_short_notes(temp_path, instr_type, instr_type)
 
     nonzeros, shape = generate_nonzeros_from_pm(pretty_midi.PrettyMIDI(temp_path), 120, riff.measure_length, instr_type)
     os.remove(temp_path)

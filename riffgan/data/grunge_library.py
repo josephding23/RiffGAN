@@ -12,8 +12,8 @@ class UnitRiffDataset(data.Dataset):
         self.instr = instr
 
         dataset_dict = {
-            'guitar': 'E:/grunge_library/data/guitar_unit_riff.npz',
-            'bass': 'E:/grunge_library/data/bass_unit_riff.npz'
+            'guitar': 'D:/Datasets/grunge_library/data/guitar_unit_riff.npz',
+            'bass': 'D:/Datasets/grunge_library/data/bass_unit_riff.npz'
         }
         self.dataset_path = dataset_dict[self.instr]
 

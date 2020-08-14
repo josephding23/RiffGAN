@@ -86,7 +86,7 @@ class Config(object):
         ##########################
         # Save Paths
 
-        self.root_dir = 'd:/riff_gan'
+        self.root_dir = 'D:/RiffGAN'
 
         self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_{}'.format(
             self.name, self.dataset_name, self.network_name, self.instr_type)
