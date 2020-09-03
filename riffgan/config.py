@@ -63,7 +63,7 @@ class Config(object):
         self.beta1 = 0.5  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
-        self.batch_size = 32
+        self.batch_size = 16
 
         self.g_lr = 0.0002
         self.d_lr = 0.0001

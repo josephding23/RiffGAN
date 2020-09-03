@@ -7,7 +7,7 @@ from riffgan.networks.midinet.utility import *
 class Discriminator(nn.Module):
     def __init__(self, pitch_range):
         super(Discriminator, self).__init__()
-        self.df_dim = 512
+        self.df_dim = 256
         self.pitch_range = pitch_range
 
         self.cnet_1 = nn.Sequential(
@@ -18,8 +18,7 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
-            nn.Dropout(0.1)
+            nn.CELU()
         )
 
         self.cnet_2 = nn.Sequential(
@@ -30,8 +29,7 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
-            nn.Dropout(0.1)
+            nn.CELU()
         )
 
         self.cnet_3 = nn.Sequential(
@@ -42,8 +40,7 @@ class Discriminator(nn.Module):
                       padding=(1, 0)
                       ),
             nn.BatchNorm2d(self.df_dim),
-            nn.ReLU(),
-            nn.Dropout(0.1)
+            nn.CELU()
         )
 
         self.cnet_4 = nn.Sequential(

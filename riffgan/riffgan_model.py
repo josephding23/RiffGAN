@@ -47,7 +47,7 @@ class RiffGAN(object):
         torch.autograd.set_detect_anomaly(True)
         self.opt = opt
 
-        self.device = torch.device('cuda') if self.opt.gpu else torch.device('cpu')
+        self.device = torch.device('cuda:1') if self.opt.gpu else torch.device('cpu')
         self.pool = ImagePool(self.opt.image_pool_max_size)
 
         self.logger = logging.getLogger()
