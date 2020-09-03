@@ -1,13 +1,14 @@
 class Config(object):
-    def __init__(self, network, dataset, instr_type):
+    def __init__(self, network, dataset, instr_type, continue_training):
 
-        assert network in ['midinet', 'riff_net_v1', 'riff_net_v2', 'riff_net_v3']
+        assert network in ['midinet', 'riff_net_v1', 'riff_net_v2', 'riff_net_v3', 'riff_net_v4']
         assert dataset in ['grunge_library', 'jimi_library']
         assert instr_type in ['guitar', 'bass']
 
         self.network_name = network
         self.dataset_name = dataset
         self.instr_type = instr_type
+        self.continue_train = continue_training
 
         ##########################
         # Info
@@ -31,7 +32,6 @@ class Config(object):
         self.note_valid_length = 84
 
         self.phase = 'train'
-        self.continue_train = False
 
         ###########################
 
@@ -60,20 +60,20 @@ class Config(object):
 
         self.gpu = True
 
-        self.beta1 = 0.9  # Adam optimizer beta1 & 2
+        self.beta1 = 0.5  # Adam optimizer beta1 & 2
         self.beta2 = 0.999
 
-        self.batch_size = 16
+        self.batch_size = 32
 
         self.g_lr = 0.0002
         self.d_lr = 0.0001
         self.gamma = 0.5
 
-        self.weight_decay = 0.0
+        self.weight_decay = 0.01
 
         self.no_flip = True
         self.num_threads = 0
-        self.max_epoch = 50
+        self.max_epoch = 200
         self.epoch_step = 5
 
         self.plot_every = 100  # iterations
@@ -86,7 +86,7 @@ class Config(object):
         ##########################
         # Save Paths
 
-        self.root_dir = 'D:/RiffGAN'
+        self.root_dir = '..'
 
         self.save_path = self.root_dir + '/checkpoints/' + '{}_{}_{}_{}'.format(
             self.name, self.dataset_name, self.network_name, self.instr_type)

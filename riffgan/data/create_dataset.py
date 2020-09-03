@@ -5,17 +5,17 @@ from dataset.grunge_library import *
 
 def generate_from_nonzeros(source, instr):
     assert instr in ['guitar', 'bass']
-
+    root_dir = ''
     if source is 'grunge_library':
         dataset_dict = {
-            'guitar': 'E:/riff_data/grunge_library/data/guitar_unit_riff.npz',
-            'bass': 'E:/riff_data/grunge_library/data/bass_unit_riff.npz'
+            'guitar': '../data/riff_data/grunge_library/data/guitar_unit_riff.npz',
+            'bass': '../data/riff_data/grunge_library/data/bass_unit_riff.npz'
         }
     else:
         assert source is 'jimi_library'
         dataset_dict = {
-            'guitar': 'E:/riff_data/jimi_library/data/guitar_unit_riff.npz',
-            'bass': 'E:/riff_data/jimi_library/data/bass_unit_riff.npz'
+            'guitar': '../data/riff_data/jimi_library/data/guitar_unit_riff.npz',
+            'bass': '../data/riff_data/jimi_library/data/bass_unit_riff.npz'
         }
 
     path = dataset_dict[instr]

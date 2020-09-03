@@ -8,6 +8,9 @@ import shutil
 
 from torchnet.meter import MovingAverageValueMeter
 
+from riffgan.networks.riffnet_v4.discriminator_v4 import Discriminator as RiffD_v4
+from riffgan.networks.riffnet_v4.generator_v4 import Generator as RiffG_v4
+
 from riffgan.networks.riffnet_v3.discriminator_v3 import Discriminator as RiffD_v3
 from riffgan.networks.riffnet_v3.generator_v3 import Generator as RiffG_v3
 
@@ -34,7 +37,9 @@ from util.fix_generated_song import *
 from riffgan.networks.midinet.utility import *
 from util.data_plotting import *
 
-from music.custom_elements.drum_riff.auto_generate_drum import *
+import os
+
+# from music.custom_elements.drum_riff.auto_generate_drum import *
 
 
 class RiffGAN(object):
@@ -82,6 +87,10 @@ class RiffGAN(object):
             self.discriminator = RiffD_v2(self.opt.pitch_range)
 
         elif self.opt.network_name == 'riff_net_v3':
+            self.generator = RiffG_v3(self.opt.pitch_range, self.opt.seed_size)
+            self.discriminator = RiffD_v3(self.opt.pitch_range)
+
+        elif self.opt.network_name == 'riff_net_v4':
             self.generator = RiffG_v3(self.opt.pitch_range, self.opt.seed_size)
             self.discriminator = RiffD_v3(self.opt.pitch_range)
 
@@ -318,9 +327,14 @@ def dirty_work():
 
 
 def ignite():
-    opt = Config('riff_net_v3', 'jimi_library', 'guitar')
+    continue_training = False
+    group_num = 0
+    riff_net_version = 4
+
+    group_list = ['grunge_library', 'jimi_library']
+    opt = Config(f'riff_net_v{riff_net_version}', group_list[group_num], 'guitar', continue_training)
     riff_gan = RiffGAN(opt)
-    riff_gan.test()
+    riff_gan.train()
 
 
 if __name__ == '__main__':
